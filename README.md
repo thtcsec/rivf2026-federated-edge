@@ -10,7 +10,7 @@ Official Research Artifact Repository for the paper submitted to **The 20th IEEE
 
 > **Track**: *Communications, Networking, IoT, Cloud Computing*  
 > **Paper Title**: *Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control*  
-> **Author**: Trinh Hoang Tu (Department of Cybersecurity, Faculty of IT, HUFLIT)
+> **Authors**: Trinh Hoang Tu and Cao Tien Thanh (Department of Cybersecurity, Faculty of IT, HUFLIT)
 
 ---
 
@@ -84,7 +84,7 @@ docker-compose up --build
 
 ```bibtex
 @inproceedings{tu2026federated,
-  author    = {Trinh Hoang Tu},
+  author    = {Trinh Hoang Tu and Cao Tien Thanh},
   title     = {Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control},
   booktitle = {Proc. 20th IEEE International Conference on Computing and Communication Technologies (RIVF 2026)},
   address   = {Hanoi, Vietnam},
@@ -98,4 +98,4 @@ docker-compose up --build
 
 ## 📜 License & Support
 
-This project is licensed under the MIT License. Developed by **Trinh Hoang Tu** at the Department of Cybersecurity, Faculty of IT, HUFLIT. Contact: `tht.csec2005@gmail.com`.
+This project is licensed under the MIT License. Developed by **Trinh Hoang Tu** and **Cao Tien Thanh** at the Department of Cybersecurity, Faculty of IT, HUFLIT. Contact: `tht.csec2005@gmail.com`, `thanhct@huflit.edu.vn`.
