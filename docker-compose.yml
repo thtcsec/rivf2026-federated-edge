@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  redis-event-bus:
+    image: redis:7.2-alpine
+    container_name: rivf2026-redis-bus
+    ports:
+      - "6379:6379"
+    restart: always
+
+  rivf2026-runner:
+    image: python:3.10-slim
+    container_name: rivf2026-runner
+    depends_on:
+      - redis-event-bus
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install -r requirements.txt && pdflatex -interaction=nonstopmode rivf2026.tex"
