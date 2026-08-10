@@ -21,23 +21,17 @@
 }
 
 \author{
-\IEEEauthorblockN{Trinh Hoang Tu}
-\IEEEauthorblockA{\textit{Department of Cybersecurity, Faculty of IT} \\
-\textit{Ho Chi Minh City University of Foreign Languages - IT (HUFLIT)}\\
+\IEEEauthorblockN{Trinh Hoang Tu\IEEEauthorrefmark{1} and Cao Tien Thanh\IEEEauthorrefmark{2}}
+\IEEEauthorblockA{\textit{Department of Cybersecurity, Faculty of Information Technology} \\
+\textit{Ho Chi Minh City University of Foreign Languages - Information Technology (HUFLIT)}\\
 Ho Chi Minh City, Vietnam \\
-tht.csec2005@gmail.com}
-\and
-\IEEEauthorblockN{Cao Tien Thanh}
-\IEEEauthorblockA{\textit{Department of Cybersecurity, Faculty of IT} \\
-\textit{Ho Chi Minh City University of Foreign Languages - IT (HUFLIT)}\\
-Ho Chi Minh City, Vietnam \\
-thanhct@huflit.edu.vn}
+Email: \IEEEauthorrefmark{1}tht.csec2005@gmail.com, \IEEEauthorrefmark{2}thanhct@huflit.edu.vn}
 }
 
 \maketitle
 
 \begin{abstract}
-Modern multi-campus university infrastructures face increasing cybersecurity risks due to high-density IoT deployments, unmanaged student endpoints, and massive distributed telemetry flows. Traditional centralized threat detection systems suffer from bandwidth saturation, privacy degradation, and prolonged Mean Time to Respond (MTTR $>$ 30 minutes). In this paper, we propose a novel \textbf{Federated Edge-Cloud Resilience Architecture} engineered specifically for distributed campus networks. By deploying lightweight, PyTorch INT8-quantized TCN-GRU sequence autoencoders at edge gateways and executing decentralized Federated Averaging (FedAvg) aggregation, our framework achieves privacy-preserving real-time anomaly detection without streaming raw packet traces to central servers. Enriched high-confidence security events are published over a distributed Redis Stream pub/sub bus to a cloud-based dynamic risk engine and multi-agent Deep Reinforcement Learning (DRL) SDN controller for automated Zero-Trust containment. Experimental evaluations on benchmark intrusion datasets (InSDN, CSE-CIC-IDS2018) demonstrate sub-10ms mitigation trueness ($4.15 \pm 0.07$~ms, Mean $\pm$ SD), a $>99.99\%$ reduction in MTTR compared to manual SOC workflows ($8.2 \pm 0.5$~ms vs $1510 \pm 340$~s), an optimal F1-score of 0.9412, and minimal edge gateway resource overhead (13.8\% CPU, 48.5~MB RAM under 10,000 events/sec). All source code, Docker configs, and benchmark scripts are available as an open research artifact.
+Modern multi-campus university infrastructures face increasing cybersecurity risks due to high-density IoT deployments, unmanaged student endpoints, and massive distributed telemetry flows. Traditional centralized threat detection systems suffer from bandwidth saturation, privacy degradation, and prolonged Mean Time to Respond (MTTR $>$ 30 minutes). In this paper, we propose a novel \textbf{Federated Edge-Cloud Resilience Architecture} engineered specifically for distributed campus networks. By deploying lightweight, PyTorch INT8-quantized TCN-GRU sequence autoencoders at edge gateways and executing decentralized Federated Averaging (FedAvg) aggregation, our framework achieves privacy-preserving real-time anomaly detection without streaming raw packet traces to central servers. Enriched high-confidence security events are published over a distributed Redis Stream pub/sub bus to a cloud-based dynamic risk engine and multi-agent Deep Reinforcement Learning (DRL) SDN controller for automated Zero-Trust containment. Experimental evaluations on benchmark intrusion datasets (InSDN, CSE-CIC-IDS2018) demonstrate sub-10ms mitigation trueness ($4.150 \pm 0.070$~ms, Mean $\pm$ SD), a $>99.99\%$ reduction in MTTR compared to manual SOC workflows ($8.2 \pm 0.5$~ms vs $1510 \pm 340$~s), an optimal F1-score of 0.9412, and minimal edge gateway resource overhead (13.8\% CPU, 48.5~MB RAM under 10,000 events/sec). All source code, Docker configs, and benchmark scripts are available as an open research artifact.
 \end{abstract}
 
 \begin{IEEEkeywords}

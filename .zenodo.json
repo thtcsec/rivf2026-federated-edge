@@ -1,0 +1,27 @@
+{
+  "title": "Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control",
+  "upload_type": "publication",
+  "publication_type": "conferencepaper",
+  "description": "Research artifact for IEEE RIVF 2026 paper introducing a decentralized Federated Edge-Cloud resilience framework combining PyTorch INT8 TCN-GRU autoencoders with FedAvg parameter aggregation and Multi-Agent DRL SDN control.",
+  "creators": [
+    {
+      "name": "Tu, Trinh Hoang",
+      "affiliation": "Faculty of Information Technology, HUFLIT"
+    },
+    {
+      "name": "Thanh, Cao Tien",
+      "affiliation": "Faculty of Information Technology, HUFLIT"
+    }
+  ],
+  "access_right": "open",
+  "license": "MIT",
+  "keywords": [
+    "Federated Learning",
+    "Edge Computing",
+    "PyTorch INT8 Quantization",
+    "Software-Defined Networking",
+    "Deep Reinforcement Learning",
+    "Zero-Trust Containment",
+    "IEEE RIVF 2026"
+  ]
+}
