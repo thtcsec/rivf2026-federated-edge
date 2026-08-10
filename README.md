@@ -1,6 +1,6 @@
 # 📡 Federated Edge-Cloud Resilience Architecture (IEEE RIVF 2026)
 
-[![Conference](https://img.shields.io/badge/Conference-IEEE%20RIVF%202026-blue.svg)](https://rivf2026.vinuni.edu.vn/)
+[![Conference](https://img.shields.io/badge/Conference-IEEE%20RIVF%202026-blue.svg)](https://rivf2026.org/#content)
 [![Format](https://img.shields.io/badge/Format-IEEE%20Tran%20(A4%20Double--Column)-brightgreen.svg)](rivf2026.pdf)
 [![Paper PDF](https://img.shields.io/badge/Paper-Compiled%20PDF-red.svg)](rivf2026.pdf)
 [![Artifact Evaluation](https://img.shields.io/badge/Artifact-Reproducible-success.svg)](README.md)

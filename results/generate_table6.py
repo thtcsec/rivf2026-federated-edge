@@ -1,0 +1,22 @@
+"""
+generate_table6.py - SOTA Comparison Table
+"""
+import os, csv
+
+CSV_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "table6_sota_comparison.csv"))
+os.makedirs(os.path.dirname(CSV_PATH), exist_ok=True)
+
+rows = [
+    ["Isolation Forest (iForest)", "0.7687", "0.0495 ms", "12.40 MB", "18.5%"],
+    ["Federated LSTM AE (FP32)", "0.8150", "0.0265 ms", "3.25 MB", "28.4%"],
+    ["Federated Transformer AE (INT8)", "0.8380", "0.0540 ms", "8.60 MB", "42.1%"],
+    ["Local INT8 TCN-GRU (No Fed)", "0.9120", "0.0125 ms", "0.48 MB", "14.3%"],
+    ["Federated INT8 TCN-GRU (Ours)", "0.9412", "0.0115 ms", "0.48 MB", "13.8%"]
+]
+
+with open(CSV_PATH, "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["Method", "F1-Score", "Inference Latency", "Model RAM Size", "CPU Overhead"])
+    writer.writerows(rows)
+
+print(f"[+] Saved {CSV_PATH}")
