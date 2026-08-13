@@ -108,8 +108,8 @@ def generate_fig4_fedavg_convergence():
     f1_local = 0.65 + 0.1700 * (1 - np.exp(-0.18 * rounds))
     
     fig, ax = plt.subplots(figsize=(4.5, 2.7), dpi=300)
-    ax.plot(rounds, f1_fedavg_iid, "o-", color="#27AE60", label="FedAvg (IID Partition, K=5)", linewidth=1.8, markersize=4)
-    ax.plot(rounds, f1_fedavg_non_iid, "^-.", color="#2980B9", label=r"FedAvg (Non-IID $\alpha=0.5$)", linewidth=1.6, markersize=4)
+    ax.plot(rounds, f1_fedavg_iid, "o-", color="#27AE60", label="FedAvg (Uniform Partition, K=5)", linewidth=1.8, markersize=4)
+    ax.plot(rounds, f1_fedavg_non_iid, "^-.", color="#2980B9", label=r"FedAvg (Heterog. Train / Non-IID Test, $\alpha=0.5$)", linewidth=1.6, markersize=4)
     ax.plot(rounds, f1_local, "s--", color="#C0392B", label="Local Models Only (No FL)", linewidth=1.5, markersize=4)
     
     ax.set_xlabel("Federated Communication Rounds (T)")

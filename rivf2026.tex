@@ -54,7 +54,7 @@ To address these challenges, we present a system-level co-design of \textbf{Fede
 The key contributions of this paper are summarized as follows:
 \begin{itemize}
     \item \textbf{Quantized Edge Sequence Autoencoder}: We design a hybrid Temporal Convolutional Network (TCN) and Gated Recurrent Unit (GRU) Autoencoder dynamically quantized to INT8 ($0.48$~MB memory footprint), executing sub-millisecond unsupervised flow anomaly scoring at distributed campus edge taps.
-    \item \textbf{Privacy-Aware Collaborative Training}: We implement a FedAvg aggregation protocol over non-IID Dirichlet-partitioned campus telemetry, eliminating raw data transmission while outperforming isolated local detection models.
+    \item \textbf{Privacy-Aware Collaborative Training}: We implement a FedAvg aggregation protocol across distributed campus clients, demonstrating collaborative training stability under client-size-heterogeneous training partitions and Dirichlet-skewed held-out evaluation distributions.
     \item \textbf{Context-Enriched Event Pipeline}: We construct an asynchronous event pipeline over Redis Streams incorporating dynamic identity-to-role risk scoring to eliminate transient false alarms.
     \item \textbf{Learned Closed-Loop DQN SDN Containment}: We formulate an adaptive Deep Q-Network (DQN) SDN controller with discrete action spaces (OpenFlow rate-limiting, 802.1X VLAN quarantine, BGP Flowspec drop) achieving an automated mitigation latency of $8.2 \pm 0.5$~ms with minimal benign user disruption.
     \item \textbf{Empirical System Benchmark}: We present detailed experimental evaluations on InSDN and CSE-CIC-IDS2018 benchmarks, validating per-stage latency, FedAvg convergence, DQN policy trade-offs, edge CPU/RAM scaling up to $10{,}000$~events/sec, and reproducible artifacts.
@@ -164,7 +164,7 @@ When an edge gateway detects a sequence with $RE(X) > \tau$ ($\tau = 0.65$), an 
 R = w_1 \cdot \widetilde{RE}(X) + w_2 \cdot (1 - \text{TrustScore}) + w_3 \cdot \text{AssetCriticality}
 \label{eq_risk}
 \end{equation}
-where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\sigma_{\text{val}}}, 0, 1 \right) \in [0, 1]$ denotes the clipped $3\sigma$ $z$-score standardized anomaly score calibrated against benign validation statistics ($\mu_{\text{val}}, \sigma_{\text{val}}$), and weights satisfy $w_1 + w_2 + w_3 = 1.0$ (calibrated to $w_1 = 0.50$, $w_2 = 0.30$, $w_3 = 0.20$). Security events with $R \ge 0.70$ are dispatched to the DRL SDN controller.
+where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\sigma_{\text{val}}}, 0, 1 \right) \in [0, 1]$ denotes the $3\sigma$-scaled and clipped anomaly score calibrated from benign validation statistics ($\mu_{\text{val}}, \sigma_{\text{val}}$), and weights satisfy $w_1 + w_2 + w_3 = 1.0$ (calibrated to $w_1 = 0.50$, $w_2 = 0.30$, $w_3 = 0.20$). Security events with $R \ge 0.70$ are dispatched to the DRL SDN controller.
 
 \subsection{Closed-Loop Deep Q-Network (DQN) SDN Control}
 We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
@@ -177,11 +177,12 @@ We model automated threat containment as a Markov Decision Process (MDP) defined
         \item $a_2$: \textit{Quarantine VLAN} (Reassign client switch port to isolated 802.1X VLAN~\cite{b_zero_trust});
         \item $a_3$: \textit{Flow Drop} (Push high-priority OpenFlow hard drop / BGP Flowspec).
     \end{itemize}
+    \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load ($U_{\text{link}}^{(t+1)} > U_{\text{link}}^{(t)}$); $a_1$ throttles malicious surges ($\lambda_{\text{flow}} \gets \min(\lambda_{\text{flow}}, 10\text{~Mbps})$); $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
     \item \textbf{Reward Function} $\mathcal{R}$: Balances threat mitigation against operational disruption:
     \begin{equation}
     r(s_t, a_t) = \alpha \cdot \mathbb{I}_{\text{threat}}(a_t) - \beta \cdot \text{Cost}(a_t) - \lambda_{\text{fp}} \cdot \mathbb{I}_{\text{fp}}(a_t)
     \end{equation}
-    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign faculty/student traffic, and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop).
+    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign traffic ($\mathbb{I}_{\text{fp}}=1$), and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop). The term $\mathbb{I}_{\text{threat}}(a_t) = 1$ indicates successful mitigation without inducing switch link congestion ($U_{\text{link}} < 0.85$).
 \end{itemize}
 
 The DQN agent~\cite{b_dqn_nature} approximates action-value functions $Q(s, a; \theta)$ using an experience replay buffer $\mathcal{D}$ (capacity $10{,}000$) and a target network $Q(s, a; \theta^-)$ updated every $100$ steps with discount factor $\gamma = 0.95$:
@@ -277,7 +278,7 @@ Fig.~\ref{fig_fedavg} evaluates model convergence across $T=20$ communication ro
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.88\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
-\caption{Federated FedAvg model convergence across communication rounds under uniform and non-IID Dirichlet ($\alpha = 0.5$) partitions.}
+\caption{Federated FedAvg model convergence across communication rounds under uniform and client-heterogeneous / non-IID test ($\alpha = 0.5$) partitions.}
 \label{fig_fedavg}
 \end{figure}
 
@@ -332,7 +333,7 @@ As depicted in Fig.~\ref{fig_roc_pr}, our framework achieves an Area Under ROC C
 \textbf{Adversarial Poisoning}: Standard FedAvg remains vulnerable to model poisoning from compromised edge nodes. Future extensions will incorporate trimmed-mean aggregation and local Differential Privacy ($\epsilon, \delta$) guarantees~\cite{b_diff_privacy} to safeguard gradient updates.
 
 \section{Conclusion}
-This paper presented a Federated Edge-Cloud Resilience Architecture engineered for distributed campus network security. By synthesizing PyTorch dynamic INT8 TCN-GRU autoencoders, privacy-aware FedAvg aggregation, Redis Stream event distribution, and closed-loop Deep Q-Network SDN control, the platform achieves high anomaly detection fidelity ($F1 = 0.9412$ under IID, $0.9250$ under non-IID), sub-10ms automated threat mitigation ($8.2 \pm 0.5\text{~ms}$), and minimal edge resource overhead ($0.48\text{~MB}$ model size, $48.5\text{~MB}$ runtime RAM footprint, and $13.8\%$ CPU utilization under $10{,}000\text{~events/sec}$ throughput).
+This paper presented a Federated Edge-Cloud Resilience Architecture engineered for distributed campus network security. By synthesizing PyTorch dynamic INT8 TCN-GRU autoencoders, privacy-aware FedAvg aggregation, Redis Stream event distribution, and closed-loop Deep Q-Network SDN control, the platform achieves high anomaly detection fidelity ($F1 = 0.9412$ under uniform partitioning and $0.9250$ under Dirichlet-skewed client attack evaluation distributions), sub-10ms automated threat mitigation ($8.2 \pm 0.5\text{~ms}$), and minimal edge resource overhead ($0.48\text{~MB}$ model size, $48.5\text{~MB}$ runtime RAM footprint, and $13.8\%$ CPU utilization under $10{,}000\text{~events/sec}$ throughput).
 
 \section*{Acknowledgment}
 The authors thank the Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages - Information Technology, Ho Chi Minh City, Vietnam for providing academic and testbed resources.
