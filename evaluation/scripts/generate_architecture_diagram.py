@@ -75,10 +75,10 @@ def generate_arch_diagram():
                                    facecolor="#FFFFFF", edgecolor="#C0392B", linewidth=1.2)
     ax.add_patch(box_fl)
     ax.text(43.0, 40.5, "Cloud FedAvg Server", ha="center", fontsize=8, fontweight="bold", color="#922B21")
-    ax.text(43.0, 36.5, "Decentralized Weight Sync", ha="center", fontsize=7, color="#2C3E50")
+    ax.text(43.0, 36.5, "Federated Weight Sync", ha="center", fontsize=7, color="#2C3E50")
     ax.text(43.0, 33.0, r"$\mathbf{W}^{t+1} = \sum \frac{N_k}{N}\mathbf{W}_k^{t+1}$", ha="center", fontsize=7.5, color="#154360")
     ax.text(43.0, 29.0, "No Raw Payload Egress", ha="center", fontsize=7, fontweight="bold", color="#27AE60")
-    ax.text(43.0, 26.5, "Bandwidth Savings: 98.6%", ha="center", fontsize=6.8, color="#566573")
+    ax.text(43.0, 26.5, "Weight Sync (No Raw Flows)", ha="center", fontsize=6.8, color="#566573")
 
     # Redis Stream Box
     box_redis = patches.FancyBboxPatch((34, 4), 18, 18.5, boxstyle="round,pad=0.5",
@@ -135,7 +135,7 @@ def generate_arch_diagram():
     ax.text(89.0, 25.0, "• a₁: Rate-Limit (Meter)", ha="center", fontsize=6.8, color="#2C3E50")
     ax.text(89.0, 21.5, "• a₂: Quarantine (VLAN)", ha="center", fontsize=6.8, color="#D35400")
     ax.text(89.0, 18.0, "• a₃: Drop (Flowspec)", ha="center", fontsize=6.8, fontweight="bold", color="#C0392B")
-    ax.text(89.0, 15.0, "Actuation: ~4.15 ms", ha="center", fontsize=6.8, fontweight="bold", color="#196F3D")
+    ax.text(89.0, 15.0, "SDN Actuation: 1.62 ms", ha="center", fontsize=6.8, fontweight="bold", color="#196F3D")
 
     # OpenFlow Switches Box
     box_sw = patches.FancyBboxPatch((81.5, 4), 15, 8.5, boxstyle="round,pad=0.4",
