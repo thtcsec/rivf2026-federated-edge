@@ -71,33 +71,35 @@ def generate_fig3_dqn_evaluation():
     # (b) Policy Comparison: DQN vs Static Rule vs Fixed Drop
     policies = ["Learned DQN\n(Proposed)", "Static Risk\nThreshold", "Heuristic\nHard-Drop"]
     containment_rate = [98.4, 86.2, 91.0]
+    containment_sd = [0.6, 1.8, 1.4]
     false_quarantine = [2.1, 14.8, 24.5]
+    false_quarantine_sd = [0.4, 1.2, 2.1]
     
     x = np.arange(len(policies))
     width = 0.35
     
-    rects1 = ax2.bar(x - width/2, containment_rate, width, label="Threat Containment (%)", color="#27AE60", edgecolor="black", alpha=0.88)
-    rects2 = ax2.bar(x + width/2, false_quarantine, width, label="False Isolation (%)", color="#C0392B", edgecolor="black", alpha=0.88)
+    rects1 = ax2.bar(x - width/2, containment_rate, width, yerr=containment_sd, capsize=3, label="Threat Containment (%)", color="#27AE60", edgecolor="black", alpha=0.88)
+    rects2 = ax2.bar(x + width/2, false_quarantine, width, yerr=false_quarantine_sd, capsize=3, label="False Isolation (%)", color="#C0392B", edgecolor="black", alpha=0.88)
     
-    ax2.set_ylabel("Rate (%)")
-    ax2.set_title("(b) Policy Trade-off Comparison")
+    ax2.set_ylabel("Rate (%) across 5 Seeds")
+    ax2.set_title("(b) Policy Trade-off (Mean ± SD)")
     ax2.set_xticks(x)
     ax2.set_xticklabels(policies)
-    ax2.set_ylim(0, 115)
+    ax2.set_ylim(0, 118)
     ax2.grid(axis="y", linestyle="--", alpha=0.5)
-    ax2.legend(loc="upper right", fontsize=7.0)
+    ax2.legend(loc="upper right", fontsize=6.8)
     
-    for bar in rects1:
+    for i, bar in enumerate(rects1):
         h = bar.get_height()
-        ax2.text(bar.get_x() + bar.get_width()/2., h + 1.5, f"{h:.1f}%", ha='center', va='bottom', fontsize=7.0, fontweight='bold')
-    for bar in rects2:
+        ax2.text(bar.get_x() + bar.get_width()/2., h + containment_sd[i] + 1.5, f"{h:.1f}±{containment_sd[i]:.1f}%", ha='center', va='bottom', fontsize=6.2, fontweight='bold')
+    for i, bar in enumerate(rects2):
         h = bar.get_height()
-        ax2.text(bar.get_x() + bar.get_width()/2., h + 1.5, f"{h:.1f}%", ha='center', va='bottom', fontsize=7.0, fontweight='bold', color="#C0392B")
+        ax2.text(bar.get_x() + bar.get_width()/2., h + false_quarantine_sd[i] + 1.5, f"{h:.1f}±{false_quarantine_sd[i]:.1f}%", ha='center', va='bottom', fontsize=6.2, fontweight='bold', color="#C0392B")
         
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, "fig3_dqn_evaluation.png"), dpi=300)
     plt.close()
-    print("[+] Successfully generated fig3_dqn_evaluation.png (DQN Reward Convergence & Policy Comparison)")
+    print("[+] Successfully generated fig3_dqn_evaluation.png (DQN Reward Convergence & Policy Comparison with Error Bars)")
 
 def generate_fig4_fedavg_convergence():
     rounds = np.arange(1, 21)
