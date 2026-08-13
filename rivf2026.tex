@@ -164,7 +164,7 @@ When an edge gateway detects a sequence with $RE(X) > \tau$ ($\tau = 0.65$), an 
 R = w_1 \cdot \widetilde{RE}(X) + w_2 \cdot (1 - \text{TrustScore}) + w_3 \cdot \text{AssetCriticality}
 \label{eq_risk}
 \end{equation}
-where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\sigma_{\text{val}}}, 0, 1 \right) \in [0, 1]$ denotes the min-max normalized reconstruction error calibrated against benign validation statistics ($\mu_{\text{val}}, \sigma_{\text{val}}$), and weights satisfy $w_1 + w_2 + w_3 = 1.0$ (calibrated to $w_1 = 0.50$, $w_2 = 0.30$, $w_3 = 0.20$). Security events with $R \ge 0.70$ are dispatched to the DRL SDN controller.
+where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\sigma_{\text{val}}}, 0, 1 \right) \in [0, 1]$ denotes the clipped $3\sigma$ $z$-score standardized anomaly score calibrated against benign validation statistics ($\mu_{\text{val}}, \sigma_{\text{val}}$), and weights satisfy $w_1 + w_2 + w_3 = 1.0$ (calibrated to $w_1 = 0.50$, $w_2 = 0.30$, $w_3 = 0.20$). Security events with $R \ge 0.70$ are dispatched to the DRL SDN controller.
 
 \subsection{Closed-Loop Deep Q-Network (DQN) SDN Control}
 We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
