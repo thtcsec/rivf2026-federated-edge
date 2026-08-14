@@ -15,9 +15,15 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+\setlength{\textfloatsep}{6pt plus 1.0pt minus 1.0pt}
+\setlength{\floatsep}{5pt plus 1.0pt minus 1.0pt}
+\setlength{\intextsep}{5pt plus 1.0pt minus 1.0pt}
+\setlength{\dbltextfloatsep}{6pt plus 1.0pt minus 1.0pt}
+\setlength{\dblfloatsep}{5pt plus 1.0pt minus 1.0pt}
+
 \begin{document}
 
-\title{Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Deep Reinforcement Learning for SDN Control\thanks{Research artifact repository (to be released upon acceptance): \protect\url{https://github.com/thtcsec/rivf2026-federated-edge}.}}
+\title{Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Deep Reinforcement Learning for SDN Control\thanks{Research artifact repository (release package prepared upon acceptance): \protect\url{https://github.com/thtcsec/rivf2026-federated-edge}.}}
 
 \author{
 \IEEEauthorblockN{Trinh Hoang Tu\IEEEauthorrefmark{1} and Cao Tien Thanh\IEEEauthorrefmark{2}}
@@ -56,8 +62,8 @@ The key contributions of this paper are summarized as follows:
     \item \textbf{Quantized Edge Sequence Autoencoder}: We design a hybrid Temporal Convolutional Network (TCN) and Gated Recurrent Unit (GRU) Autoencoder dynamically quantized to INT8 ($0.48$~MB memory footprint), executing sub-millisecond unsupervised flow anomaly scoring at distributed campus edge taps.
     \item \textbf{Privacy-Aware Collaborative Training}: We implement a FedAvg aggregation protocol across distributed campus clients, demonstrating collaborative training stability under client-size-heterogeneous training partitions and Dirichlet-skewed held-out evaluation distributions.
     \item \textbf{Context-Enriched Event Pipeline}: We construct an asynchronous event pipeline over Redis Streams incorporating dynamic identity-to-role risk scoring to eliminate transient false alarms.
-    \item \textbf{Learned Closed-Loop DQN SDN Containment}: We formulate an adaptive Deep Q-Network (DQN) SDN controller with discrete action spaces (OpenFlow rate-limiting, 802.1X VLAN quarantine, BGP Flowspec drop) achieving an automated mitigation latency of $8.2 \pm 0.5$~ms with minimal benign user disruption.
-    \item \textbf{Empirical System Benchmark}: We present detailed experimental evaluations on InSDN and CSE-CIC-IDS2018 benchmarks, validating per-stage latency, FedAvg convergence, DQN policy trade-offs, edge CPU/RAM scaling up to $10{,}000$~events/sec, and reproducible artifacts.
+    \item \textbf{Learned Closed-Loop DQN SDN Containment}: We formulate an adaptive Deep Q-Network (DQN) SDN controller with discrete action spaces (OpenFlow rate-limiting, VLAN quarantine, flow drop) achieving an automated mitigation latency of $8.2 \pm 0.5$~ms with minimal benign user disruption.
+    \item \textbf{Empirical System Benchmark}: We present detailed experimental evaluations on InSDN and CSE-CIC-IDS2018 benchmarks, validating per-stage latency, FedAvg convergence, DQN policy trade-offs, edge CPU/RAM scaling up to $10{,}000$~events/sec, and an artifact package prepared for release upon acceptance.
 \end{itemize}
 
 \section{Related Work \& Novelty Positioning}
@@ -170,26 +176,20 @@ where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\
 We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
 \begin{itemize}
     \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\text{CPU}_{\text{gw}}, \lambda_{\text{flow}}, U_{\text{link}}, RE(x), R, \text{Trust}] \in \mathbb{R}^6$, quantifying edge load, flow rate $\lambda_{\text{flow}}$, link utilization $U_{\text{link}}$, anomaly score, risk, and entity trust.
-    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$:
-    \begin{itemize}
-        \item $a_0$: \textit{Monitor \& Log} (No disruption to baseline traffic);
-        \item $a_1$: \textit{Rate-Limit} (Apply OpenFlow meter band of $10\text{~Mbps}$);
-        \item $a_2$: \textit{Quarantine VLAN} (Reassign client switch port to isolated 802.1X VLAN~\cite{b_zero_trust});
-        \item $a_3$: \textit{Flow Drop} (Push high-priority OpenFlow hard drop / BGP Flowspec).
-    \end{itemize}
+    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$. In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to 802.1X dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
     \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load ($U_{\text{link}}^{(t+1)} > U_{\text{link}}^{(t)}$); $a_1$ throttles malicious surges ($\lambda_{\text{flow}} \gets \min(\lambda_{\text{flow}}, 10\text{~Mbps})$); $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
     \item \textbf{Reward Function} $\mathcal{R}$: Balances threat mitigation against operational disruption:
     \begin{equation}
     r(s_t, a_t) = \alpha \cdot \mathbb{I}_{\text{threat}}(a_t) - \beta \cdot \text{Cost}(a_t) - \lambda_{\text{fp}} \cdot \mathbb{I}_{\text{fp}}(a_t)
     \end{equation}
-    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign traffic ($\mathbb{I}_{\text{fp}}=1$), and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop). The term $\mathbb{I}_{\text{threat}}(a_t) = 1$ indicates successful mitigation without inducing switch link congestion ($U_{\text{link}} < 0.85$).
+    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign traffic ($\mathbb{I}_{\text{fp}}=1$), and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop). The indicator $\mathbb{I}_{\text{threat}}(a_t) = 1$ denotes successful containment where malicious ingress traffic is suppressed below $1.0\text{~Mbps}$ (or completely blocked from destination hosts), while targeted campus services remain accessible and link utilization satisfies $U_{\text{link}} < 0.85$.
 \end{itemize}
 
 The DQN agent~\cite{b_dqn_nature} approximates action-value functions $Q(s, a; \theta)$ using an experience replay buffer $\mathcal{D}$ (capacity $10{,}000$) and a target network $Q(s, a; \theta^-)$ updated every $100$ steps with discount factor $\gamma = 0.95$:
 \begin{equation}
 \mathcal{L}(\theta) = \mathbb{E}_{\mathcal{D}} \left[ \left( r + \gamma \max_{a'} Q(s', a'; \theta^-) - Q(s, a; \theta) \right)^2 \right]
 \end{equation}
-The optimal policy selects $a^* = \arg\max_{a \in \mathcal{A}} Q(s_t, a; \theta)$, which triggers programmatic REST API calls to the OpenDaylight/Ryu SDN controller to install OpenFlow \texttt{flow\_mod} rules.
+The optimal policy selects $a^* = \arg\max_{a \in \mathcal{A}} Q(s_t, a; \theta)$, which triggers programmatic REST API calls to the Ryu SDN controller to install OpenFlow \texttt{flow\_mod} rules.
 
 \section{Experimental Evaluation \& Benchmark Suite}
 \subsection{Experimental Testbed and Hyperparameter Setup}
@@ -209,7 +209,7 @@ Feature Dimensions ($D$) & 10 statistical flow features \\
 TCN Architecture & 2 Conv1d layers ($k=3$, dilations $d \in \{1, 2\}$, 32 filters) \\
 GRU Decoder & 1 layer (hidden dimension $H = 64$) \\
 Model Quantization & PyTorch Dynamic INT8 ($0.48$~MB footprint) \\
-Federated Clients ($K$) & 5 campus client nodes (Dirichlet non-IID $\alpha = 0.5$) \\
+Federated Clients ($K$) & 5 campus client nodes (heterog. benign train / non-IID test $\alpha = 0.5$) \\
 FL Communication Rounds ($T$) & 20 global rounds ($E = 3$ local epochs, $\text{batch} = 64$) \\
 Anomaly Threshold ($\tau$) & $\tau = 0.65$ (calibrated on validation split) \\
 DQN Architecture & MLP (Input: 6, Hidden: $[64, 64]$, Output: 4 actions) \\
@@ -253,7 +253,7 @@ Stage 4: SDN OpenFlow Flow\_Mod Actuation & $1.620 \pm 0.048$ & $39.0\%$ \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\columnwidth]{paper/figures/fig2_latency_breakdown.png}
+\includegraphics[width=0.80\columnwidth]{paper/figures/fig2_latency_breakdown.png}
 \caption{Per-stage compute latency breakdown (Mean $\pm$ SD ms) across $1{,}000$ flow trials.}
 \label{fig_latency}
 \end{figure}
@@ -261,11 +261,11 @@ Stage 4: SDN OpenFlow Flow\_Mod Actuation & $1.620 \pm 0.048$ & $39.0\%$ \\
 Stage 1 latency ($0.415 \pm 0.011$~ms) reflects the unbatched, single-event sequence scoring time ($\text{batch size} = 1$) on a single edge CPU core. The total compute pipeline completes in $4.150 \pm 0.070$~ms. Combined with OpenFlow switch flow-table modification and dataplane rule-installation latency ($4.05 \pm 0.45$~ms on Open vSwitch), the entire closed-loop containment action completes in $8.20 \pm 0.52$~ms.
 
 \subsection{Experiment 2: Closed-Loop DQN Policy Validation \& Comparison}
-To validate the necessity of reinforcement learning over static heuristic thresholding, Fig.~\ref{fig_dqn} evaluates the DQN agent's training dynamics and comparative policy performance. The DQN agent was trained over $200$ episodes using trace-replayed attack and benign flow sequences from the training split. Policy metrics in Fig.~\ref{fig_dqn}(b) are evaluated across $100$ held-out test episodes per seed over $5$ independent random seeds ($500$ total evaluation episodes) with $\epsilon$-greedy exploration disabled ($\epsilon = 0$).
+To validate the necessity of reinforcement learning over static heuristic thresholding, Fig.~\ref{fig_dqn} evaluates the DQN agent's training dynamics and comparative policy performance. The DQN agent was trained over $200$ episodes using trace-replayed attack and benign flow sequences from the training split. During trace replay, selected actions $a_t$ are dynamically executed on the emulated Ryu/OVS dataplane (installing meter or flow-drop rules), and next state $\mathbf{s}_{t+1}$ is sampled from the telemetry stream after the subsequent $\Delta t = 1.0\text{~s}$ observation interval. Policy metrics in Fig.~\ref{fig_dqn}(b) are evaluated across $100$ held-out test episodes per seed over $5$ independent random seeds ($500$ total evaluation episodes) with $\epsilon$-greedy exploration disabled ($\epsilon = 0$).
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.98\columnwidth]{paper/figures/fig3_dqn_evaluation.png}
+\includegraphics[width=0.90\columnwidth]{paper/figures/fig3_dqn_evaluation.png}
 \caption{DQN agent evaluation: (a) Cumulative training reward convergence over 200 episodes; (b) Policy performance trade-off comparison (Mean $\pm$ SD across 5 random seeds) against baseline containment strategies.}
 \label{fig_dqn}
 \end{figure}
@@ -273,11 +273,11 @@ To validate the necessity of reinforcement learning over static heuristic thresh
 As shown in Fig.~\ref{fig_dqn}(a), the DQN agent achieves stable cumulative reward convergence ($\approx +48.5$) within 75 episodes. Fig.~\ref{fig_dqn}(b) compares the learned DQN policy against a static risk-thresholding policy ($R \ge 0.70 \to \text{Drop}$) and a heuristic hard-drop baseline. The learned DQN policy achieves a $98.4 \pm 0.6\%$ threat containment rate while maintaining a negligible $2.1 \pm 0.4\%$ false quarantine rate. In contrast, static risk thresholding incurs a $14.8 \pm 1.2\%$ false isolation rate ($86.2 \pm 1.8\%$ containment) because fixed thresholds cannot dynamically adapt to fluctuations in switch CPU load, flow arrival rate, and entity trust scores. Heuristic hard-drop incurs a $24.5 \pm 2.1\%$ false positive isolation rate ($91.0 \pm 1.4\%$ containment), causing severe disruption to legitimate academic workflows.
 
 \subsection{Experiment 3: Federated Convergence Across Communication Rounds}
-Fig.~\ref{fig_fedavg} evaluates model convergence across $T=20$ communication rounds under uniform and non-IID Dirichlet ($\alpha=0.5$) data distributions compared against uncoordinated isolated edge models.
+Fig.~\ref{fig_fedavg} evaluates model convergence across $T=20$ communication rounds under uniform partitioning and client-size-heterogeneous training with non-IID Dirichlet ($\alpha=0.5$) attack-skewed test partitions compared against uncoordinated isolated edge models.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
+\includegraphics[width=0.80\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
 \caption{Federated FedAvg model convergence across communication rounds under uniform and client-heterogeneous / non-IID test ($\alpha = 0.5$) partitions.}
 \label{fig_fedavg}
 \end{figure}
@@ -289,7 +289,7 @@ We evaluated edge gateway resource utilization under stress testing from $100$ t
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.88\columnwidth]{paper/figures/fig5_resource_scaling.png}
+\includegraphics[width=0.80\columnwidth]{paper/figures/fig5_resource_scaling.png}
 \caption{Edge gateway CPU overhead scaling under high telemetry throughput ($100$ to $10{,}000$~events/sec).}
 \label{fig_resource}
 \end{figure}
@@ -320,7 +320,7 @@ All baseline inference latencies in Table~\ref{tab_sota} are evaluated under ide
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.92\columnwidth]{paper/figures/fig6_ablation_pr_roc.png}
+\includegraphics[width=0.82\columnwidth]{paper/figures/fig6_ablation_pr_roc.png}
 \caption{ROC and Precision-Recall evaluation curves of the proposed framework on InSDN and CSE-CIC-IDS2018 datasets.}
 \label{fig_roc_pr}
 \end{figure}
