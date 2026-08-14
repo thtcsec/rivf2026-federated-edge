@@ -68,7 +68,7 @@ The key contributions of this paper are summarized as follows:
 
 \section{Related Work \& Novelty Positioning}
 \subsection{Federated Learning in Network Intrusion Detection}
-Federated Learning (FL), pioneered by McMahan et al.~\cite{b_fedavg}, enables collaborative model training across distributed clients without sharing raw private data. In network security, collaborative FL has been applied to IoT anomaly detection and DDoS mitigation~\cite{b_fl_survey, b_al_garadi}. Al-Garadi et al.~\cite{b_al_garadi} investigated collaborative FL paired with DRL-based control for 6G DDoS mitigation. However, existing federated intrusion detection architectures predominantly evaluate unquantized 32-bit floating-point (FP32) recurrent models, which impose prohibitive memory and compute footprints on constrained campus edge gateways.
+Federated Learning (FL), pioneered by McMahan et al.~\cite{b_fedavg}, enables collaborative model training across distributed clients without sharing raw private data. In network security, collaborative FL has been applied to IoT anomaly detection and DDoS mitigation~\cite{b_fl_survey, b_al_garadi}. Al-Garadi et al.~\cite{b_al_garadi} investigated collaborative FL paired with DRL-based control for 6G DDoS mitigation. However, several representative approaches evaluate unquantized 32-bit floating-point (FP32) recurrent models, which impose prohibitive memory and compute footprints on constrained campus edge gateways.
 
 \subsection{Sequence Autoencoders and Edge Model Quantization}
 Temporal Convolutional Networks (TCN)~\cite{b_tcn} leverage dilated causal convolutions to capture extended historical receptive fields with lower computational complexity than standard Recurrent Neural Networks (RNN). Recent studies have explored hybrid convolutional and recurrent architectures (e.g., CNN/TCN and GRU) for sequential telemetry modeling in SDN environments~\cite{b_tcn_gru_iiot}. Nevertheless, deploying deep sequential autoencoders at edge gateways requires post-training dynamic quantization to minimize runtime latency and memory saturation. Our work customizes INT8 dynamic quantization~\cite{b_pytorch_quant} for TCN-GRU flow autoencoders, reducing storage to $0.48$~MB while preserving detection fidelity.
@@ -157,12 +157,12 @@ RE(X) = \frac{1}{L \cdot D} \sum_{t=1}^{L} \sum_{i=1}^{D} \left( X_{t,i} - \hat{
 To minimize edge gateway resource consumption, the trained sequence autoencoder is dynamically quantized using PyTorch dynamic quantization (\texttt{torch.quantization.quantize\_dynamic}) with linear and GRU layers mapped to signed 8-bit integers (INT8)~\cite{b_pytorch_quant}, compressing the model memory footprint by $74.0\%$ (from $1.85$~MB to $0.48$~MB) while executing convolutional sequence feature extraction in 32-bit floating point.
 
 \subsection{Privacy-Aware Federated Averaging (FedAvg)}
-Rather than streaming raw packet logs to a central repository, each campus edge gateway $k \in \{1, \dots, K\}$ trains its local model $\theta_k$ on its local normal baseline traffic partition $D_k^{\text{train}}$ over $E = 3$ local epochs using the Adam optimizer ($\eta = 10^{-3}$). At communication round $t$, edge nodes upload model parameters $\mathbf{W}_k^t$ to the Cloud Aggregator. The global model is updated via Federated Averaging:
+Rather than streaming raw packet logs to a central repository, each campus edge gateway $k \in \{1, \dots, K\}$ trains its local model $\theta_k$ on its local normal baseline traffic partition $D_k^{\text{train}}$ over $E = 3$ local epochs using the Adam optimizer ($\eta = 10^{-3}$). At communication round $t$, each client $k$ initializes with global weights $\mathbf{W}^t$, trains locally to obtain $\mathbf{W}_k^{t+1}$, and uploads these updated parameters to the Cloud Aggregator. The global model is updated via Federated Averaging:
 \begin{equation}
 \mathbf{W}^{t+1} = \sum_{k=1}^{K} \frac{|D_k^{\text{train}}|}{|D^{\text{train}}|} \mathbf{W}_k^{t+1}, \quad \text{where } |D^{\text{train}}| = \sum_{k=1}^{K} |D_k^{\text{train}}|
 \label{eq_fedavg}
 \end{equation}
-The aggregated global weights $\mathbf{W}^{t+1}$ are redistributed to all campus gateways. This protocol guarantees that raw student and institutional traffic remains localized.
+The aggregated global weights $\mathbf{W}^{t+1}$ are redistributed to all campus gateways. This protocol ensures that raw student and institutional telemetry remains localized by design.
 
 \subsection{Event Pub/Sub \& Identity-Context Risk Fusion}
 When an edge gateway detects a sequence with $RE(X) > \tau$ ($\tau = 0.65$), an alert tuple is published to Redis Streams~\cite{b_redis_stream} (\texttt{security:telemetry:stream}). The Cloud Risk Engine fuses this telemetry with directory metadata (Active Directory LDAP role, device ownership, and location context) to compute a composite risk score $R \in [0, 1]$:
@@ -278,7 +278,7 @@ Fig.~\ref{fig_fedavg} evaluates model convergence across $T=20$ communication ro
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.80\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
-\caption{Federated FedAvg model convergence across communication rounds under uniform and client-heterogeneous / non-IID test ($\alpha = 0.5$) partitions.}
+\caption{Federated FedAvg model convergence across communication rounds under uniform partitioning versus client-size-heterogeneous training with non-IID Dirichlet ($\alpha = 0.5$) test attack distributions.}
 \label{fig_fedavg}
 \end{figure}
 
