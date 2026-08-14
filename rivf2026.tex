@@ -48,7 +48,7 @@ Higher education institutions operate geographically distributed campus networks
 
 \begin{enumerate}
     \item \textbf{Privacy Concerns and WAN Bandwidth Saturation}: Continuous backhauling of raw packet traces or granular NetFlow streams across Wide Area Network (WAN) links saturates satellite inter-campus uplinks and risks violating regional student data privacy mandates.
-    \item \textbf{High Response Latency and Alert Fatigue}: Centralized manual triage workflows in Security Operations Centers (SOC) frequently experience response times exceeding $20$--$30$ minutes during aggressive volumetric or lateral threat propagation (e.g., ransomware, ARP poisoning, credential brute-forcing).
+    \item \textbf{High Response Latency and Alert Fatigue}: Centralized manual triage workflows in Security Operations Centers (SOC) can experience substantial response delays and triage bottlenecks during aggressive volumetric or lateral threat propagation (e.g., ransomware, ARP poisoning, credential brute-forcing).
 \end{enumerate}
 
 To address these challenges, we present a system-level co-design of \textbf{Federated Edge-Cloud Resilience Architecture} tailored for distributed campus networks. Our system decouples threat detection and mitigation into a coordinated 4-tier event-driven hierarchy:
@@ -147,7 +147,7 @@ The edge autoencoder model $f_{\theta}$ comprises a Temporal Convolutional Netwo
 \begin{equation}
 y(t) = (x *_d w)(t) = \sum_{i=0}^{K-1} w(i) \cdot x(t - d \cdot i)
 \end{equation}
-where $K=3$ is the kernel filter size and $d \in \{1, 2, 4\}$ denotes the exponential dilation factor, enabling an expanded receptive field without increasing parameter volume.
+where $K=3$ is the kernel filter size and $d \in \{1, 2\}$ denotes the exponential dilation factor across the 2 Conv1d layers, enabling an expanded receptive field without increasing parameter volume.
 
 The latent representation $h_L$ is decoded by a single-layer GRU to reconstruct the normalized sequence $\hat{X} \in \mathbb{R}^{L \times D}$. The unsupervised Reconstruction Error $RE(X)$ is computed as the Mean Squared Error:
 \begin{equation}
@@ -175,7 +175,7 @@ where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\
 \subsection{Closed-Loop Deep Q-Network (DQN) SDN Control}
 We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
 \begin{itemize}
-    \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\text{CPU}_{\text{gw}}, \lambda_{\text{flow}}, U_{\text{link}}, RE(x), R, \text{Trust}] \in \mathbb{R}^6$, quantifying edge load, flow rate $\lambda_{\text{flow}}$, link utilization $U_{\text{link}}$, anomaly score, risk, and entity trust.
+    \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\text{CPU}_{\text{gw}}, \lambda_{\text{flow}}, U_{\text{link}}, RE(x), R, \text{Trust}] \in \mathbb{R}^6$, quantifying edge load, ingress flow rate $\lambda_{\text{flow}}$ (in Mbps), link utilization $U_{\text{link}}$, anomaly score, risk, and entity trust.
     \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$. In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to 802.1X dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
     \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load ($U_{\text{link}}^{(t+1)} > U_{\text{link}}^{(t)}$); $a_1$ throttles malicious surges ($\lambda_{\text{flow}} \gets \min(\lambda_{\text{flow}}, 10\text{~Mbps})$); $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
     \item \textbf{Reward Function} $\mathcal{R}$: Balances threat mitigation against operational disruption:
@@ -328,7 +328,7 @@ All baseline inference latencies in Table~\ref{tab_sota} are evaluated under ide
 As depicted in Fig.~\ref{fig_roc_pr}, our framework achieves an Area Under ROC Curve (ROC-AUC) of $0.978$ on InSDN and $0.954$ on CSE-CIC-IDS2018, demonstrating consistent anomaly detection fidelity across two distinct benchmark datasets.
 
 \section{Discussion, Limitations \& Threats to Validity}
-\textbf{WAN Network Jitter}: While local inference latency is deterministic ($0.415\text{~ms}$), federated weight synchronization over public WAN links is subject to network jitter. However, because FedAvg occurs asynchronously at $10$-minute intervals, communication delays do not affect real-time anomaly detection.
+\textbf{WAN Network Jitter}: While local inference latency is deterministic ($0.415\text{~ms}$), federated weight synchronization over public WAN links is subject to network jitter. However, because FedAvg runs out-of-band at $10$-minute intervals, communication delays do not affect real-time anomaly detection.
 
 \textbf{Adversarial Poisoning}: Standard FedAvg remains vulnerable to model poisoning from compromised edge nodes. Future extensions will incorporate trimmed-mean aggregation and local Differential Privacy ($\epsilon, \delta$) guarantees~\cite{b_diff_privacy} to safeguard gradient updates.
 
