@@ -176,7 +176,7 @@ where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\
 We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
 \begin{itemize}
     \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\text{CPU}_{\text{gw}}, \lambda_{\text{flow}}, U_{\text{link}}, RE(x), R, \text{Trust}] \in \mathbb{R}^6$, quantifying edge load, ingress flow rate $\lambda_{\text{flow}}$ (in Mbps), link utilization $U_{\text{link}}$, anomaly score, risk, and entity trust.
-    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$. In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to 802.1X dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
+    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$. In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to identity-aware dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
     \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load ($U_{\text{link}}^{(t+1)} > U_{\text{link}}^{(t)}$); $a_1$ throttles malicious surges ($\lambda_{\text{flow}} \gets \min(\lambda_{\text{flow}}, 10\text{~Mbps})$); $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
     \item \textbf{Reward Function} $\mathcal{R}$: Balances threat mitigation against operational disruption:
     \begin{equation}
@@ -223,7 +223,7 @@ Evaluation Datasets & InSDN~\cite{b_insdn}, CSE-CIC-IDS2018~\cite{b_cicids2018} 
 
 \subsection{Benchmark Datasets \& Non-IID Partitioning Protocol}
 We evaluate our architecture on two established intrusion datasets:
-(i) \textbf{InSDN}~\cite{b_insdn}: A dedicated SDN intrusion benchmark featuring contemporary attacks (DDoS, DoS, Probe, Web Attack, U2R, BGP manipulation);
+(i) \textbf{InSDN}~\cite{b_insdn}: A dedicated SDN intrusion benchmark featuring contemporary attacks (DDoS, DoS, Probe, brute-force attacks, Web Attack, Botnet, and U2R);
 (ii) \textbf{CSE-CIC-IDS2018}~\cite{b_cicids2018}: Large-scale multi-vector enterprise network telemetry.
 
 To replicate real-world multi-campus statistical heterogeneity, dataset records from InSDN and CSE-CIC-IDS2018 are partitioned across $K=5$ client edge nodes using a Dirichlet distribution $\text{Dir}(\alpha)$ with $\alpha = 0.5$ across multi-class traffic distributions. For unsupervised autoencoder training, each client $k$ extracts the benign traffic subset from its assigned partition ($D_k^{\text{train}}$), introducing client-level training set size heterogeneity, while the held-out evaluation partitions ($D_k^{\text{test}}$) retain severe non-IID attack-class skew across campus client nodes.
