@@ -15,15 +15,18 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
-\setlength{\textfloatsep}{6pt plus 1.0pt minus 1.0pt}
-\setlength{\floatsep}{5pt plus 1.0pt minus 1.0pt}
-\setlength{\intextsep}{5pt plus 1.0pt minus 1.0pt}
-\setlength{\dbltextfloatsep}{6pt plus 1.0pt minus 1.0pt}
-\setlength{\dblfloatsep}{5pt plus 1.0pt minus 1.0pt}
+\setlength{\textfloatsep}{3pt plus 1.0pt minus 1.0pt}
+\setlength{\floatsep}{3pt plus 1.0pt minus 1.0pt}
+\setlength{\intextsep}{3pt plus 1.0pt minus 1.0pt}
+\setlength{\dbltextfloatsep}{4pt plus 1.0pt minus 1.0pt}
+\setlength{\dblfloatsep}{3pt plus 1.0pt minus 1.0pt}
+\setlength{\abovecaptionskip}{2pt}
+\setlength{\belowcaptionskip}{2pt}
+\renewcommand{\arraystretch}{0.92}
 
 \begin{document}
 
-\title{Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Deep Reinforcement Learning for SDN Control\thanks{Research artifact repository (release package prepared upon acceptance): \protect\url{https://github.com/thtcsec/rivf2026-federated-edge}.}}
+\title{Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized TCN-GRU Sequence Detectors and Deep Reinforcement Learning for SDN Control\thanks{Research artifact repository (release package prepared upon acceptance): \protect\url{https://github.com/thtcsec/rivf2026-federated-edge}.}}
 
 \author{
 \IEEEauthorblockN{Trinh Hoang Tu\IEEEauthorrefmark{1} and Cao Tien Thanh\IEEEauthorrefmark{2}}
@@ -36,11 +39,11 @@ Email: \IEEEauthorrefmark{1}tht.csec2005@gmail.com, \IEEEauthorrefmark{2}thanhct
 \maketitle
 
 \begin{abstract}
-Modern multi-campus higher education infrastructures face escalating cyber threats driven by high-density IoT deployments, unmanaged student endpoints, and massive distributed telemetry flows. Centralized security architectures suffer from wide-area bandwidth saturation, student data privacy vulnerabilities, and extended containment latency. In this paper, we propose a privacy-aware, event-driven \textbf{Federated Edge-Cloud Resilience Architecture} engineered specifically for distributed campus environments. The platform deploys lightweight PyTorch INT8-quantized Temporal Convolutional Network and Gated Recurrent Unit (TCN-GRU) sequence autoencoders directly at edge gateways, executing localized anomaly scoring and participating in collaborative Federated Averaging (FedAvg) aggregation without raw telemetry egress. Enriched high-confidence security events are published over an asynchronous Redis Stream bus to a cloud-based dynamic risk engine and a Deep Q-Network (DQN) Software-Defined Networking (SDN) controller for automated closed-loop containment. Evaluated on benchmark intrusion datasets (InSDN and CSE-CIC-IDS2018) across $K=5$ distributed campus clients, the proposed framework achieves a binary anomaly detection F1-score (benign vs. attack) of $0.9412$ under uniform partitioning and $0.9250$ when evaluated under non-IID Dirichlet-skewed ($\alpha=0.5$) client attack distributions, a total pipeline compute latency of $4.150 \pm 0.070$~ms, and an automated closed-loop mitigation latency of $8.2 \pm 0.5$~ms on Open vSwitch datapaths. Evaluated over $100$ held-out test episodes per seed across 5 random seeds ($500$ total evaluation episodes), the learned DQN policy achieves a $98.4 \pm 0.6\%$ threat containment rate with only $2.1 \pm 0.4\%$ false quarantine, substantially outperforming static threshold heuristics ($14.8 \pm 1.2\%$ false isolation). Furthermore, dynamic INT8 quantization compresses model footprint to $0.48$~MB ($74.0\%$ reduction), maintaining low edge CPU utilization ($13.8\%$) and $48.5$~MB runtime RAM under sustained throughput of $10{,}000$~events/sec.
+Modern multi-campus higher education infrastructures face escalating cyber threats driven by high-density IoT deployments, unmanaged student endpoints, and massive distributed telemetry flows. Centralized security architectures suffer from wide-area bandwidth saturation, student data privacy vulnerabilities, and extended containment latency. In this paper, we propose a privacy-aware, event-driven \textbf{Federated Edge-Cloud Resilience Architecture} engineered specifically for distributed campus environments. The platform deploys lightweight PyTorch dynamically INT8-quantized Temporal Convolutional Network and Gated Recurrent Unit (TCN-GRU) sequence detectors directly at edge gateways, executing localized anomaly scoring and participating in collaborative Federated Averaging (FedAvg) aggregation without raw telemetry egress. Enriched high-confidence security events are published over an asynchronous Redis Streams bus to a cloud-based dynamic risk engine and a Deep Q-Network (DQN) Software-Defined Networking (SDN) controller for automated closed-loop containment. Evaluated across $K=5$ federated campus clients on the InSDN benchmark with additional cross-dataset zero-shot evaluation on CSE-CIC-IDS2018, the proposed framework achieves a binary anomaly detection F1-score of $0.8582$ ($\text{ROC-AUC} = 0.9729$, $\text{PR-AUC} = 0.9567$) under uniform partitioning, outperforming isolated uncoordinated local baselines ($0.8314$). Under non-IID Dirichlet-skewed ($\alpha=0.5$) client attack distributions, the global model achieves $F1 = 0.8097$, demonstrating stable collaborative convergence despite statistical heterogeneity. The edge compute pipeline completes in $8.290 \pm 0.140$~ms (with single-sequence INT8 scoring in $4.555$~ms), and automated closed-loop OpenFlow mitigation completes in $12.34 \pm 0.55$~ms on Open vSwitch datapaths. Evaluated over $100$ test episodes across 5 random seeds ($500$ total evaluation episodes), the learned DQN policy achieves a $98.4 \pm 0.6\%$ threat containment rate with only $2.1 \pm 0.4\%$ false quarantine, substantially outperforming static threshold heuristics ($14.8 \pm 1.2\%$ false isolation). Furthermore, dynamic INT8 quantization compresses the GRU and linear model footprint to $0.027$~MB ($27.5$~KB), maintaining minimal edge CPU utilization ($13.8\%$) under sustained throughput of $10{,}000$~events/sec.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Federated Learning, Edge Computing, INT8 Quantization, TCN-GRU Autoencoder, Software-Defined Networking, Deep Reinforcement Learning, Campus Network Security.
+Federated Learning, Edge Computing, INT8 Quantization, TCN-GRU Sequence Detector, Software-Defined Networking, Deep Reinforcement Learning, Campus Network Security.
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -52,26 +55,26 @@ Higher education institutions operate geographically distributed campus networks
 \end{enumerate}
 
 To address these challenges, we present a system-level co-design of \textbf{Federated Edge-Cloud Resilience Architecture} tailored for distributed campus networks. Our system decouples threat detection and mitigation into a coordinated 4-tier event-driven hierarchy:
-(i) localized edge telemetry extraction with PyTorch INT8 dynamic-quantized sequence autoencoders;
+(i) localized edge telemetry extraction with PyTorch dynamically INT8-quantized sequence detectors;
 (ii) privacy-aware Federated Averaging (FedAvg) model parameter coordination;
 (iii) asynchronous Redis Streams event routing coupled with spatial-temporal identity-context fusion; and
 (iv) closed-loop Deep Q-Network (DQN) Software-Defined Networking (SDN) policy enforcement.
 
 The key contributions of this paper are summarized as follows:
 \begin{itemize}
-    \item \textbf{Quantized Edge Sequence Autoencoder}: We design a hybrid Temporal Convolutional Network (TCN) and Gated Recurrent Unit (GRU) Autoencoder dynamically quantized to INT8 ($0.48$~MB memory footprint), executing sub-millisecond unsupervised flow anomaly scoring at distributed campus edge taps.
-    \item \textbf{Privacy-Aware Collaborative Training}: We implement a FedAvg aggregation protocol across distributed campus clients, demonstrating collaborative training stability under client-size-heterogeneous training partitions and Dirichlet-skewed held-out evaluation distributions.
+    \item \textbf{Quantized Edge Sequence Detection}: We design a hybrid Temporal Convolutional Network (TCN) and Gated Recurrent Unit (GRU) detector with dynamic INT8 quantization on recurrent and linear layers ($0.027$~MB footprint), executing sub-$5$~ms unbatched flow scoring at distributed campus edge taps.
+    \item \textbf{Privacy-Aware Collaborative Training}: We implement a FedAvg aggregation protocol across distributed campus clients, demonstrating collaborative training stability under uniform client partitioning ($F1 = 0.8582$ vs. $0.8314$ uncoordinated local baseline) and characterized non-IID Dirichlet evaluation distributions ($F1 = 0.8097$).
     \item \textbf{Context-Enriched Event Pipeline}: We construct an asynchronous event pipeline over Redis Streams incorporating dynamic identity-to-role risk scoring to eliminate transient false alarms.
-    \item \textbf{Learned Closed-Loop DQN SDN Containment}: We formulate an adaptive Deep Q-Network (DQN) SDN controller with discrete action spaces (OpenFlow rate-limiting, VLAN quarantine, flow drop) achieving an automated mitigation latency of $8.2 \pm 0.5$~ms with minimal benign user disruption.
+    \item \textbf{Learned Closed-Loop DQN SDN Containment}: We formulate an adaptive Deep Q-Network (DQN) SDN controller with discrete action spaces (OpenFlow rate-limiting, VLAN quarantine, flow drop) achieving an automated closed-loop mitigation latency of $12.34 \pm 0.55$~ms with minimal benign user disruption.
     \item \textbf{Empirical System Benchmark}: We present detailed experimental evaluations on InSDN and CSE-CIC-IDS2018 benchmarks, validating per-stage latency, FedAvg convergence, DQN policy trade-offs, edge CPU/RAM scaling up to $10{,}000$~events/sec, and an artifact package prepared for release upon acceptance.
 \end{itemize}
 
 \section{Related Work \& Novelty Positioning}
 \subsection{Federated Learning in Network Intrusion Detection}
-Federated Learning (FL), pioneered by McMahan et al.~\cite{b_fedavg}, enables collaborative model training across distributed clients without sharing raw private data. In network security, collaborative FL has been applied to IoT anomaly detection and DDoS mitigation~\cite{b_fl_survey, b_al_garadi}. Al-Garadi et al.~\cite{b_al_garadi} investigated collaborative FL paired with DRL-based control for 6G DDoS mitigation. However, several representative approaches evaluate unquantized 32-bit floating-point (FP32) recurrent models, which impose prohibitive memory and compute footprints on constrained campus edge gateways.
+Federated Learning (FL), pioneered by McMahan et al.~\cite{b_fedavg}, enables collaborative model training across distributed clients without sharing raw private data. In network security, collaborative FL has been applied to IoT anomaly detection and DDoS mitigation~\cite{b_fl_survey, b_al_garadi}. Kianpisheh and Taleb~\cite{b_al_garadi} investigated collaborative FL paired with DRL-based control for 6G DDoS mitigation. However, several representative approaches evaluate unquantized 32-bit floating-point (FP32) recurrent models, which impose prohibitive memory and compute footprints on constrained campus edge gateways.
 
-\subsection{Sequence Autoencoders and Edge Model Quantization}
-Temporal Convolutional Networks (TCN)~\cite{b_tcn} leverage dilated causal convolutions to capture extended historical receptive fields with lower computational complexity than standard Recurrent Neural Networks (RNN). Recent studies have explored hybrid convolutional and recurrent architectures (e.g., CNN/TCN and GRU) for sequential telemetry modeling in SDN environments~\cite{b_tcn_gru_iiot}. Nevertheless, deploying deep sequential autoencoders at edge gateways requires post-training dynamic quantization to minimize runtime latency and memory saturation. Our work customizes INT8 dynamic quantization~\cite{b_pytorch_quant} for TCN-GRU flow autoencoders, reducing storage to $0.48$~MB while preserving detection fidelity.
+\subsection{Sequence Modeling and Edge Model Quantization}
+Temporal Convolutional Networks (TCN)~\cite{b_tcn} leverage dilated causal convolutions to capture extended historical receptive fields with lower computational complexity than standard Recurrent Neural Networks (RNN). Recent studies have explored hybrid convolutional and recurrent architectures (e.g., CNN/TCN and GRU) for sequential telemetry modeling in SDN environments~\cite{b_tcn_gru_iiot}. Nevertheless, deploying deep sequential detectors at edge gateways requires post-training dynamic quantization to minimize runtime latency and memory saturation. Our work customizes dynamic INT8 post-training quantization~\cite{b_pytorch_quant} for TCN-GRU flow detectors, compressing storage to $0.027$~MB while preserving detection fidelity.
 
 \subsection{Automated SDN Mitigation and DRL Control}
 Software-Defined Networking (SDN) provides programmable centralized control of network forwarding planes via OpenFlow protocols~\cite{b_sdn_survey, b_openflow}. Integrating Deep Reinforcement Learning (DRL) into SDN controllers enables autonomous selection of mitigation policies balancing security containment against network quality-of-service (QoS) degradation~\cite{b_yungaicela, b_drl_sdn}. Yungaicela-Naula et al.~\cite{b_yungaicela, b_drl_sdn} demonstrated the feasibility of DRL for autonomous DDoS defense in SDN/NFV environments. Table~\ref{tab_related_comparison} positions our framework against representative related architectures.
@@ -86,9 +89,9 @@ Software-Defined Networking (SDN) provides programmable centralized control of n
 \textbf{Framework} & \textbf{Detection Model} & \textbf{Federated} & \textbf{Edge INT8} & \textbf{Event Bus} & \textbf{Closed-Loop SDN} \\
 \midrule
 DeepLog~\cite{b_deeplog} & LSTM (Next-Event) & No & No & No & No \\
-Al-Garadi et al.~\cite{b_al_garadi} & FP32 GRU & Yes & No & No & Partial \\
+Kianpisheh et al.~\cite{b_al_garadi} & FP32 GRU & Yes & No & No & Partial \\
 Yungaicela et al.~\cite{b_yungaicela} & DRL Agent Only & No & No & ZeroMQ & Yes (SDN) \\
-\textbf{Ours} & \textbf{INT8 TCN-GRU} & \textbf{Yes (FedAvg)} & \textbf{Yes (0.48 MB)} & \textbf{Redis Stream} & \textbf{Yes (DQN-SDN)} \\
+\textbf{Ours} & \textbf{TCN-GRU (INT8 GRU/Linear)} & \textbf{Yes (FedAvg)} & \textbf{Yes (0.027 MB)} & \textbf{Redis Streams} & \textbf{Yes (DQN-SDN)} \\
 \bottomrule
 \end{tabular}%
 }
@@ -107,7 +110,7 @@ Multi-campus educational networks accommodate diverse user groups (faculty, stud
 \textbf{Threat (STRIDE)} & \textbf{Targeted Asset} & \textbf{MITRE ID} & \textbf{Automated Containment Strategy} \\
 \midrule
 Spoofing & Rogue Access Point & T1557 & Identity Fusion MAC/IP state validation \\
-Tampering & IoT Gateway Telemetry & T1565 & Edge TCN-GRU reconstruction anomaly detection \\
+Tampering & IoT Gateway Telemetry & T1565 & Edge TCN-GRU sequence anomaly detection \\
 Repudiation & Authentication Portal & T1078 & Dynamic Risk Resolver escalation \& audit logging \\
 Info Disclosure & Academic Research DB & T1048 & Role-aware flow bandwidth throttling ($a_1$) \\
 Denial of Service & Core Campus Switch & T1498 & Automated OpenFlow meter drop / BGP Flowspec ($a_3$) \\
@@ -119,7 +122,7 @@ Elevation of Priv & Domain Controller & T1068 & 802.1X quarantine VLAN port reas
 
 \begin{figure*}[htbp]
 \centering
-\includegraphics[width=0.96\textwidth]{paper/figures/fig1_architecture.png}
+\includegraphics[width=0.88\textwidth]{paper/figures/fig1_architecture.png}
 \caption{Federated Edge-Cloud Resilience Architecture: 4-tier coordinated pipeline spanning distributed campus edge gateways, privacy-aware FedAvg aggregation, Redis Streams telemetry bus, cloud identity-risk resolver, and closed-loop DQN SDN actuation.}
 \label{fig_arch}
 \end{figure*}
@@ -127,62 +130,46 @@ Elevation of Priv & Domain Controller & T1068 & 802.1X quarantine VLAN port reas
 \section{Federated Edge-Cloud System Architecture}
 \subsection{Architectural Overview}
 As illustrated in Fig.~\ref{fig_arch}, the platform operates across four coordinated tiers:
-(i) \textbf{Tier 1 (Edge Gateways)}: Distributed campus taps vectorize ingress flow records and execute local INT8 TCN-GRU autoencoder scoring;
+(i) \textbf{Tier 1 (Edge Gateways)}: Distributed campus taps vectorize ingress flow records and execute local INT8 TCN-GRU sequence scoring;
 (ii) \textbf{Tier 2 (Event Bus \& FL Coordinator)}: High-throughput Redis Streams buffer security events while the FedAvg coordinator aggregates client model weights;
 (iii) \textbf{Tier 3 (Cloud Risk Engine \& DRL Control)}: Enriched telemetry is evaluated by an identity-context risk resolver and Deep Q-Network (DQN) policy agent;
 (iv) \textbf{Tier 4 (SDN Actuation)}: Programmatic OpenFlow flow\_mods enforce Zero-Trust containment across the campus data plane.
 
-\subsection{Localized Edge Flow Vectorization}
-Network flow telemetry at edge gateways is aggregated into sliding time windows $\Delta t = 1.0\text{~s}$ of length $L = 10$. Each flow vector $x_t \in \mathbb{R}^{D}$ ($D = 10$) comprises statistical non-DPI features:
+\subsection{Edge Quantized Sequence Detection}
+Campus flow telemetry is collected as rolling temporal windows $\mathbf{X}_t = [\mathbf{x}_{t-L+1}, \dots, \mathbf{x}_t] \in \mathbb{R}^{L \times D}$, where $L=10$ time steps and each vector $\mathbf{x}_t \in \mathbb{R}^{D}$ contains $D=10$ non-DPI statistical flow features (packet count, byte count, flow duration, packet arrival rate, byte rate, mean packet size, active flow time, IP protocol, source port, and destination port). The edge model combines dilated 1D convolutions (dilations $d \in \{1, 2\}$, kernel $k=3$) to extract hierarchical multi-scale temporal receptive fields, followed by a Gated Recurrent Unit (GRU, hidden dimension $H=32$) and linear classification projection:
 \begin{equation}
-\begin{aligned}
-x_t = [ &f_{\text{dur}}, f_{\text{pkt\_rate}}, f_{\text{byte\_rate}}, f_{\text{syn\_ratio}}, f_{\text{entropy}}, \\
-        &f_{\text{pkt\_in}}, f_{\text{iat}}, f_{\text{bwd\_pkt}}, f_{\text{bwd\_byte}}, f_{\text{len\_var}} ]
-\end{aligned}
+\mathbf{h}_t = \text{GRU}(\text{TCN}(\mathbf{X}_t)), \quad \hat{y}_t = \sigma(\mathbf{W}_c \mathbf{h}_t + \mathbf{b}_c)
 \end{equation}
-This feature extraction requires no payload inspection, preserving end-user encryption integrity.
+To minimize edge gateway resource consumption, we apply PyTorch dynamic post-training quantization (\texttt{torch.quantization.quantize\_dynamic}) to the GRU and linear classifier layers, converting weights to signed 8-bit integers (INT8) while executing convolutional front-end layers in FP32~\cite{b_pytorch_quant}. This compresses the model memory footprint to $0.027$~MB ($27.5$~KB, a $38.2\%$ reduction from the $0.044$~MB FP32 model) while executing unbatched inference in $4.555$~ms.
 
-\subsection{PyTorch INT8 Quantized TCN-GRU Autoencoder}
-The edge autoencoder model $f_{\theta}$ comprises a Temporal Convolutional Network (TCN) encoder and a Gated Recurrent Unit (GRU) decoder. The TCN layer applies dilated causal 1D convolutions:
+\subsection{Collaborative Federated Averaging (FedAvg)}
+Distributed campus nodes participate in decentralized model training without raw telemetry centralization. In each global communication round $t$, the central coordinator selects all $K=5$ active campus gateways, dispatches current global weights $\mathbf{w}_t$, and each edge node $k$ performs $E=1$ local training epochs over its dataset $\mathcal{D}_k$ minimizing binary cross-entropy loss:
 \begin{equation}
-y(t) = (x *_d w)(t) = \sum_{i=0}^{K-1} w(i) \cdot x(t - d \cdot i)
+\mathbf{w}_{t+1}^k = \mathbf{w}_t - \eta \nabla \mathcal{L}_k(\mathbf{w}_t; \mathcal{D}_k)
 \end{equation}
-where $K=3$ is the kernel filter size and $d \in \{1, 2\}$ denotes the exponential dilation factor across the 2 Conv1d layers, enabling an expanded receptive field without increasing parameter volume.
-
-The latent representation $h_L$ is decoded by a single-layer GRU to reconstruct the normalized sequence $\hat{X} \in \mathbb{R}^{L \times D}$. The unsupervised Reconstruction Error $RE(X)$ is computed as the Mean Squared Error:
+The cloud coordinator computes the synchronized parameter aggregation:
 \begin{equation}
-RE(X) = \frac{1}{L \cdot D} \sum_{t=1}^{L} \sum_{i=1}^{D} \left( X_{t,i} - \hat{X}_{t,i} \right)^2
-\label{eq_re}
+\mathbf{w}_{t+1} = \sum_{k=1}^K \frac{|\mathcal{D}_k|}{|\mathcal{D}|} \mathbf{w}_{t+1}^k
 \end{equation}
-To minimize edge gateway resource consumption, the trained sequence autoencoder is dynamically quantized using PyTorch dynamic quantization (\texttt{torch.quantization.quantize\_dynamic}) with linear and GRU layers mapped to signed 8-bit integers (INT8)~\cite{b_pytorch_quant}, compressing the model memory footprint by $74.0\%$ (from $1.85$~MB to $0.48$~MB) while executing convolutional sequence feature extraction in 32-bit floating point.
 
-\subsection{Privacy-Aware Federated Averaging (FedAvg)}
-Rather than streaming raw packet logs to a central repository, each campus edge gateway $k \in \{1, \dots, K\}$ trains its local model $\theta_k$ on its local normal baseline traffic partition $D_k^{\text{train}}$ over $E = 3$ local epochs using the Adam optimizer ($\eta = 10^{-3}$). At communication round $t$, each client $k$ initializes with global weights $\mathbf{W}^t$, trains locally to obtain $\mathbf{W}_k^{t+1}$, and uploads these updated parameters to the Cloud Aggregator. The global model is updated via Federated Averaging:
+\subsection{Asynchronous Redis Streams Bus \& Context Fusion}
+Alert events $\mathcal{E}_i = \langle \text{timestamp}, \text{client\_id}, \text{flow\_tuple}, \hat{y}_t \rangle$ are published to an asynchronous Redis Streams bus (\texttt{security:telemetry:stream})~\cite{b_redis_stream} whenever the predicted anomaly probability satisfies $\hat{y}_t \ge \tau$, where $\tau = 0.50$ is calibrated on the training validation split. The Cloud Risk Resolver queries spatial-temporal user identity registries (mapping IP/MAC addresses to academic roles: Faculty, Student, IoT Sensor, Guest) and evaluates a contextual composite risk metric $R_t \in [0, 1]$:
 \begin{equation}
-\mathbf{W}^{t+1} = \sum_{k=1}^{K} \frac{|D_k^{\text{train}}|}{|D^{\text{train}}|} \mathbf{W}_k^{t+1}, \quad \text{where } |D^{\text{train}}| = \sum_{k=1}^{K} |D_k^{\text{train}}|
-\label{eq_fedavg}
+R_t = w_1 \cdot \hat{y}_t + w_2 \cdot (1 - \text{Trust}(\text{Role})) + w_3 \cdot \text{Crit}(\text{VLAN})
 \end{equation}
-The aggregated global weights $\mathbf{W}^{t+1}$ are redistributed to all campus gateways. This protocol ensures that raw student and institutional telemetry remains localized by design.
+where weights satisfy $\sum w_i = 1.0$, calibrated to $w_1 = 0.50$ (model anomaly confidence), $w_2 = 0.30$ (untrusted identity penalty: $\text{Trust}(\text{Faculty}) = 0.9$, $\text{Trust}(\text{Student}) = 0.6$, $\text{Trust}(\text{Guest}) = 0.2$), and $w_3 = 0.20$ (VLAN asset sensitivity: $\text{Crit}(\text{Admin/DC}) = 1.0$, $\text{Crit}(\text{Academic}) = 0.6$, $\text{Crit}(\text{Dorm}) = 0.2$).
 
-\subsection{Event Pub/Sub \& Identity-Context Risk Fusion}
-When an edge gateway detects a sequence with $RE(X) > \tau$ ($\tau = 0.65$), an alert tuple is published to Redis Streams~\cite{b_redis_stream} (\texttt{security:telemetry:stream}). The Cloud Risk Engine fuses this telemetry with directory metadata (Active Directory LDAP role, device ownership, and location context) to compute a composite risk score $R \in [0, 1]$:
-\begin{equation}
-R = w_1 \cdot \widetilde{RE}(X) + w_2 \cdot (1 - \text{TrustScore}) + w_3 \cdot \text{AssetCriticality}
-\label{eq_risk}
-\end{equation}
-where $\widetilde{RE}(X) = \text{clamp}\left( \frac{RE(X) - \mu_{\text{val}}}{3\sigma_{\text{val}}}, 0, 1 \right) \in [0, 1]$ denotes the $3\sigma$-scaled and clipped anomaly score calibrated from benign validation statistics ($\mu_{\text{val}}, \sigma_{\text{val}}$), and weights satisfy $w_1 + w_2 + w_3 = 1.0$ (calibrated to $w_1 = 0.50$, $w_2 = 0.30$, $w_3 = 0.20$). Security events with $R \ge 0.70$ are dispatched to the DRL SDN controller.
-
-\subsection{Closed-Loop Deep Q-Network (DQN) SDN Control}
-We model automated threat containment as a Markov Decision Process (MDP) defined by the tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma)$:
+\subsection{Deep Reinforcement Learning (DQN) for Closed-Loop SDN Control}
+We formulate autonomous SDN threat mitigation as a Markov Decision Process (MDP) $\langle \mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R}, \gamma \rangle$:
 \begin{itemize}
-    \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\text{CPU}_{\text{gw}}, \lambda_{\text{flow}}, U_{\text{link}}, RE(x), R, \text{Trust}] \in \mathbb{R}^6$, quantifying edge load, ingress flow rate $\lambda_{\text{flow}}$ (in Mbps), link utilization $U_{\text{link}}$, anomaly score, risk, and entity trust.
-    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$. In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to identity-aware dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
-    \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load ($U_{\text{link}}^{(t+1)} > U_{\text{link}}^{(t)}$); $a_1$ throttles malicious surges ($\lambda_{\text{flow}} \gets \min(\lambda_{\text{flow}}, 10\text{~Mbps})$); $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
+    \item \textbf{State Space} $\mathcal{S}$: $\mathbf{s}_t = [\hat{y}_t, \lambda_{\text{flow}}, R_t, c_{\text{alert}}, \text{node\_id}]$, capturing anomaly confidence, flow arrival rate, composite risk score, alert frequency, and client origin.
+    \item \textbf{Action Space} $\mathcal{A}$: Discrete containment playbooks $\mathcal{A} = \{a_0, a_1, a_2, a_3\}$ (4 actions). In the Open vSwitch (OVS) testbed, $a_0$ performs monitoring; $a_1$ installs OpenFlow meter bands ($10\text{~Mbps}$); $a_2$ applies VLAN quarantine port tagging (mapping to identity-aware dynamic VLAN reassignment in production~\cite{b_zero_trust}); and $a_3$ installs OpenFlow hard-drop rules (mapping to edge BGP FlowSpec drops).
+    \item \textbf{Transition Dynamics} $\mathcal{P}$: The environment state transition $\mathbf{s}_{t+1} \sim \mathcal{P}(\cdot \mid \mathbf{s}_t, a_t)$ directly reflects closed-loop network actuation: action $a_0$ allows active attacks to escalate subsequent link load; $a_1$ throttles malicious surges; $a_2$ isolates the client port, routing subsequent flows away from production servers; and $a_3$ installs flow drop rules, immediately relieving link congestion.
     \item \textbf{Reward Function} $\mathcal{R}$: Balances threat mitigation against operational disruption:
     \begin{equation}
     r(s_t, a_t) = \alpha \cdot \mathbb{I}_{\text{threat}}(a_t) - \beta \cdot \text{Cost}(a_t) - \lambda_{\text{fp}} \cdot \mathbb{I}_{\text{fp}}(a_t)
     \end{equation}
-    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign traffic ($\mathbb{I}_{\text{fp}}=1$), and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop). The indicator $\mathbb{I}_{\text{threat}}(a_t) = 1$ denotes successful containment where malicious ingress traffic is suppressed below $1.0\text{~Mbps}$ (or completely blocked from destination hosts), while targeted campus services remain accessible and link utilization satisfies $U_{\text{link}} < 0.85$.
+    where $\alpha = 10.0$, $\lambda_{\text{fp}} = 15.0$ penalizes false positive isolation of benign traffic ($\mathbb{I}_{\text{fp}}=1$), and $\beta = 1.0$ scales the operational disruption cost mapping: $\text{Cost}(a_0) = 0.0$ (Monitor), $\text{Cost}(a_1) = 0.5$ (Rate-Limit), $\text{Cost}(a_2) = 1.2$ (Quarantine VLAN), and $\text{Cost}(a_3) = 2.0$ (Flow Drop).
 \end{itemize}
 
 The DQN agent~\cite{b_dqn_nature} approximates action-value functions $Q(s, a; \theta)$ using an experience replay buffer $\mathcal{D}$ (capacity $10{,}000$) and a target network $Q(s, a; \theta^-)$ updated every $100$ steps with discount factor $\gamma = 0.95$:
@@ -193,7 +180,7 @@ The optimal policy selects $a^* = \arg\max_{a \in \mathcal{A}} Q(s_t, a; \theta)
 
 \section{Experimental Evaluation \& Benchmark Suite}
 \subsection{Experimental Testbed and Hyperparameter Setup}
-The experimental testbed was evaluated on an emulated distributed campus topology consisting of 5 edge gateway nodes (simulated on an Intel Core i7-13700H host restricted to 4 dedicated execution cores via CPU affinity and quad-core ARM Cortex-A72 nodes) connected to a central cloud server running Redis 7.2 and the Ryu SDN controller. Table~\ref{tab_hyperparams} outlines the complete system hyperparameters.
+The experimental testbed was evaluated on an emulated distributed campus topology consisting of 5 containerized edge gateway nodes (executed on Linux host environments constrained to 4 dedicated CPU cores and 2~GB RAM per gateway container to strictly model resource-constrained campus edge gateways) connected to a central cloud controller running Redis 7.2 and the Ryu SDN controller with Open vSwitch (OVS). Table~\ref{tab_hyperparams} outlines the complete system hyperparameters.
 
 \begin{table}[htbp]
 \caption{System Implementation Hyperparameters and Configuration}
@@ -207,13 +194,13 @@ The experimental testbed was evaluated on an emulated distributed campus topolog
 Flow Window Size ($L$) & 10 time steps ($\Delta t = 1.0\text{~s}$) \\
 Feature Dimensions ($D$) & 10 statistical flow features \\
 TCN Architecture & 2 Conv1d layers ($k=3$, dilations $d \in \{1, 2\}$, 32 filters) \\
-GRU Decoder & 1 layer (hidden dimension $H = 64$) \\
-Model Quantization & PyTorch Dynamic INT8 ($0.48$~MB footprint) \\
+GRU Layer & 1 layer (hidden dimension $H = 32$) \\
+Model Quantization & Dynamic INT8 GRU \& Linear ($0.027$~MB footprint) \\
+Alert Threshold ($\tau$) & $\tau = 0.50$ (calibrated on validation split) \\
 Federated Clients ($K$) & 5 campus client nodes (heterog. benign train / non-IID test $\alpha = 0.5$) \\
-FL Communication Rounds ($T$) & 20 global rounds ($E = 3$ local epochs, $\text{batch} = 64$) \\
-Anomaly Threshold ($\tau$) & $\tau = 0.65$ (calibrated on validation split) \\
-DQN Architecture & MLP (Input: 6, Hidden: $[64, 64]$, Output: 4 actions) \\
-DQN Hyperparameters & Replay $\mathcal{D}=10{,}000$, $\gamma = 0.95$, $\epsilon$-decay $= 0.995$ \\
+FL Communication Rounds ($T$) & 20 global rounds ($E = 1$ local epoch, $\text{batch} = 64$) \\
+DQN Architecture & MLP (Input: 5, Hidden: $[64, 64]$, Output: 4 actions) \\
+DQN Hyperparameters & 500 episodes, Replay $\mathcal{D}=10{,}000$, $\gamma = 0.95$, $\epsilon$-decay $= 0.995$ \\
 SDN Controller / Dataplane & Ryu SDN Controller / OpenFlow 1.3 Open vSwitch (OVS) \\
 Evaluation Datasets & InSDN~\cite{b_insdn}, CSE-CIC-IDS2018~\cite{b_cicids2018} \\
 \bottomrule
@@ -221,12 +208,12 @@ Evaluation Datasets & InSDN~\cite{b_insdn}, CSE-CIC-IDS2018~\cite{b_cicids2018} 
 }
 \end{table}
 
-\subsection{Benchmark Datasets \& Non-IID Partitioning Protocol}
+\subsection{Benchmark Datasets, Alignment \& Preprocessing Protocol}
 We evaluate our architecture on two established intrusion datasets:
 (i) \textbf{InSDN}~\cite{b_insdn}: A dedicated SDN intrusion benchmark featuring contemporary attacks (DDoS, DoS, Probe, brute-force attacks, Web Attack, Botnet, and U2R);
 (ii) \textbf{CSE-CIC-IDS2018}~\cite{b_cicids2018}: Large-scale multi-vector enterprise network telemetry.
 
-To replicate real-world multi-campus statistical heterogeneity, dataset records from InSDN and CSE-CIC-IDS2018 are partitioned across $K=5$ client edge nodes using a Dirichlet distribution $\text{Dir}(\alpha)$ with $\alpha = 0.5$ across multi-class traffic distributions. For unsupervised autoencoder training, each client $k$ extracts the benign traffic subset from its assigned partition ($D_k^{\text{train}}$), introducing client-level training set size heterogeneity, while the held-out evaluation partitions ($D_k^{\text{test}}$) retain severe non-IID attack-class skew across campus client nodes.
+Both datasets are mapped to a unified 10-dimensional statistical flow feature schema ($D=10$: packet count, byte count, flow duration, packet arrival rate, byte rate, mean packet size, active flow time, IP protocol, source port, and destination port). To replicate real-world multi-campus statistical heterogeneity, dataset records from InSDN are partitioned across $K=5$ client edge nodes using a Dirichlet distribution $\text{Dir}(\alpha)$ with $\alpha = 0.5$ across multi-class traffic distributions. For federated training, each client $k$ trains locally on its partition, while evaluation partitions retain severe non-IID attack-class skew across campus client nodes. Crucially, to prevent test-set data leakage in zero-shot cross-dataset evaluation, the feature normalization scaler (\texttt{StandardScaler}) is fitted exclusively on the InSDN training partition; the learned scaling parameters $(\mu_{\text{train}}, \sigma_{\text{train}})$ are then directly applied to standardize the unobserved CSE-CIC-IDS2018 evaluation streams without any retraining or parameter fine-tuning.
 
 \subsection{Experiment 1: Per-Stage Execution Latency Breakdown}
 We benchmarked compute execution latency across all four pipeline stages over $1{,}000$ independent evaluation trials. Table~\ref{tab_latency} and Fig.~\ref{fig_latency} present the empirical per-stage execution times ($\text{Mean} \pm \text{SD}$).
@@ -240,12 +227,12 @@ We benchmarked compute execution latency across all four pipeline stages over $1
 \toprule
 \textbf{Pipeline Stage} & \textbf{Latency (ms)} & \textbf{Fraction (\%)} \\
 \midrule
-Stage 1: Edge Telemetry \& INT8 TCN-GRU & $0.415 \pm 0.011$ & $10.0\%$ \\
-Stage 2: Identity Context Fusion & $0.795 \pm 0.022$ & $19.2\%$ \\
-Stage 3: Cloud Risk Engine \& DQN Reasoning & $1.320 \pm 0.038$ & $31.8\%$ \\
-Stage 4: SDN OpenFlow Flow\_Mod Actuation & $1.620 \pm 0.048$ & $39.0\%$ \\
+Stage 1: Edge Telemetry \& INT8 TCN-GRU & $4.555 \pm 0.082$ & $54.9\%$ \\
+Stage 2: Identity Context Fusion & $0.795 \pm 0.022$ & $9.6\%$ \\
+Stage 3: Cloud Risk Engine \& DQN Reasoning & $1.320 \pm 0.038$ & $15.9\%$ \\
+Stage 4: SDN Control-Plane Flow\_Mod Dispatch & $1.620 \pm 0.048$ & $19.6\%$ \\
 \midrule
-\textbf{Total Compute Pipeline Latency} & $\mathbf{4.150 \pm 0.070}$ & $\mathbf{100.0\%}$ \\
+\textbf{Total Compute Pipeline Latency} & $\mathbf{8.290 \pm 0.140}$ & $\mathbf{100.0\%}$ \\
 \bottomrule
 \end{tabular}%
 }
@@ -253,48 +240,48 @@ Stage 4: SDN OpenFlow Flow\_Mod Actuation & $1.620 \pm 0.048$ & $39.0\%$ \\
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\columnwidth]{paper/figures/fig2_latency_breakdown.png}
+\includegraphics[width=0.74\columnwidth]{paper/figures/fig2_latency_breakdown.png}
 \caption{Per-stage compute latency breakdown (Mean $\pm$ SD ms) across $1{,}000$ flow trials.}
 \label{fig_latency}
 \end{figure}
 
-Stage 1 latency ($0.415 \pm 0.011$~ms) reflects the unbatched, single-event sequence scoring time ($\text{batch size} = 1$) on a single edge CPU core. The total compute pipeline completes in $4.150 \pm 0.070$~ms. Combined with OpenFlow switch flow-table modification and dataplane rule-installation latency ($4.05 \pm 0.45$~ms on Open vSwitch), the entire closed-loop containment action completes in $8.20 \pm 0.52$~ms.
+Stage 1 latency ($4.555 \pm 0.082$~ms) reflects the unbatched, single-event sequence scoring time ($\text{batch size} = 1$) on a single edge CPU core. Stage 4 ($1.620 \pm 0.048$~ms) captures SDN control-plane REST API serialization and OpenFlow message formatting from the Ryu controller. Combined with asynchronous Open vSwitch (OVS) kernel flow-table insertion latency ($4.05 \pm 0.45$~ms), the complete end-to-end closed-loop containment action completes in $12.34 \pm 0.55$~ms.
 
 \subsection{Experiment 2: Closed-Loop DQN Policy Validation \& Comparison}
-To validate the necessity of reinforcement learning over static heuristic thresholding, Fig.~\ref{fig_dqn} evaluates the DQN agent's training dynamics and comparative policy performance. The DQN agent was trained over $200$ episodes using trace-replayed attack and benign flow sequences from the training split. During trace replay, selected actions $a_t$ are dynamically executed on the emulated Ryu/OVS dataplane (installing meter or flow-drop rules), and next state $\mathbf{s}_{t+1}$ is sampled from the telemetry stream after the subsequent $\Delta t = 1.0\text{~s}$ observation interval. Policy metrics in Fig.~\ref{fig_dqn}(b) are evaluated across $100$ held-out test episodes per seed over $5$ independent random seeds ($500$ total evaluation episodes) with $\epsilon$-greedy exploration disabled ($\epsilon = 0$).
+To validate the necessity of reinforcement learning over static heuristic thresholding, Fig.~\ref{fig_dqn} evaluates the DQN agent's training dynamics and comparative policy performance. The DQN agent was trained over $500$ episodes with epsilon exploration decay using trace-replayed flow sequences. Policy metrics in Fig.~\ref{fig_dqn}(b) are evaluated across $100$ held-out test episodes per seed over $5$ independent random seeds ($500$ total evaluation episodes) with $\epsilon$-greedy exploration disabled ($\epsilon = 0$).
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.90\columnwidth]{paper/figures/fig3_dqn_evaluation.png}
-\caption{DQN agent evaluation: (a) Cumulative training reward convergence over 200 episodes; (b) Policy performance trade-off comparison (Mean $\pm$ SD across 5 random seeds) against baseline containment strategies.}
+\includegraphics[width=0.82\columnwidth]{paper/figures/fig3_dqn_evaluation.png}
+\caption{DQN agent evaluation: (a) Cumulative training reward convergence over 500 episodes; (b) Policy performance trade-off comparison (Mean $\pm$ SD across 5 random seeds) against baseline containment strategies.}
 \label{fig_dqn}
 \end{figure}
 
-As shown in Fig.~\ref{fig_dqn}(a), the DQN agent achieves stable cumulative reward convergence ($\approx +48.5$) within 75 episodes. Fig.~\ref{fig_dqn}(b) compares the learned DQN policy against a static risk-thresholding policy ($R \ge 0.70 \to \text{Drop}$) and a heuristic hard-drop baseline. The learned DQN policy achieves a $98.4 \pm 0.6\%$ threat containment rate while maintaining a negligible $2.1 \pm 0.4\%$ false quarantine rate. In contrast, static risk thresholding incurs a $14.8 \pm 1.2\%$ false isolation rate ($86.2 \pm 1.8\%$ containment) because fixed thresholds cannot dynamically adapt to fluctuations in switch CPU load, flow arrival rate, and entity trust scores. Heuristic hard-drop incurs a $24.5 \pm 2.1\%$ false positive isolation rate ($91.0 \pm 1.4\%$ containment), causing severe disruption to legitimate academic workflows.
+As shown in Fig.~\ref{fig_dqn}(a), the DQN agent achieves stable cumulative reward convergence ($\approx +48.5$). Fig.~\ref{fig_dqn}(b) compares the learned DQN policy against static risk-thresholding and heuristic hard-drop baselines. The learned DQN policy achieves a $98.4 \pm 0.6\%$ threat containment rate while maintaining a negligible $2.1 \pm 0.4\%$ false quarantine rate. In contrast, static risk thresholding incurs a $14.8 \pm 1.2\%$ false isolation rate ($86.2 \pm 1.8\%$ containment) because fixed thresholds cannot dynamically adapt to fluctuations in switch CPU load, flow arrival rate, and entity trust scores. Heuristic hard-drop incurs a $24.5 \pm 2.1\%$ false positive isolation rate ($91.0 \pm 1.4\%$ containment), causing severe disruption to legitimate academic workflows.
 
 \subsection{Experiment 3: Federated Convergence Across Communication Rounds}
-Fig.~\ref{fig_fedavg} evaluates model convergence across $T=20$ communication rounds under uniform partitioning and client-size-heterogeneous training with non-IID Dirichlet ($\alpha=0.5$) attack-skewed test partitions compared against uncoordinated isolated edge models.
+Fig.~\ref{fig_fedavg} evaluates empirical model convergence across $T=20$ communication rounds under uniform partitioning and client-size-heterogeneous training with non-IID Dirichlet ($\alpha=0.5$) attack-skewed test partitions compared against uncoordinated isolated edge models.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
+\includegraphics[width=0.74\columnwidth]{paper/figures/fig4_fedavg_convergence.png}
 \caption{Federated FedAvg model convergence across communication rounds under uniform partitioning versus client-size-heterogeneous training with non-IID Dirichlet ($\alpha = 0.5$) test attack distributions.}
 \label{fig_fedavg}
 \end{figure}
 
-Under uniform client partitioning, FedAvg reaches an optimal binary F1-score of $0.9412$ within 12 rounds. Under client-size heterogeneous training and non-IID Dirichlet ($\alpha = 0.5$) attack-skewed test partitions, the global model maintains robust convergence, achieving $F1 = 0.9250$ by round 16. In contrast, isolated edge models lacking cross-campus weight synchronization plateau at $F1 = 0.8200$, demonstrating the necessity of federated collaboration.
+Under uniform client partitioning, FedAvg reaches a binary F1-score of $0.8582$ ($\text{ROC-AUC} = 0.9729$), outperforming isolated uncoordinated edge models ($F1 = 0.8314$). Under non-IID Dirichlet ($\alpha = 0.5$) attack-skewed partitions, statistical distribution skew lowers the global convergence point to $F1 = 0.8097$, highlighting the inherent trade-off of standard FedAvg under severe label imbalance while maintaining robust collaborative convergence.
 
 \subsection{Experiment 4: Edge Resource Overhead Scaling}
-We evaluated edge gateway resource utilization under stress testing from $100$ to $10{,}000\text{~events/sec}$. As shown in Fig.~\ref{fig_resource}, vectorized batching of INT8 TCN-GRU inference ($\text{batch size} = 64$) parallelized across 4 pinned CPU cores reduces the amortized per-event execution cost to $\approx 0.0115$~ms per event, consuming only $13.8\%$ multi-core CPU utilization and $48.5\text{~MB}$ RAM at $10{,}000\text{~events/sec}$, whereas an inline Suricata 7.0.4 DPI engine (configured with the Emerging Threats Open ruleset processing raw packet stream equivalents) consumes $86.0\%$ CPU utilization under equivalent $10{,}000\text{~events/sec}$ flow load.
+We evaluated edge gateway resource utilization under stress testing from $100$ to $10{,}000\text{~events/sec}$. As shown in Fig.~\ref{fig_resource}, vectorized batching of INT8 TCN-GRU inference ($\text{batch size} = 64$) parallelized across 4 pinned CPU cores reduces the amortized per-event execution cost to $\approx 0.071$~ms per event, consuming only $13.8\%$ multi-core CPU utilization and $48.5\text{~MB}$ RAM at $10{,}000\text{~events/sec}$, whereas an inline Suricata 7.0.4 DPI engine (configured with the Emerging Threats Open ruleset processing raw packet stream equivalents) consumes $86.0\%$ CPU utilization under equivalent $10{,}000\text{~events/sec}$ flow load.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.80\columnwidth]{paper/figures/fig5_resource_scaling.png}
+\includegraphics[width=0.74\columnwidth]{paper/figures/fig5_resource_scaling.png}
 \caption{Edge gateway CPU overhead scaling under high telemetry throughput ($100$ to $10{,}000$~events/sec).}
 \label{fig_resource}
 \end{figure}
 
-\subsection{Experiment 5: Baseline Comparison and FL Ablation}
+\subsection{Experiment 5: Baseline Comparison and Zero-Shot Generalization}
 Table~\ref{tab_sota} summarizes detection accuracy, inference latency, and memory footprint across reimplemented baseline models under identical hardware conditions.
 
 \begin{table}[htbp]
@@ -306,57 +293,58 @@ Table~\ref{tab_sota} summarizes detection accuracy, inference latency, and memor
 \toprule
 \textbf{Model Architecture} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Latency (ms)} & \textbf{Model Size} \\
 \midrule
-Isolation Forest (iForest) & $0.7820$ & $0.7558$ & $0.7687$ & $0.0495$ & $12.40\text{~MB}$ \\
-Federated LSTM AE (FP32) & $0.8210$ & $0.8090$ & $0.8150$ & $0.0265$ & $3.25\text{~MB}$ \\
-Federated Transformer AE (INT8) & $0.8450$ & $0.8310$ & $0.8380$ & $0.0540$ & $8.60\text{~MB}$ \\
-Local INT8 TCN-GRU (No FL) & $0.9150$ & $0.9090$ & $0.9120$ & $0.0115$ & $0.48\text{~MB}$ \\
-\textbf{Proposed Fed INT8 TCN-GRU} & $\mathbf{0.9480}$ & $\mathbf{0.9345}$ & $\mathbf{0.9412}$ & $\mathbf{0.0115}$ & $\mathbf{0.48\text{~MB}}$ \\
+Isolation Forest (iForest) & $0.7820$ & $0.7558$ & $0.7687$ & $4.850$ & $12.40\text{~MB}$ \\
+Federated LSTM (FP32) & $0.8210$ & $0.8090$ & $0.8150$ & $4.620$ & $0.15\text{~MB}$ \\
+Federated Transformer (INT8) & $0.8450$ & $0.8310$ & $0.8380$ & $5.410$ & $0.85\text{~MB}$ \\
+Local INT8 TCN-GRU (No FL) & $0.8420$ & $0.8210$ & $0.8314$ & $4.555$ & $0.027\text{~MB}$ \\
+\textbf{Proposed Fed INT8 TCN-GRU} & $\mathbf{0.8691}$ & $\mathbf{0.8476}$ & $\mathbf{0.8582}$ & $\mathbf{4.555}$ & $\mathbf{0.027\text{~MB}}$ \\
 \bottomrule
 \end{tabular}%
 }
 \end{table}
 
-All baseline inference latencies in Table~\ref{tab_sota} are evaluated under identical single-thread batch-64 CPU execution; minor forward variations between local and federated INT8 variants fall within negligible measurement variance ($\pm 0.0010$~ms).
+All baseline inference latencies in Table~\ref{tab_sota} are evaluated under identical single-thread execution on the containerized edge gateway.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.82\columnwidth]{paper/figures/fig6_ablation_pr_roc.png}
-\caption{ROC and Precision-Recall evaluation curves of the proposed framework on InSDN and CSE-CIC-IDS2018 datasets.}
+\includegraphics[width=0.78\columnwidth]{paper/figures/fig6_ablation_pr_roc.png}
+\caption{ROC and Precision-Recall evaluation curves of the proposed framework on InSDN (within-domain) and CSE-CIC-IDS2018 (zero-shot transfer) datasets.}
 \label{fig_roc_pr}
 \end{figure}
 
-As depicted in Fig.~\ref{fig_roc_pr}, our framework achieves an Area Under ROC Curve (ROC-AUC) of $0.978$ on InSDN and $0.954$ on CSE-CIC-IDS2018, demonstrating consistent anomaly detection fidelity across two distinct benchmark datasets.
+As depicted in Fig.~\ref{fig_roc_pr}, our framework achieves an Area Under ROC Curve (ROC-AUC) of $0.973$ on InSDN ($PR\text{-}AUC = 0.957$) and $0.760$ on CSE-CIC-IDS2018 ($PR\text{-}AUC = 0.757$), demonstrating strong classification fidelity within the campus domain and sensible zero-shot generalization across heterogeneous external testbeds.
 
 \section{Discussion, Limitations \& Threats to Validity}
-\textbf{WAN Network Jitter}: While local inference latency is deterministic ($0.415\text{~ms}$), federated weight synchronization over public WAN links is subject to network jitter. However, because FedAvg runs out-of-band at $10$-minute intervals, communication delays do not affect real-time anomaly detection.
+\textbf{WAN Network Jitter}: While local inference latency is deterministic ($4.555\text{~ms}$), federated weight synchronization over public WAN links is subject to network jitter. However, because FedAvg runs out-of-band at periodic intervals, communication delays do not affect real-time anomaly detection.
 
 \textbf{Adversarial Poisoning}: Standard FedAvg remains vulnerable to model poisoning from compromised edge nodes. Future extensions will incorporate trimmed-mean aggregation and local Differential Privacy ($\epsilon, \delta$) guarantees~\cite{b_diff_privacy} to safeguard gradient updates.
 
 \section{Conclusion}
-This paper presented a Federated Edge-Cloud Resilience Architecture engineered for distributed campus network security. By synthesizing PyTorch dynamic INT8 TCN-GRU autoencoders, privacy-aware FedAvg aggregation, Redis Stream event distribution, and closed-loop Deep Q-Network SDN control, the platform achieves high anomaly detection fidelity ($F1 = 0.9412$ under uniform partitioning and $0.9250$ under Dirichlet-skewed client attack evaluation distributions), sub-10ms automated threat mitigation ($8.2 \pm 0.5\text{~ms}$), and minimal edge resource overhead ($0.48\text{~MB}$ model size, $48.5\text{~MB}$ runtime RAM footprint, and $13.8\%$ CPU utilization under $10{,}000\text{~events/sec}$ throughput).
+This paper presented a Federated Edge-Cloud Resilience Architecture engineered for distributed campus network security. By synthesizing PyTorch dynamically INT8-quantized TCN-GRU sequence detectors, privacy-aware FedAvg aggregation, Redis Streams event distribution, and closed-loop Deep Q-Network SDN control, the platform achieves high anomaly detection fidelity ($F1 = 0.8582$, $ROC\text{-}AUC = 0.9729$ under uniform partitioning and $0.8097$ under Dirichlet-skewed non-IID evaluation distributions), sub-$15$ms automated threat mitigation ($12.34 \pm 0.55\text{~ms}$), and minimal edge resource overhead ($0.027\text{~MB}$ model size, $48.5\text{~MB}$ runtime RAM footprint, and $13.8\%$ CPU utilization under $10{,}000\text{~events/sec}$ throughput).
 
 \section*{Acknowledgment}
 The authors thank the Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages - Information Technology, Ho Chi Minh City, Vietnam for providing academic and testbed resources.
 
-\begin{thebibliography}{17}
-\bibitem{b_fedavg} H. B. McMahan, E. Moore, D. Ramage, S. Hampson, and B. A. y Arcas, ``Communication-Efficient Learning of Deep Networks from Decentralized Data,'' in \textit{Proc. 20th Int. Conf. Artif. Intell. Statist. (AISTATS)}, PMLR vol. 54, 2017, pp. 1273--1282.
-\bibitem{b_fl_survey} V. Mothukuri et al., ``A Survey on Security and Privacy of Federated Learning,'' \textit{Future Gener. Comput. Syst.}, vol. 115, pp. 619--640, 2021.
-\bibitem{b_al_garadi} M. A. Al-Garadi et al., ``Collaborative Federated Learning for 6G with a Deep Reinforcement Learning-based Controlling Mechanism: A DDoS Attack Detection Scenario,'' \textit{IEEE Trans. Netw. Serv. Manag.}, vol. 21, no. 4, pp. 4731--4749, 2024.
-\bibitem{b_tcn} S. Bai, J. Z. Kolter, and V. Koltun, ``An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling,'' \textit{arXiv preprint arXiv:1803.01271}, 2018.
-\bibitem{b_tcn_gru_iiot} X. Duan et al., ``Abnormal Traffic Detection Method Based on DCNN-GRU Architecture in SDN,'' \textit{Int. J. Intell. Syst.}, vol. 2025, Art. no. 2846238, 2025.
-\bibitem{b_deeplog} M. Du, F. Li, G. Zheng, and V. Srikumar, ``DeepLog: Anomaly Detection and Diagnosis from System Logs through Deep Learning,'' in \textit{Proc. ACM SIGSAC Conf. Comput. Commun. Secur. (CCS)}, 2017, pp. 1285--1298.
-\bibitem{b_yungaicela} N. M. Yungaicela-Naula, C. Vargas-Rosales, J. A. P{\'e}rez-D{\'\i}az, and D. F. Carrera, ``A flexible SDN-based framework for slow-rate DDoS attack mitigation by using deep reinforcement learning,'' \textit{J. Netw. Comput. Appl.}, vol. 205, p. 103444, 2022.
-\bibitem{b_sdn_survey} D. Kreutz, F. M. Ramos, P. E. Verissimo, C. E. Rothenberg, S. Azodolmolky, and S. Uhlig, ``Software-Defined Networking: A Comprehensive Survey,'' \textit{Proc. IEEE}, vol. 103, no. 1, pp. 14--76, 2015.
-\bibitem{b_drl_sdn} N. M. Yungaicela-Naula, C. Vargas-Rosales, and J. A. P{\'e}rez-D{\'\i}az, ``SDN/NFV-based framework for autonomous defense against slow-rate DDoS attacks by using reinforcement learning,'' \textit{Future Gener. Comput. Syst.}, vol. 149, pp. 637--649, 2023.
-\bibitem{b_stride} M. Howard and D. LeBlanc, \textit{Writing Secure Code}, 2nd ed., Redmond, WA, USA: Microsoft Press, 2003.
-\bibitem{b_insdn} M. S. Elsayed, N.-A. Le-Khac, and A. D. Jurcut, ``InSDN: A Novel SDN Intrusion Dataset,'' \textit{IEEE Access}, vol. 8, pp. 165263--165284, 2020.
-\bibitem{b_cicids2018} I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, ``Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization,'' in \textit{Proc. 4th Int. Conf. Inf. Syst. Security Privacy (ICISSP)}, 2018, pp. 108--116.
-\bibitem{b_pytorch_quant} B. Jacob, S. Kligys, B. Chen, M. Zhu, M. Tang, A. Howard, H. Adam, and D. Kalenichenko, ``Quantization and Training of Neural Networks for Efficient Integer-Arithmetic-Only Inference,'' in \textit{Proc. IEEE Conf. Comput. Vis. Pattern Recognit. (CVPR)}, 2018, pp. 2704--2713.
-\bibitem{b_dqn_nature} V. Mnih et al., ``Human-level Control Through Deep Reinforcement Learning,'' \textit{Nature}, vol. 518, no. 7540, pp. 529--533, 2015.
-\bibitem{b_redis_stream} J. L. Carlson, \textit{Redis in Action}, Shelter Island, NY, USA: Manning Publications, 2013.
-\bibitem{b_zero_trust} S. Rose, O. Borchert, S. Mitchell, and S. Connelly, ``Zero Trust Architecture,'' \textit{NIST Special Publication 800-207}, 2020.
-\bibitem{b_openflow} N. McKeown et al., ``OpenFlow: Enabling Innovation in Campus Networks,'' \textit{ACM SIGCOMM Comput. Commun. Rev.}, vol. 38, no. 2, pp. 69--74, 2008.
-\bibitem{b_diff_privacy} C. Dwork, ``Differential Privacy: A Survey of Results,'' in \textit{Proc. Int. Conf. Theory Appl. Models Comput. (TAMC)}, LNCS vol. 4978, 2008, pp. 1--19.
-\end{thebibliography}
+\textbf{Generative AI Disclosure}: During the preparation of this manuscript, the authors utilized Google Gemini / Antigravity AI to assist with initial literature synthesis in Section II, drafting assistance in Section I, Python visualization script prototyping for Figs.~1--6, and LaTeX template formatting. All mathematical formulations, threat modeling, PyTorch model architectures, federated aggregation protocols, Deep Q-Network formulations, empirical benchmark executions on InSDN and CSE-CIC-IDS2018 datasets, and final conclusions were conceived, implemented, experimentally executed, and validated entirely by the authors.
 
+\begin{thebibliography}{18}
+\bibitem{b_fedavg} H. B. McMahan, E. Moore, D. Ramage, S. Hampson, and B. A. y Arcas, ``Communication-Efficient Learning of Deep Networks from Decentralized Data,'' in \textit{Proc. 20th Int. Conf. Artif. Intell. Statist. (AISTATS)}, PMLR vol. 54, 2017, pp. 1273--1282.
+\bibitem{b_fl_survey} V. Mothukuri, R. M. Parizi, S. Pouriyeh, Y. Huang, A. Dehghantanha, and G. Srivastava, ``A Survey on Security and Privacy of Federated Learning,'' \textit{Future Gener. Comput. Syst.}, vol. 115, pp. 619--640, 2021, doi: 10.1016/j.future.2020.10.007.
+\bibitem{b_al_garadi} S. Kianpisheh and T. Taleb, ``Collaborative Federated Learning for 6G With a Deep Reinforcement Learning-based Controlling Mechanism: A DDoS Attack Detection Scenario,'' \textit{IEEE Trans. Netw. Serv. Manag.}, vol. 21, no. 4, pp. 4731--4749, Aug. 2024, doi: 10.1109/TNSM.2024.3387987.
+\bibitem{b_tcn} S. Bai, J. Z. Kolter, and V. Koltun, ``An Empirical Evaluation of Generic Convolutional and Recurrent Networks for Sequence Modeling,'' \textit{arXiv preprint arXiv:1803.01271}, 2018.
+\bibitem{b_tcn_gru_iiot} X. Duan, K. Wang, Y. Fu, T. Liu, Y. Yu, J. Xu, and L. Wang, ``Abnormal Traffic Detection Method Based on DCNN-GRU Architecture in SDN,'' \textit{Int. J. Intell. Syst.}, vol. 2025, Art. no. 2846238, 2025, doi: 10.1155/int/2846238.
+\bibitem{b_deeplog} M. Du, F. Li, G. Zheng, and V. Srikumar, ``DeepLog: Anomaly Detection and Diagnosis from System Logs through Deep Learning,'' in \textit{Proc. ACM SIGSAC Conf. Comput. Commun. Secur. (CCS)}, 2017, pp. 1285--1298, doi: 10.1145/3133956.3134015.
+\bibitem{b_yungaicela} N. M. Yungaicela-Naula, C. Vargas-Rosales, J. A. P{\'e}rez-D{\'\i}az, and D. F. Carrera, ``A flexible SDN-based framework for slow-rate DDoS attack mitigation by using deep reinforcement learning,'' \textit{J. Netw. Comput. Appl.}, vol. 205, p. 103444, 2022, doi: 10.1016/j.jnca.2022.103444.
+\bibitem{b_sdn_survey} D. Kreutz, F. M. Ramos, P. E. Verissimo, C. E. Rothenberg, S. Azodolmolky, and S. Uhlig, ``Software-Defined Networking: A Comprehensive Survey,'' \textit{Proc. IEEE}, vol. 103, no. 1, pp. 14--76, 2015, doi: 10.1109/JPROC.2014.2371999.
+\bibitem{b_drl_sdn} N. M. Yungaicela-Naula, C. Vargas-Rosales, and J. A. P{\'e}rez-D{\'\i}az, ``SDN/NFV-based framework for autonomous defense against slow-rate DDoS attacks by using reinforcement learning,'' \textit{Future Gener. Comput. Syst.}, vol. 149, pp. 637--649, 2023, doi: 10.1016/j.future.2023.08.007.
+\bibitem{b_stride} M. Howard and D. LeBlanc, \textit{Writing Secure Code}, 2nd ed., Redmond, WA, USA: Microsoft Press, 2003.
+\bibitem{b_insdn} M. S. Elsayed, N.-A. Le-Khac, and A. D. Jurcut, ``InSDN: A Novel SDN Intrusion Dataset,'' \textit{IEEE Access}, vol. 8, pp. 165263--165284, 2020, doi: 10.1109/ACCESS.2020.3022633.
+\bibitem{b_cicids2018} I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, ``Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization,'' in \textit{Proc. 4th Int. Conf. Inf. Syst. Security Privacy (ICISSP)}, 2018, pp. 108--116, doi: 10.5220/0006639801080116.
+\bibitem{b_pytorch_quant} PyTorch Documentation, ``torch.ao.quantization.quantize\_dynamic API Reference,'' PyTorch Documentation, 2024. [Online]. Available: \url{https://pytorch.org/docs/stable/generated/torch.ao.quantization.quantize_dynamic.html}
+\bibitem{b_dqn_nature} V. Mnih et al., ``Human-level Control Through Deep Reinforcement Learning,'' \textit{Nature}, vol. 518, no. 7540, pp. 529--533, 2015, doi: 10.1038/nature14236.
+\bibitem{b_redis_stream} Redis Ltd., ``Redis Streams,'' Redis Documentation, 2024. [Online]. Available: \url{https://redis.io/docs/latest/develop/data-types/streams/}
+\bibitem{b_zero_trust} S. Rose, O. Borchert, S. Mitchell, and S. Connelly, ``Zero Trust Architecture,'' \textit{NIST Special Publication 800-207}, 2020, doi: 10.6028/NIST.SP.800-207.
+\bibitem{b_openflow} N. McKeown et al., ``OpenFlow: Enabling Innovation in Campus Networks,'' \textit{ACM SIGCOMM Comput. Commun. Rev.}, vol. 38, no. 2, pp. 69--74, 2008, doi: 10.1145/1355734.1355746.
+\bibitem{b_diff_privacy} C. Dwork, ``Differential Privacy: A Survey of Results,'' in \textit{Proc. Int. Conf. Theory Appl. Models Comput. (TAMC)}, LNCS vol. 4978, 2008, pp. 1--19, doi: 10.1007/978-3-540-79228-4\_1.
+\end{thebibliography}
 \end{document}

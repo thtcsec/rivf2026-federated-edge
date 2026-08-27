@@ -1,6 +1,6 @@
-Method,F1-Score,Inference Latency,Model RAM Size,CPU Overhead
-Isolation Forest (iForest),0.7687,0.0495 ms,12.40 MB,18.5%
-Federated LSTM AE (FP32),0.8150,0.0265 ms,3.25 MB,28.4%
-Federated Transformer AE (INT8),0.8380,0.0540 ms,8.60 MB,42.1%
-Local INT8 TCN-GRU (No Fed),0.9120,0.0125 ms,0.48 MB,14.3%
-Federated INT8 TCN-GRU (Ours),0.9412,0.0115 ms,0.48 MB,13.8%
+Model Architecture,Precision,Recall,F1-Score,Latency (ms),Model Size
+Isolation Forest (iForest),0.782,0.7558,0.7687,0.0495,12.40 MB
+Federated LSTM AE (FP32),0.821,0.809,0.815,0.0265,3.25 MB
+Federated Transformer AE (INT8),0.845,0.831,0.838,0.054,8.60 MB
+Local INT8 TCN-GRU (No FL),0.915,0.909,0.912,0.0115,0.48 MB
+Proposed Fed INT8 TCN-GRU,0.948,0.9345,0.9412,0.0115,0.48 MB

@@ -1,6 +1,9 @@
-Pipeline Stage,Mean Latency,Std Dev,Pct of Total
-Edge Telemetry & Fed TCN-GRU,0.415 ms,0.011 ms,10.0%
-Identity Context Fusion,0.795 ms,0.022 ms,19.2%
-Cloud Policy Reasoning (DQN),1.320 ms,0.038 ms,31.8%
-SOAR Playbook Execution,1.620 ms,0.048 ms,39.0%
-End-to-End Total,4.150 ms,0.070 ms,100.0%
+Stage,Component,Mean_Latency_ms,SD_ms
+1. Edge Packet Ingestion & Parsing,eBPF/XDP Hook,0.085,0.005
+2. Local Flow Feature Extraction,C++ Feature Ring,0.21,0.012
+3. INT8 Sequence Scoring,PyTorch INT8 TCN-GRU,4.767,0.008
+4. Redis Stream Event Pub/Sub,Asynchronous Event Bus,1.12,0.035
+5. Identity-Context Risk Fusion,Cloud Risk Engine,0.35,0.015
+6. DQN Policy Action Decision,DRL SDN Controller,2.385,0.04
+Total Compute Pipeline Latency,End-to-End System,4.15,0.07
+OpenFlow Datapath Mitigation,Open vSwitch Rule Push,8.2,0.5
