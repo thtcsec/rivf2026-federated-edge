@@ -48,7 +48,8 @@ statistically obvious; semantic reconstruction has to be declared.
 - zero-shot transfer from InSDN to **all three** CICIDS2017 views, scored by the
   same models in a single run, plus the centralized model on the same views;
 - port/protocol retraining ablations against every view, which quantify dropping
-  a field against reconstructing it;
+  a field against reconstructing it, including the schema-intersection setting
+  that drops both fields the `MachineLearningCVE` release does not supply;
 - a feature-level audit using two-sample KS distance and source-mean masking,
   reported per view; and
 - a label-free preflight provenance check, reported against that audit.

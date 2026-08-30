@@ -22,7 +22,10 @@ Cross-Dataset Federated Intrusion Detection*
    reversal to protocol, whose learned contribution changes sign between
    row-matched views while its marginal KS distance is the smaller of the two,
    and that quantify dropping the unavailable field (0.5157) against
-   reconstructing it (0.3545).
+   reconstructing it (0.3545). The schema-intersection setting, which drops both
+   fields `MachineLearningCVE` does not supply, reaches 0.5075 and returns the
+   same five-seed metrics on TL and CF to four decimals, since removing those two
+   columns makes the two views the same data.
 5. A label-free preflight check using only source-training statistics and
    unlabelled target values. It flags exactly the two substituted source-port
    columns among 27 column--view pairs, on all five seeds, and does not flag the

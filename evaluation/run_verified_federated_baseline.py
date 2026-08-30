@@ -114,7 +114,11 @@ def one(seed,ablation='all'):
    raise SystemExit('counterfactual mirror is not row-matched after seeded subsampling')
   if np.array_equal(xa[:,[FEATURES.index(f) for f in PROVENANCE_FIELDS]],xb[:,[FEATURES.index(f) for f in PROVENANCE_FIELDS]]):
    raise SystemExit('counterfactual mirror is identical to the original; nothing was varied')
- keep={'no_ports':[0,3,4,5,6,7,8],'no_protocol':list(range(1,len(FEATURES)))}.get(ablation)
+ # 'intersection' keeps only the fields MachineLearningCVE supplies as read
+ # values, i.e. it drops both provenance-sensitive columns instead of
+ # reconstructing or sentinel-filling them.
+ keep={'no_ports':[0,3,4,5,6,7,8],'no_protocol':list(range(1,len(FEATURES))),
+       'intersection':[i for i,f in enumerate(FEATURES) if f not in PROVENANCE_FIELDS]}.get(ablation)
  if keep is not None: xi=xi[:,keep];tg={m:(x[:,keep],y) for m,(x,y) in tg.items()}
  xtr,xte,ytr,yte=train_test_split(xi,yi,test_size=.2,stratify=yi,random_state=seed)
  raw_tr=xtr.copy();raw_tg={m:x.copy() for m,(x,_) in tg.items()}  # unscaled, for the label-free screen
@@ -148,8 +152,8 @@ def summarize(rows,key):
 def main():
  missing=[str(p) for p in [INSDN,*MIRRORS.values()] if not p.exists()]
  if missing: raise SystemExit('Missing prepared dataset file(s): '+', '.join(missing)+'\nSee data/README.md or set INSDN_CSV, CICIDS2017_MIRROR_CSV and CICIDS2017_MLCVE_MIRROR_CSV.')
- rows=[one(s) for s in SEEDS]; ab=[one(s,'no_ports') for s in SEEDS]; npv=[one(s,'no_protocol') for s in SEEDS]; oh=[one(s,'onehot_protocol') for s in SEEDS]
- groups=[('all_nine',rows),('without_ports',ab),('without_protocol',npv),('onehot_protocol',oh)]
+ rows=[one(s) for s in SEEDS]; ab=[one(s,'no_ports') for s in SEEDS]; npv=[one(s,'no_protocol') for s in SEEDS]; oh=[one(s,'onehot_protocol') for s in SEEDS]; isec=[one(s,'intersection') for s in SEEDS]
+ groups=[('all_nine',rows),('without_ports',ab),('without_protocol',npv),('onehot_protocol',oh),('intersection',isec)]
  out=dict(seeds=SEEDS,clients=K,rounds=ROUNDS,features=FEATURES,source=dict(insdn_file=INSDN.name,mirrors={m:str(p.parent.name+'/'+p.name) for m,p in MIRRORS.items()},cicids2017_label_mapping={'1':'benign','0':'attack_ddos','2':'attack_portscan'},provenance='See data/README.md and evaluation/prepare_public_data.py'),hyperparameters=dict(model='SGDClassifier(log_loss)',penalty='l2',alpha=1e-4,eta0=.01,batch='full local partition per round',local_epochs=1,initialization='shared zero coefficients/intercept',threshold=.5,class_weight=None,scaler='StandardScaler fit on source training only',sklearn=sklearn.__version__),per_seed=rows,summary={k:summarize(rows,k) for k in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS]})
  for name,group in groups[1:]:
   out[f'ablation_{name}']=summarize(group,'fedavg_iid')

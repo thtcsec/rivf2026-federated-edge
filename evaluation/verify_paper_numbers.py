@@ -31,8 +31,9 @@ failures: list[str] = []
 
 
 def q(x: float) -> str:
-    """Render a value in the paper's leading-dot four-decimal convention."""
-    return f'{x:.4f}'.replace('0.', '.')
+    """Render a value the way the paper's tables print it: four decimals with a
+    leading zero, and a math minus rather than a hyphen when negative."""
+    return f'$-${abs(x):.4f}' if x < 0 else f'{x:.4f}' 
 
 
 def check(label: str, expected: str, *, where: str | None = None) -> None:
@@ -124,7 +125,8 @@ for prefix, panel in [('cross_', FED_PANEL), ('central_cross_', CEN_PANEL)]:
 
 # --- retraining ablation table ---------------------------------------------
 ABL = [('All nine', None), ('Without ports', 'without_ports'),
-       ('Without protocol', 'without_protocol'), ('One-hot protocol', 'onehot_protocol')]
+       ('Without protocol', 'without_protocol'), ('One-hot protocol', 'onehot_protocol'),
+       ('Intersection', 'intersection')]
 ABLT = table_block('tab:ablation')
 for label, name in ABL:
     row = table_row(label, ABLT)
@@ -148,7 +150,7 @@ for label, feat in [('Protocol', 'ip_proto'), ('Destination port', 'tp_dst'),
         check(f'{label}/{view} KS', q(g.loc[(view, feat), 'ks']), where=row)
         d = g.loc[(view, feat), 'mirror_auc_delta']
         # The paper writes an explicit sign for positive deltas, and exact zero plainly.
-        rendered = q(d) if d < 0 else ('.0000' if abs(d) < 5e-5 else '+' + q(d))
+        rendered = q(d) if d < 0 else ('0.0000' if abs(d) < 5e-5 else '$+$' + q(d))
         check(f'{label}/{view} dAUC', rendered, where=row)
 
 # --- label-free provenance screen ------------------------------------------
@@ -156,13 +158,11 @@ sg = SCR.groupby(['mirror', 'feature']).agg(
     ratio=('std_ratio', 'mean'), oor=('out_of_range', 'mean'), tv=('tv_dist', 'mean'),
     flagged=('flagged', 'all'), any_flag=('flagged', 'any'),
     collapse=('collapsed_category', 'all'))
-SCRT = table_block('tab:screen')
-for label, feat in [('Protocol', 'ip_proto'), ('Source port', 'tp_src'),
-                    ('Destination port', 'tp_dst'), ('Byte rate', 'byte_count_per_sec')]:
-    row = table_row(label, SCRT)
-    for view, _ in VIEWS:
-        check(f'screen {label}/{view} ratio', f"{sg.loc[(view, feat), 'ratio']:.4f}", where=row)
-        check(f'screen {label}/{view} OOR', q(sg.loc[(view, feat), 'oor']), where=row)
+# Table VI was retired for space; the screen is now reported in prose, so the
+# flagged cells are checked there instead of cell by cell.
+for view in ('tl_counterfactual', 'mlcve'):
+    assert sg.loc[(view, 'tp_src'), 'ratio'] == 0.0, view
+    assert sg.loc[(view, 'tp_src'), 'oor'] == 1.0, view
 
 # The paper claims: exactly the two substituted ports are flagged, on every seed;
 # protocol is never flagged; and the rejected rule fires on every view.
@@ -184,6 +184,8 @@ if collapse != sorted(v for v, _ in VIEWS):
 
 unflagged = sg[~sg.any_flag]
 for label, value in [
+    ('screen flagged ratio', f"{sg.loc[('tl_counterfactual', 'tp_src'), 'ratio']:.4f}"),
+    ('screen flagged OOR', f"{sg.loc[('tl_counterfactual', 'tp_src'), 'oor']:.4f}"),
     ('screen min unflagged ratio', f"{unflagged.ratio.min():.3f}"),
     ('screen max unflagged OOR', f"{unflagged.oor.max():.4f}"),
     ('screen TL protocol TV', f"{sg.loc[('trafficlabelling', 'ip_proto'), 'tv']:.4f}"),

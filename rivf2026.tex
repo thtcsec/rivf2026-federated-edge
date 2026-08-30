@@ -2,7 +2,7 @@
 \pdfminorversion=6
 \usepackage[utf8]{inputenc}
 \usepackage{cite,amsmath,amssymb,graphicx,booktabs,url,microtype,balance}
-\renewcommand{\arraystretch}{0.88}
+\renewcommand{\arraystretch}{0.86}
 \begin{document}
 \title{Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection}
 \author{\IEEEauthorblockN{Hoang Tu Trinh and Tien Thanh Cao}
@@ -95,10 +95,10 @@ Table~\ref{tab:results} reports mean$\pm$std over five seeded repeated holdouts.
 \caption{Source-domain (InSDN) five-seed results; mean$\pm$std.}\label{tab:results}\centering\scriptsize\setlength{\tabcolsep}{2.5pt}
 \begin{tabular}{lrrrr}\toprule
 Setting&F1&ROC-AUC&Bal. acc.&MCC\\\midrule
-Central&.9567$\pm$.0033&.9320$\pm$.0038&.8285$\pm$.0149&.7624$\pm$.0199\\
-Local-only&.9588$\pm$.0027&.9288$\pm$.0030&.8367$\pm$.0120&.7751$\pm$.0162\\
-FedAvg IID&.9580$\pm$.0023&.9324$\pm$.0039&.8355$\pm$.0091&.7709$\pm$.0140\\
-FedAvg non-IID&.9556$\pm$.0038&.9336$\pm$.0064&.8136$\pm$.0166&.7562$\pm$.0228\\\bottomrule
+Central&0.9567$\pm$0.0033&0.9320$\pm$0.0038&0.8285$\pm$0.0149&0.7624$\pm$0.0199\\
+Local-only&0.9588$\pm$0.0027&0.9288$\pm$0.0030&0.8367$\pm$0.0120&0.7751$\pm$0.0162\\
+FedAvg IID&0.9580$\pm$0.0023&0.9324$\pm$0.0039&0.8355$\pm$0.0091&0.7709$\pm$0.0140\\
+FedAvg non-IID&0.9556$\pm$0.0038&0.9336$\pm$0.0064&0.8136$\pm$0.0166&0.7562$\pm$0.0228\\\bottomrule
 \end{tabular}\end{table}
 Round 20 was fixed before evaluation, and the saved history shows both partitions flat well before it. For seed 11, the IID FedAvg confusion matrix contains TN=833, FP=361, FN=33, and TP=4,773, so the class imbalance explains why F1 and PR-AUC alone are insufficient and why Table~\ref{tab:results} includes MCC. Per-seed values are in \texttt{five\_seed\_metrics.csv}: IID FedAvg F1 ranges from 0.9557 to 0.9606 and the non-IID range is wider (0.9510--0.9611), as expected when both sampled records and client allocations change.
 
@@ -111,54 +111,45 @@ The real \textsc{ml} release lands close to the counterfactual ($0.3441$ against
 \resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrr}\toprule
 Target view&F1&ROC-AUC&PR-AUC&Bal. acc.&MCC\\\midrule
 \multicolumn{6}{l}{\textit{FedAvg IID global model}}\\
-\textsc{tl} (original)&.5012$\pm$.0037&.7357$\pm$.0070&.4520$\pm$.0154&.6403$\pm$.0037&.2511$\pm$.0065\\
-\textsc{cf} (row-matched)&.3558$\pm$.0026&.3545$\pm$.0031&.2102$\pm$.0009&.4191$\pm$.0037&-.1915$\pm$.0097\\
-\textsc{ml} (real release)&.2914$\pm$.0018&.3441$\pm$.0040&.1848$\pm$.0010&.3766$\pm$.0023&-.2698$\pm$.0067\\\midrule
+\textsc{tl} (original)&0.5012$\pm$0.0037&0.7357$\pm$0.0070&0.4520$\pm$0.0154&0.6403$\pm$0.0037&0.2511$\pm$0.0065\\
+\textsc{cf} (row-matched)&0.3558$\pm$0.0026&0.3545$\pm$0.0031&0.2102$\pm$0.0009&0.4191$\pm$0.0037&$-$0.1915$\pm$0.0097\\
+\textsc{ml} (real release)&0.2914$\pm$0.0018&0.3441$\pm$0.0040&0.1848$\pm$0.0010&0.3766$\pm$0.0023&$-$0.2698$\pm$0.0067\\\midrule
 \multicolumn{6}{l}{\textit{Centralized model, same records}}\\
-\textsc{tl} (original)&.4950$\pm$.0041&.7490$\pm$.0165&.4656$\pm$.0225&.6336$\pm$.0047&.2392$\pm$.0083\\
-\textsc{cf} (row-matched)&.3545$\pm$.0020&.3544$\pm$.0033&.2100$\pm$.0010&.4163$\pm$.0045&-.2004$\pm$.0147\\
-\textsc{ml} (real release)&.2903$\pm$.0041&.3447$\pm$.0048&.1848$\pm$.0012&.3738$\pm$.0074&-.2782$\pm$.0198\\\bottomrule
+\textsc{tl} (original)&0.4950$\pm$0.0041&0.7490$\pm$0.0165&0.4656$\pm$0.0225&0.6336$\pm$0.0047&0.2392$\pm$0.0083\\
+\textsc{cf} (row-matched)&0.3545$\pm$0.0020&0.3544$\pm$0.0033&0.2100$\pm$0.0010&0.4163$\pm$0.0045&$-$0.2004$\pm$0.0147\\
+\textsc{ml} (real release)&0.2903$\pm$0.0041&0.3447$\pm$0.0048&0.1848$\pm$0.0012&0.3738$\pm$0.0074&$-$0.2782$\pm$0.0198\\\bottomrule
 \end{tabular}}\end{table}
 
 \subsection{Localizing the reversal}
 Table~\ref{tab:audit} perturbs the fixed model one feature at a time, localizing the ranking reversal to protocol: it is the only field whose masking effect changes sign, and it does so on matched rows: on \textsc{tl} it carries the largest transferable contribution, with masking costing $0.1438$ ROC-AUC, whereas on \textsc{cf} masking the surrogate \emph{gains} $0.2647$. The real release agrees ($+0.2103$). Marginal shift magnitude does not identify this. The KS distance for protocol is $0.3532$ on \textsc{tl} and only $0.0992$ on \textsc{cf}, so the harmful encoding is the one that looks better aligned, even though the two are computed on the very same rows. Source port shows the converse failure: its \textsc{cf} distance is maximal because every value is the sentinel, yet masking it changes nothing, since a constant column contributes a constant to the logit and cannot affect ranking.
 \begin{table}[t]\caption{Model-preserving feature audit; five-seed means. $\Delta$AUC is masked minus full ROC-AUC on that view. Source F1 is shared because the source model is identical.}\label{tab:audit}\centering\scriptsize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{lrrrrrrr}\toprule
+\resizebox{\columnwidth}{!}{\begin{tabular}{lrrrrrrr}\toprule
 &&\multicolumn{2}{c}{\textsc{tl}}&\multicolumn{2}{c}{\textsc{cf}}&\multicolumn{2}{c}{\textsc{ml}}\\
 \cmidrule(lr){3-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
 Masked feature&Src. F1&KS&$\Delta$AUC&KS&$\Delta$AUC&KS&$\Delta$AUC\\\midrule
-Protocol&.9070&.3532&-.1438&.0992&+.2647&.0992&+.2103\\
-Destination port&.9611&.3533&-.0605&.3533&-.0542&.3535&-.0583\\
-Mean packet size&.9500&.5642&+.0547&.5642&+.0230&.5571&+.0639\\
-Source port&.9563&.4287&+.0165&1.0000&.0000&1.0000&.0000\\\bottomrule
-\end{tabular}\end{table}
+Protocol&0.9070&0.3532&$-$0.1438&0.0992&$+$0.2647&0.0992&$+$0.2103\\
+Destination port&0.9611&0.3533&$-$0.0605&0.3533&$-$0.0542&0.3535&$-$0.0583\\
+Mean packet size&0.9500&0.5642&$+$0.0547&0.5642&$+$0.0230&0.5571&$+$0.0639\\
+Source port&0.9563&0.4287&$+$0.0165&1.0000&0.0000&1.0000&0.0000\\\bottomrule
+\end{tabular}}\end{table}
 
-Retraining confirms the mechanism rather than inferring it from perturbation alone, and yields the comparison that matters when a column is unavailable. Table~\ref{tab:ablation} removes fields before training. Dropping protocol costs source F1 ($0.9580\rightarrow0.9118$) and collapses the large \textsc{tl}--\textsc{cf} gap, bringing all three views near chance ($0.4953$, $0.5157$, $0.4668$), which is consistent with protocol being the dominant driver. The residual differences remain because source-port provenance still differs and \textsc{ml} additionally uses a different row set. Crucially, on the matched rows of \textsc{cf}, \emph{dropping} the unavailable field reaches $0.5157$ while \emph{reconstructing} it reaches only $0.3545$, so incorrect reconstruction is substantially worse than admitting the field is missing. That inverts the intuition behind name-based harmonization. One-hot encoding protocol is the best \textsc{tl} configuration ($0.7472$) yet barely moves \textsc{cf} ($0.3630$), so a representation change cannot repair reconstructed values. Removing both ports lowers \textsc{tl} ROC-AUC to $0.7062$ with source F1 unchanged; the masking audit attributes that aggregate loss primarily to destination port, which is present in every view, whereas source port is secondary for ranking.
-\begin{table}[t]\caption{Retraining ablations, five seeds. Source columns are InSDN; view columns are zero-shot ROC-AUC.}\label{tab:ablation}\centering\scriptsize\setlength{\tabcolsep}{3pt}
+Retraining confirms the mechanism rather than inferring it from perturbation alone, and yields the comparison that matters when a column is unavailable. Table~\ref{tab:ablation} removes fields before training. Dropping protocol costs source F1 ($0.9580\rightarrow0.9118$) and collapses the large \textsc{tl}--\textsc{cf} gap, bringing all three views near chance ($0.4953$, $0.5157$, $0.4668$), which is consistent with protocol being the dominant driver. The residual differences remain because source-port provenance still differs and \textsc{ml} additionally uses a different row set. Crucially, on the matched rows of \textsc{cf}, \emph{dropping} the unavailable field reaches $0.5157$ while \emph{reconstructing} it reaches only $0.3545$: incorrect reconstruction is worse than admitting the field is missing, which inverts the intuition behind name-based harmonization. One-hot encoding protocol is the best \textsc{tl} configuration ($0.7472$) yet barely moves \textsc{cf} ($0.3630$), so a representation change cannot repair reconstructed values. Removing both ports lowers \textsc{tl} ROC-AUC to $0.7062$ with source F1 unchanged; the masking audit attributes that aggregate loss primarily to destination port, which is present in every view, whereas source port is secondary for ranking. Finally, the schema intersection, dropping both unavailable fields rather than reconstructing either, is what a practitioner should prefer: it costs source F1 ($0.9580\rightarrow0.9082$) but returns chance-level transfer ($0.5075$) instead of the $0.3545$ reconstruction produces. It also checks the counterfactual independently, since with both columns removed \textsc{cf} and \textsc{tl} are the same data and agree to every digit ($0.5075\pm0.0198$), confirming they differ in those two columns alone.
+\begin{table}[t]\caption{Retraining ablations, five seeds. Source columns are InSDN; view columns are zero-shot ROC-AUC. The intersection row keeps only the seven fields both releases supply as read values.}\label{tab:ablation}\centering\scriptsize\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lrrrrr}\toprule
 Features&Src. F1&Src. AUC&\textsc{tl}&\textsc{cf}&\textsc{ml}\\\midrule
-All nine&.9580$\pm$.0023&.9324$\pm$.0039&.7357&.3545&.3441\\
-Without ports&.9583$\pm$.0030&.9267$\pm$.0065&.7062&.3005&.2857\\
-Without protocol&.9118$\pm$.0042&.8915$\pm$.0067&.4953&.5157&.4668\\
-One-hot protocol&.9582$\pm$.0023&.9311$\pm$.0036&.7472&.3630&.3506\\\bottomrule
+All nine&0.9580$\pm$0.0023&0.9324$\pm$0.0039&0.7357&0.3545&0.3441\\
+Without ports&0.9583$\pm$0.0030&0.9267$\pm$0.0065&0.7062&0.3005&0.2857\\
+Without protocol&0.9118$\pm$0.0042&0.8915$\pm$0.0067&0.4953&0.5157&0.4668\\
+One-hot protocol&0.9582$\pm$0.0023&0.9311$\pm$0.0036&0.7472&0.3630&0.3506\\
+Intersection&0.9082$\pm$0.0045&0.8954$\pm$0.0076&0.5075&0.5075&0.4505\\\bottomrule
 \end{tabular}\end{table}
 
 \subsection{What a label-free preflight check can and cannot catch}\label{sec:screen}
-Table~\ref{tab:screen} applies the check of Section~III-B, which sees no target label. Among the 27 evaluated column--view pairs it flags two on all five seeds and no others: the source port of \textsc{cf} and of \textsc{ml}, which retain none of their variation (ratio $0.0000$) and lie entirely outside the source-training range. The separation is not marginal, since no unflagged column falls below ratio $0.352$ or exceeds out-of-range $0.0028$. The one-sided thresholds are justified in the same table, where the byte-rate column is 31 to 48 times more dispersed yet has $\Delta$AUC $0.0000$. We claim no more than a cheap preflight sanity check: detecting a constant placeholder is easy, and what makes it worth reporting is the field it does \emph{not} flag.
+The check of Section~III-B sees no target label. Among the 27 evaluated column--view pairs it flags two on all five seeds and no others: the source port of \textsc{cf} and of \textsc{ml}, which retain none of their variation (ratio $0.0000$) and lie entirely outside the source-training range (out-of-range $1.0000$). The separation is not marginal, since no unflagged column falls below ratio $0.352$ or exceeds out-of-range $0.0028$. The one-sided thresholds matter: the byte-rate column is 31 to 48 times more dispersed yet has $\Delta$AUC $0.0000$. Per-column values are in \texttt{provenance\_screen.csv}. We claim no more than a cheap preflight sanity check: detecting a constant placeholder is easy, and what makes it worth reporting is the field it does \emph{not} flag.
 
 That field is the one that reverses the verdict. The reconstructed protocol keeps a plausible dispersion ratio ($0.5672$ on \textsc{cf}) and never leaves the source range, so both conditions stay silent. This is not because the corruption leaves no statistical trace; it does, and the table shows it. The trace simply fails to distinguish semantic corruption from ordinary shift under the marginal rules we tested. Total-variation distance repeats the KS failure, scoring the harmful encoding as the \emph{closer} one ($0.1489$ against $0.3532$) despite identical rows, and the mass-collapse rule fires on all three views, including uncorrupted \textsc{tl}, where protocol 0 falls from $35\%$ of source mass to $0.04\%$. A rule firing on the intact view as readily as on the damaged ones cannot discriminate, so we report that negative result rather than tune thresholds until the cases separate.
-\begin{table}[t]\caption{Label-free check, five-seed means. Ratio is target over source-training standard deviation; OOR is the fraction of target rows outside the source-training range. A flag requires ratio $<0.01$ or OOR $>0.01$; flagged cells are bold.}\label{tab:screen}\centering\scriptsize\setlength{\tabcolsep}{3pt}
-\begin{tabular}{lrrrrrr}\toprule
-&\multicolumn{2}{c}{\textsc{tl}}&\multicolumn{2}{c}{\textsc{cf}}&\multicolumn{2}{c}{\textsc{ml}}\\
-\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
-Column&Ratio&OOR&Ratio&OOR&Ratio&OOR\\\midrule
-Protocol&1.0401&.0000&0.5672&.0000&0.5606&.0000\\
-Source port&0.9481&.0028&\textbf{0.0000}&\textbf{1.0000}&\textbf{0.0000}&\textbf{1.0000}\\
-Destination port&1.1984&.0005&1.1984&.0005&1.2650&.0006\\
-Byte rate&30.6377&.0023&30.6377&.0023&47.6245&.0028\\\bottomrule
-\end{tabular}\end{table}
 
-The consequence is a division of labour. Placeholder substitution is statistically obvious and a preflight check should reject it, whereas a semantically reconstructed field may retain plausible marginal statistics and evade such checks, so it cannot be reliably inferred from the marginal checks tested here and should be established from provenance metadata recorded at preparation time. Our script therefore records, per input file, whether each field was read or reconstructed.
+Placeholder substitution is statistically obvious and a preflight check should reject it, whereas a semantically reconstructed field may retain plausible marginal statistics and evade such checks, so it cannot be reliably inferred from the marginal checks tested here and should be established from provenance metadata recorded at preparation time. Our script therefore records, per input file, whether each field was read or reconstructed.
 
 \section{Discussion}
 \subsection{What the controls establish}
@@ -167,18 +158,18 @@ The controls share the feature set, records, optimizer family, class weight and 
 \subsection{Why provenance, not traffic, is the operative variable}
 The \textsc{tl}--\textsc{cf} contrast licenses a causal reading: those views share rows, order, labels, prevalence and seven of nine features, and are scored by the same models under the same source-fitted scaler and threshold, so the difference in Table~\ref{tab:cross} cannot be attributed to attack mix, labeling, collection environment or sampling. Only two columns differ. The \textsc{tl}--\textsc{ml} contrast alone would not, since those releases also differ in row set and prevalence.
 
-The effect is a reversal rather than a loss because the model applies a coefficient to a field whose target values now encode something else. Protocol becomes a TCP-flag indicator omitting UDP entirely, disagreeing with the original on $30.32\%$ of matched rows, so its contribution is not merely uninformative but anti-aligned with target ranking; the fixed-threshold MCC turns negative as well. Rosay et al.\ independently report wrong protocol detection in these releases~\cite{rosay}; we quantify what such a field does to a verdict. The ablations add the corollary: when a meaningful field is unavailable, dropping it degrades transfer to near-chance, but reconstructing it incorrectly is considerably worse.
+The effect is a reversal rather than a loss because the model applies a coefficient to a field whose target values now encode something else. Protocol becomes a TCP-flag indicator omitting UDP entirely, disagreeing with the original on $30.32\%$ of matched rows, so its contribution is not merely uninformative but anti-aligned with target ranking; the fixed-threshold MCC turns negative too. Rosay et al.\ independently report wrong protocol detection in these releases~\cite{rosay}; we quantify what such a field does to a verdict. The ablations add the corollary: dropping an unavailable field degrades transfer to near-chance, but reconstructing it incorrectly is considerably worse.
 
 Section~\ref{sec:screen} states the limit of automation. A preflight check catches placeholder substitution and should be run, but it did not catch the reconstruction here, and none of the marginal rules we tested separates the two protocol encodings even on identical rows. A cross-dataset NIDS result must therefore state which release supplied each feature and which fields were reconstructed rather than read. Absent that record, a below-random result cannot be distinguished from an artifact of harmonization, and neither can a favorable one.
 
-The external evaluation fixes every source-fitted quantity, including scaling and the threshold, which is stricter than re-fitting either on target labels. The residual \textsc{tl} degradation still admits several causes, among them attack mix, label reduction and the limited expressiveness of nine aggregate features; this design does not attribute it to any one of them.
+The external evaluation fixes every source-fitted quantity, including scaling and threshold, which is stricter than re-fitting on target labels. The residual \textsc{tl} degradation still admits several causes, among them attack mix, label reduction and the limited expressiveness of nine aggregate features; this design does not attribute it to any one of them.
 
 \section{Threats to Validity and Reproducibility}
 The experiment evaluates tabular flows, not packet traces, and is not an SDN deployment. Five repeated holdouts share a finite source corpus and are not independent sites. The contrast covers one source corpus, one target corpus, one classifier family under two training regimes, and three capture files; whether the reversal generalizes to other release pairs or model families is open. The reconstruction we evaluate is one plausible rule, the obvious one when only flag counts survive; another would give other magnitudes. The counterfactual establishes what these two fields do to this model on these rows, not that provenance is the largest source of cross-dataset error. The preflight thresholds were fixed at $0.01$ rather than tuned, and the check is one-directional: a flag is strong evidence of substitution, but silence is not evidence of sound provenance. Masking is a label-aware model-reliance diagnostic, not a causal attribution, since correlated features share credit. Binary reduction limits external validity.
 
 \balance
 \section{Artifact Availability}
-The preparation script converts named public source files, records which branch supplied each reconstructed field, publishes SHA-256 checksums for the InSDN file and each target view, and aborts if the counterfactual is not row-matched. The evaluation script regenerates all five-seed outputs under the pinned Python 3.11 environment, and a companion script re-reads this paper and fails if any reported value disagrees with them. The artifact is at \url{https://github.com/thtcsec/rivf2026-federated-edge}; third-party datasets are not redistributed.
+The preparation script converts named public source files, records which branch supplied each reconstructed field, publishes SHA-256 checksums for the InSDN file and each target view, and aborts if the counterfactual is not row-matched. The evaluation script regenerates all five-seed outputs under the pinned Python 3.11 environment, and a companion script re-reads this paper and fails if any reported value disagrees with them. We separate repeatability (pinned environment, fixed seeds), reproducibility (released scripts and checksummed inputs, independent team), and replicability on other release pairs, which is left open. The artifact is at \url{https://github.com/thtcsec/rivf2026-federated-edge}; third-party datasets are not redistributed.
 
 \section{Conclusion}
 Matched controls show no FedAvg accuracy advantage on sampled InSDN, while non-IID skew primarily harms fixed-threshold measures. On one fixed set of 207,463 target flows, with identical labels, prevalence and seven identical features, overwriting only protocol and source port with the surrogates of one \texttt{MachineLearningCVE}-compatible harmonization moves ROC-AUC from $0.7357$ to $0.3545$ and MCC from $+0.2511$ to $-0.1915$. The real \texttt{MachineLearningCVE} release reproduces the effect ($0.3441$) and a centralized model shows the same pattern, so this is a property of feature semantics rather than of federated averaging. Masking localizes the ranking reversal to protocol, whose smaller marginal shift is the more harmful encoding, and the ablations show that dropping an unavailable field is safer than reconstructing it wrongly ($0.5157$ versus $0.3545$). A label-free preflight check catches the substituted port but not the reconstructed protocol, and none of the tested marginal distance rules separates the two encodings. Cross-dataset NIDS evaluations should therefore report feature provenance per field. Future work should test other corpora, release pairs, reconstruction rules, and model families.
