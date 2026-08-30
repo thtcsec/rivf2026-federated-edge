@@ -1,26 +1,25 @@
 cff-version: 1.2.0
 message: "If you use this research software or paper in your academic work, please cite it as below."
 authors:
-  - family-names: "Tu"
-    given-names: "Trinh Hoang"
+  - family-names: "Trinh"
+    given-names: "Hoang Tu"
     email: "tht.csec2005@gmail.com"
     affiliation: "Department of Cybersecurity, Faculty of Information Technology, HUFLIT"
-  - family-names: "Thanh"
-    given-names: "Cao Tien"
+  - family-names: "Cao"
+    given-names: "Tien Thanh"
     email: "thanhct@huflit.edu.vn"
     affiliation: "Department of Cybersecurity, Faculty of Information Technology, HUFLIT"
-title: "Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control"
-version: "1.0.0"
+title: "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection"
+version: "2.0.0"
 date-released: "2026-08-10"
-url: "https://github.com/thtcsec/rivf2026-federated-edge"
 preferred-citation:
   type: conference-paper
   authors:
-    - family-names: "Tu"
-      given-names: "Trinh Hoang"
-    - family-names: "Thanh"
-      given-names: "Cao Tien"
-  title: "Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control"
+    - family-names: "Trinh"
+      given-names: "Hoang Tu"
+    - family-names: "Cao"
+      given-names: "Tien Thanh"
+  title: "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection"
   collection-title: "Proceedings of the 20th IEEE RIVF International Conference on Computing and Communication Technologies (RIVF 2026)"
   year: 2026
   address: "Hanoi, Vietnam"

@@ -1,18 +1,10 @@
-#!/bin/bash
-# run.sh - Master One-Click Reproducibility Script for IEEE RIVF 2026
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
-
-echo "=== [1/3] Setting up Python Virtual Environment ==="
-python3 -m venv .venv || python -m venv .venv
-source .venv/bin/activate || source .venv/Scripts/activate
-
-echo "=== [2/3] Installing Dependencies ==="
-pip install --upgrade pip
-pip install -r requirements.txt
-
-echo "=== [3/3] Compiling IEEE RIVF 2026 Camera-Ready PDF ==="
-pdflatex -interaction=nonstopmode rivf2026.tex
-pdflatex -interaction=nonstopmode rivf2026.tex
-
-echo "=== SUCCESS: rivf2026.pdf compiled successfully! ==="
+python -m pip install -r requirements.txt
+python evaluation/run_verified_federated_baseline.py
+pdflatex -halt-on-error -interaction=nonstopmode rivf2026.tex
+pdflatex -halt-on-error -interaction=nonstopmode rivf2026.tex
+mkdir -p output/pdf
+cp rivf2026.pdf output/pdf/rivf2026_submission.pdf
+echo "Reproduced metrics and output/pdf/rivf2026_submission.pdf"

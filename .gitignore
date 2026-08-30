@@ -8,3 +8,8 @@ __pycache__/
 *.fls
 *.fdb_latexmk
 .DS_Store
+tmp/
+output/
+# Third-party data must never be redistributed; only README and the
+# provenance/checksum metadata for each prepared file are tracked.
+data/*/*.csv

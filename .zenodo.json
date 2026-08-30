@@ -1,15 +1,15 @@
 {
-  "title": "Federated Edge-Cloud Resilience Architecture for Distributed Campus Networks Using Quantized Sequence Autoencoders and Multi-Agent DRL Control",
+  "title": "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection",
   "upload_type": "publication",
   "publication_type": "conferencepaper",
-  "description": "Research artifact for IEEE RIVF 2026 paper introducing a decentralized Federated Edge-Cloud resilience framework combining PyTorch INT8 TCN-GRU autoencoders with FedAvg parameter aggregation and Multi-Agent DRL SDN control.",
+  "description": "Research artifact for an IEEE RIVF 2026 submission showing that the published CSV distribution supplying target features, not the target traffic, can decide the sign of a cross-dataset federated intrusion-detection result.",
   "creators": [
     {
-      "name": "Tu, Trinh Hoang",
+      "name": "Trinh, Hoang Tu",
       "affiliation": "Faculty of Information Technology, HUFLIT"
     },
     {
-      "name": "Thanh, Cao Tien",
+      "name": "Cao, Tien Thanh",
       "affiliation": "Faculty of Information Technology, HUFLIT"
     }
   ],
@@ -17,11 +17,11 @@
   "license": "MIT",
   "keywords": [
     "Federated Learning",
-    "Edge Computing",
-    "PyTorch INT8 Quantization",
-    "Software-Defined Networking",
-    "Deep Reinforcement Learning",
-    "Zero-Trust Containment",
+    "Intrusion Detection",
+    "Logistic Regression",
+    "Cross-Dataset Evaluation",
+    "Feature Provenance",
+    "Reproducible Research",
     "IEEE RIVF 2026"
   ]
 }

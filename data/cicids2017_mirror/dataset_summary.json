@@ -1,0 +1,39 @@
+{
+  "dataset": "cicids2017_3class",
+  "rows_after_clean": 1037315,
+  "rows_test": 207463,
+  "random_state": 42,
+  "labels": {
+    "ddos": 0,
+    "normal": 1,
+    "portscan": 2
+  },
+  "source_files": [
+    "Monday-WorkingHours.pcap_ISCX.csv.parquet",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet",
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet"
+  ],
+  "field_provenance": [
+    {
+      "file": "Monday-WorkingHours.pcap_ISCX.csv.parquet",
+      "protocol": "original Protocol column",
+      "source_port": "original Source Port column"
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet",
+      "protocol": "original Protocol column",
+      "source_port": "original Source Port column"
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet",
+      "protocol": "original Protocol column",
+      "source_port": "original Source Port column"
+    }
+  ],
+  "protocol_values": [
+    0,
+    6,
+    17
+  ],
+  "source_port_sentinel_rows": 0
+}

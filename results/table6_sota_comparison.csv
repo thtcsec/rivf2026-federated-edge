@@ -1,6 +1,0 @@
-Model Architecture,Precision,Recall,F1-Score,Latency (ms),Model Size
-Isolation Forest (iForest),0.782,0.7558,0.7687,0.0495,12.40 MB
-Federated LSTM AE (FP32),0.821,0.809,0.815,0.0265,3.25 MB
-Federated Transformer AE (INT8),0.845,0.831,0.838,0.054,8.60 MB
-Local INT8 TCN-GRU (No FL),0.915,0.909,0.912,0.0115,0.48 MB
-Proposed Fed INT8 TCN-GRU,0.948,0.9345,0.9412,0.0115,0.48 MB
