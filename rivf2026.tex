@@ -2,6 +2,7 @@
 \pdfminorversion=6
 \usepackage[utf8]{inputenc}
 \usepackage{cite,amsmath,amssymb,graphicx,booktabs,url,microtype,balance}
+\renewcommand{\arraystretch}{0.92}
 \begin{document}
 \title{Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection}
 \author{\IEEEauthorblockN{Hoang Tu Trinh and Tien Thanh Cao}
@@ -99,7 +100,7 @@ Local-only&.9588$\pm$.0027&.9288$\pm$.0030&.8367$\pm$.0120&.7751$\pm$.0162\\
 FedAvg IID&.9580$\pm$.0023&.9324$\pm$.0039&.8355$\pm$.0091&.7709$\pm$.0140\\
 FedAvg non-IID&.9556$\pm$.0038&.9336$\pm$.0064&.8136$\pm$.0166&.7562$\pm$.0228\\\bottomrule
 \end{tabular}\end{table}
-For seed 11, the IID FedAvg confusion matrix contains TN=833, FP=361, FN=33, and TP=4,773, so the class imbalance explains why F1 and PR-AUC alone are insufficient and why Table~\ref{tab:results} includes MCC. Per-seed values are in \texttt{five\_seed\_metrics.csv}: IID FedAvg F1 ranges from 0.9557 to 0.9606 and the non-IID range is wider (0.9510--0.9611), as expected when both sampled records and client allocations change.
+Round 20 was fixed before evaluation, and the saved history shows both partitions flat well before it. For seed 11, the IID FedAvg confusion matrix contains TN=833, FP=361, FN=33, and TP=4,773, so the class imbalance explains why F1 and PR-AUC alone are insufficient and why Table~\ref{tab:results} includes MCC. Per-seed values are in \texttt{five\_seed\_metrics.csv}: IID FedAvg F1 ranges from 0.9557 to 0.9606 and the non-IID range is wider (0.9510--0.9611), as expected when both sampled records and client allocations change.
 
 \subsection{Two fields reverse the verdict on identical rows}\label{sec:cf}
 The same five IID FedAvg models are now scored on all three target views without any refitting (Table~\ref{tab:cross}). On \textsc{tl}, transfer is clearly degraded relative to the source domain ($0.9324\rightarrow0.7357$ ROC-AUC) but remains informative, with positive MCC and PR-AUC $0.4520$ against a $0.2765$ prevalence baseline. Overwriting only \texttt{ip\_proto} and \texttt{tp\_src} on those very rows sends ROC-AUC, PR-AUC, balanced accuracy and MCC below their respective no-skill baselines (ROC-AUC $0.3545$, MCC $-0.1915$), while F1 falls to $0.3558$. Because \textsc{cf} shares its rows, order, labels, prevalence and seven features with \textsc{tl}, this cannot be attributed to attack mix, labeling, collection environment or sampling; the only variable is the values those two columns hold. The seed-to-seed standard deviations are an order of magnitude smaller than the gap.
@@ -188,25 +189,25 @@ The authors thank the Faculty of Information Technology, Ho Chi Minh City Univer
 \bibitem{fedavg} H. B. McMahan \textit{et al.}, ``Communication-Efficient Learning of Deep Networks from Decentralized Data,'' in \textit{Proc. AISTATS}, 2017, pp. 1273--1282.
 \bibitem{flsurvey} V. Mothukuri \textit{et al.}, ``A Survey on Security and Privacy of Federated Learning,'' \textit{Future Gener. Comput. Syst.}, vol. 115, pp. 619--640, 2021.
 \bibitem{dhooge} L. D'hooge \textit{et al.}, ``Inter-Dataset Generalization Strength of Supervised Machine Learning Methods for Intrusion Detection,'' \textit{J. Inf. Secur. Appl.}, vol. 54, Art. 102564, 2020, doi: 10.1016/j.jisa.2020.102564.
-\bibitem{xenids} G. Apruzzese \textit{et al.}, ``The Cross-Evaluation of Machine Learning-Based Network Intrusion Detection Systems,'' \textit{IEEE Trans. Netw. Service Manag.}, vol. 19, no. 4, pp. 5152--5169, 2022, doi: 10.1109/TNSM.2022.3157344.
+\bibitem{xenids} G. Apruzzese, L. Pajola, and M. Conti, ``The Cross-Evaluation of Machine Learning-Based Network Intrusion Detection Systems,'' \textit{IEEE Trans. Netw. Service Manag.}, vol. 19, no. 4, pp. 5152--5169, 2022, doi: 10.1109/TNSM.2022.3157344.
 \bibitem{layeghy} S. Layeghy and M. Portmann, ``Explainable Cross-Domain Evaluation of ML-Based Network Intrusion Detection Systems,'' \textit{Comput. Electr. Eng.}, vol. 108, Art. 108692, 2023, doi: 10.1016/j.compeleceng.2023.108692.
-\bibitem{cantone} M. Cantone \textit{et al.}, ``Machine Learning in Network Intrusion Detection: A Cross-Dataset Generalization Study,'' \textit{IEEE Access}, vol. 12, pp. 144489--144508, 2024, doi: 10.1109/ACCESS.2024.3472907.
+\bibitem{cantone} M. Cantone, C. Marrocco, and A. Bria, ``Machine Learning in Network Intrusion Detection: A Cross-Dataset Generalization Study,'' \textit{IEEE Access}, vol. 12, pp. 144489--144508, 2024, doi: 10.1109/ACCESS.2024.3472907.
 \bibitem{fedprox} T. Li \textit{et al.}, ``Federated Optimization in Heterogeneous Networks,'' in \textit{Proc. MLSys}, vol. 2, 2020, pp. 429--450.
 \bibitem{scaffold} S. P. Karimireddy \textit{et al.}, ``SCAFFOLD: Stochastic Controlled Averaging for Federated Learning,'' in \textit{Proc. ICML}, PMLR vol. 119, 2020, pp. 5132--5143.
 \bibitem{fednova} J. Wang \textit{et al.}, ``Tackling the Objective Inconsistency Problem in Heterogeneous Federated Optimization,'' in \textit{Proc. NeurIPS}, 2020.
-\bibitem{scanfl} R. Doriguzzi-Corin \textit{et al.}, ``Improving Detection of Scanning Attacks on Heterogeneous Networks with Federated Learning,'' \textit{ACM SIGMETRICS Perform. Eval. Rev.}, vol. 49, no. 4, 2022, doi: 10.1145/3543146.3543172.
+\bibitem{scanfl} R. Doriguzzi-Corin, S. Cretti, and D. Siracusa, ``Improving Detection of Scanning Attacks on Heterogeneous Networks with Federated Learning,'' \textit{ACM SIGMETRICS Perform. Eval. Rev.}, vol. 49, no. 4, 2022, doi: 10.1145/3543146.3543172.
 \bibitem{fiveg} T. E. T. Djaidja \textit{et al.}, ``Federated Learning for 5G and Beyond, a Blessing and a Curse--An Experimental Study on Intrusion Detection Systems,'' \textit{Comput. Secur.}, vol. 139, Art. 103707, 2024, doi: 10.1016/j.cose.2024.103707.
-\bibitem{flreview} A. Belenguer \textit{et al.}, ``A Review of Federated Learning Applications in Intrusion Detection Systems,'' \textit{Comput. Netw.}, vol. 258, Art. 111023, 2025, doi: 10.1016/j.comnet.2024.111023.
+\bibitem{flreview} A. Belenguer, J. A. Pascual, and J. Navaridas, ``A Review of Federated Learning Applications in Intrusion Detection Systems,'' \textit{Comput. Netw.}, vol. 258, Art. 111023, 2025, doi: 10.1016/j.comnet.2024.111023.
 \bibitem{fedkd} N. H. Quyen \textit{et al.}, ``FedKD-IDS: A Robust Intrusion Detection System Using Knowledge Distillation-Based Semi-Supervised Federated Learning and Anti-Poisoning Attack Mechanism,'' \textit{Inf. Fusion}, vol. 117, Art. 102807, 2025, doi: 10.1016/j.inffus.2024.102807.
 \bibitem{datasetcentric} M. A. Bilal \textit{et al.}, ``Dataset-Centric Evaluation of Federated Intrusion Detection Models in IoT Networks,'' \textit{Sci. Rep.}, vol. 16, Art. 2683, 2026, doi: 10.1038/s41598-025-32567-w.
 \bibitem{ringsurvey} M. Ring \textit{et al.}, ``A Survey of Network-Based Intrusion Detection Data Sets,'' \textit{Comput. Secur.}, vol. 86, pp. 147--167, 2019, doi: 10.1016/j.cose.2019.06.005.
 \bibitem{smotefl} A. Demirba\c{s} Paray and M. Aydos, ``Federated Learning for Intrusion Detection Under Class Imbalance: A Multi-Domain Ablation Study with Per-Client SMOTE,'' \textit{Appl. Sci.}, vol. 16, no. 2, Art. 801, 2026, doi: 10.3390/app16020801.
-\bibitem{sarhan} M. Sarhan \textit{et al.}, ``Evaluating Standard Feature Sets Towards Increased Generalisability and Explainability of ML-Based Network Intrusion Detection,'' \textit{Big Data Res.}, vol. 30, Art. 100359, 2022, doi: 10.1016/j.bdr.2022.100359.
-\bibitem{domainadapt} A. Singla \textit{et al.}, ``Preparing Network Intrusion Detection Deep Learning Models with Minimal Data Using Adversarial Domain Adaptation,'' in \textit{Proc. ACM ASIACCS}, 2020, pp. 127--140.
-\bibitem{troubleshoot} G. Engelen \textit{et al.}, ``Troubleshooting an Intrusion Detection Dataset: The CICIDS2017 Case Study,'' in \textit{Proc. IEEE SPW}, 2021, pp. 7--12, doi: 10.1109/SPW53761.2021.00009.
+\bibitem{sarhan} M. Sarhan, S. Layeghy, and M. Portmann, ``Evaluating Standard Feature Sets Towards Increased Generalisability and Explainability of ML-Based Network Intrusion Detection,'' \textit{Big Data Res.}, vol. 30, Art. 100359, 2022, doi: 10.1016/j.bdr.2022.100359.
+\bibitem{domainadapt} A. Singla, E. Bertino, and D. Verma, ``Preparing Network Intrusion Detection Deep Learning Models with Minimal Data Using Adversarial Domain Adaptation,'' in \textit{Proc. ACM ASIACCS}, 2020, pp. 127--140.
+\bibitem{troubleshoot} G. Engelen, V. Rimmer, and W. Joosen, ``Troubleshooting an Intrusion Detection Dataset: The CICIDS2017 Case Study,'' in \textit{Proc. IEEE SPW}, 2021, pp. 7--12, doi: 10.1109/SPW53761.2021.00009.
 \bibitem{lanvin} M. Lanvin \textit{et al.}, ``Errors in the CICIDS2017 Dataset and the Significant Differences in Detection Performances It Makes,'' in \textit{Proc. CRiSIS}, 2022, pp. 18--33, doi: 10.1007/978-3-031-31108-6\_2.
 \bibitem{rosay} A. Rosay \textit{et al.}, ``Network Intrusion Detection: A Comprehensive Analysis of CIC-IDS2017,'' in \textit{Proc. ICISSP}, 2022, pp. 25--36, doi: 10.5220/0010774000003120.
-\bibitem{insdn} M. S. Elsayed \textit{et al.}, ``InSDN: A Novel SDN Intrusion Dataset,'' \textit{IEEE Access}, vol. 8, pp. 165263--165284, 2020, doi: 10.1109/ACCESS.2020.3022633.
-\bibitem{cicids} I. Sharafaldin \textit{et al.}, ``Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization,'' in \textit{Proc. ICISSP}, 2018, pp. 108--116.
+\bibitem{insdn} M. S. Elsayed, N.-A. Le-Khac, and A. D. Jurcut, ``InSDN: A Novel SDN Intrusion Dataset,'' \textit{IEEE Access}, vol. 8, pp. 165263--165284, 2020, doi: 10.1109/ACCESS.2020.3022633.
+\bibitem{cicids} I. Sharafaldin, A. H. Lashkari, and A. A. Ghorbani, ``Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization,'' in \textit{Proc. ICISSP}, 2018, pp. 108--116.
 \end{thebibliography}
 \end{document}
