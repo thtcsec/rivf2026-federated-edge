@@ -3,8 +3,6 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 import pandas as pd
 import sklearn
@@ -15,16 +13,22 @@ from sklearn.metrics import (accuracy_score, balanced_accuracy_score, matthews_c
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/'results'/'verified'; FIG=ROOT/'paper'/'figures'/'verified'
-OUT.mkdir(parents=True,exist_ok=True); FIG.mkdir(parents=True,exist_ok=True)
+ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/'results'/'verified'
+OUT.mkdir(parents=True,exist_ok=True)
 INSDN=Path(os.environ.get('INSDN_CSV',ROOT/'data'/'insdn'/'flow_stats.csv'))
-# Two mirrors of the same target traffic. They differ only in which public
-# CICIDS2017 CSV distribution the fields were taken from: `trafficlabelling`
-# keeps the original Protocol and Source Port columns, whereas `mlcve` lacks
-# both and must infer protocol from TCP flags and substitute a port sentinel.
+# Three views of the same target traffic. `trafficlabelling` keeps the original
+# Protocol and Source Port columns. `tl_counterfactual` is the controlled
+# comparison: the *same rows* as `trafficlabelling`, with every other feature and
+# the label untouched, and only those two fields replaced by the surrogates that
+# MachineLearningCVE forces. `mlcve` is the actual public release, which differs
+# from the other two in row set and attack prevalence as well, so it establishes
+# practical relevance rather than the mechanism.
 MIRRORS={'trafficlabelling':Path(os.environ.get('CICIDS2017_MIRROR_CSV',ROOT/'data'/'cicids2017_mirror'/'test.csv')),
+         'tl_counterfactual':Path(os.environ.get('CICIDS2017_COUNTERFACTUAL_CSV',ROOT/'data'/'cicids2017_mirror_counterfactual'/'test.csv')),
          'mlcve':Path(os.environ.get('CICIDS2017_MLCVE_MIRROR_CSV',ROOT/'data'/'cicids2017_mirror_mlcve'/'test.csv'))}
 CROSS_KEYS=[f'cross_{m}' for m in MIRRORS]
+CENTRAL_CROSS_KEYS=[f'central_cross_{m}' for m in MIRRORS]
+PROVENANCE_FIELDS=('ip_proto','tp_src')
 # The prepared InSDN and mirror CSVs also carry a `flow_duration` column that is
 # byte-identical to `duration_sec` in every row; it is excluded here so that the
 # model sees nine independent inputs rather than one duplicated coefficient.
@@ -101,6 +105,15 @@ def prov_checks(s,t):
  return r
 def one(seed,ablation='all'):
  xi,yi=load(INSDN,'label','insdn',seed); tg={m:load(p,'label','cic',seed) for m,p in MIRRORS.items()}
+ # The controlled claim depends on the counterfactual sample still being the same
+ # rows after seeded subsampling, so assert it instead of trusting it.
+ if {'trafficlabelling','tl_counterfactual'}<=tg.keys():
+  ua=[i for i,f in enumerate(FEATURES) if f not in PROVENANCE_FIELDS]
+  (xa,ya),(xb,yb)=tg['trafficlabelling'],tg['tl_counterfactual']
+  if not (np.array_equal(xa[:,ua],xb[:,ua]) and np.array_equal(ya,yb)):
+   raise SystemExit('counterfactual mirror is not row-matched after seeded subsampling')
+  if np.array_equal(xa[:,[FEATURES.index(f) for f in PROVENANCE_FIELDS]],xb[:,[FEATURES.index(f) for f in PROVENANCE_FIELDS]]):
+   raise SystemExit('counterfactual mirror is identical to the original; nothing was varied')
  keep={'no_ports':[0,3,4,5,6,7,8],'no_protocol':list(range(1,len(FEATURES)))}.get(ablation)
  if keep is not None: xi=xi[:,keep];tg={m:(x[:,keep],y) for m,(x,y) in tg.items()}
  xtr,xte,ytr,yte=train_test_split(xi,yi,test_size=.2,stratify=yi,random_state=seed)
@@ -110,9 +123,11 @@ def one(seed,ablation='all'):
   hot=lambda a:np.hstack([a[:,1:],enc.transform(a[:,[0]])])
   xtr=hot(xtr); xte=hot(xte); tg={m:(hot(x),y) for m,(x,y) in tg.items()}
  sc=StandardScaler().fit(xtr);xtr,xte=sc.transform(xtr),sc.transform(xte);tg={m:(sc.transform(x),y) for m,(x,y) in tg.items()}
- cen=met(yte,fit(xtr,ytr,seed).predict_proba(xte)[:,1]); pi=parts(xtr,ytr,seed);pn=parts(xtr,ytr,seed,True)
+ cm=fit(xtr,ytr,seed); cen=met(yte,cm.predict_proba(xte)[:,1]); pi=parts(xtr,ytr,seed);pn=parts(xtr,ytr,seed,True)
  wi,bi,hi=fed(pi,xte,yte,seed);wn,bn,hn=fed(pn,xte,yte,seed); fi=met(yte,prob(wi,bi,xte));fn=met(yte,prob(wn,bn,xte))
  cross={m:met(y,prob(wi,bi,x)) for m,(x,y) in tg.items()}
+ # Scored so that the provenance effect cannot be attributed to FedAvg averaging.
+ central_cross={m:met(y,cm.predict_proba(x)[:,1]) for m,(x,y) in tg.items()}
  local=[met(yte,fit(x,y,seed+i).predict_proba(xte)[:,1]) for i,(x,y) in enumerate(pi)]
  audit=[];screen=[]
  if ablation=='all':
@@ -126,7 +141,7 @@ def one(seed,ablation='all'):
     audit.append(dict(mirror=m,feature=name,ks=ks_distance(xtr[:,j],xc[:,j]),target_abs_z_mean=float(abs(xc[:,j].mean())),source_mask_f1=float(sm['f1']),mirror_mask_roc_auc=float(tm['roc_auc']),mirror_mask_mcc=float(tm['mcc']),mirror_auc_delta=float(tm['roc_auc']-cross[m]['roc_auc'])))
  out=dict(seed=seed,centralized=compact(cen),local_mean={k:float(np.mean([a[k] for a in local])) for k in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']},fedavg_iid=compact(fi),fedavg_noniid=compact(fn),feature_audit=audit,provenance_screen=screen,iid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pi],noniid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pn],history_iid=hi,history_noniid=hn,counts=dict(insdn_benign=int((yi==0).sum()),insdn_attack=int((yi==1).sum())))
  for m,(x,y) in tg.items():
-  out[f'cross_{m}']=compact(cross[m]);out['counts'][f'{m}_benign']=int((y==0).sum());out['counts'][f'{m}_attack']=int((y==1).sum())
+  out[f'cross_{m}']=compact(cross[m]);out[f'central_cross_{m}']=compact(central_cross[m]);out['counts'][f'{m}_benign']=int((y==0).sum());out['counts'][f'{m}_attack']=int((y==1).sum())
  return out
 def summarize(rows,key):
  keys=['f1','roc_auc','pr_auc','balanced_accuracy','mcc'];return {k:{'mean':float(np.mean([r[key][k] for r in rows])),'std':float(np.std([r[key][k] for r in rows],ddof=1))} for k in keys}
@@ -135,21 +150,15 @@ def main():
  if missing: raise SystemExit('Missing prepared dataset file(s): '+', '.join(missing)+'\nSee data/README.md or set INSDN_CSV, CICIDS2017_MIRROR_CSV and CICIDS2017_MLCVE_MIRROR_CSV.')
  rows=[one(s) for s in SEEDS]; ab=[one(s,'no_ports') for s in SEEDS]; npv=[one(s,'no_protocol') for s in SEEDS]; oh=[one(s,'onehot_protocol') for s in SEEDS]
  groups=[('all_nine',rows),('without_ports',ab),('without_protocol',npv),('onehot_protocol',oh)]
- out=dict(seeds=SEEDS,clients=K,rounds=ROUNDS,features=FEATURES,source=dict(insdn_file=INSDN.name,mirrors={m:str(p.parent.name+'/'+p.name) for m,p in MIRRORS.items()},cicids2017_label_mapping={'1':'benign','0':'attack_ddos','2':'attack_portscan'},provenance='See data/README.md and evaluation/prepare_public_data.py'),hyperparameters=dict(model='SGDClassifier(log_loss)',penalty='l2',alpha=1e-4,eta0=.01,batch='full local partition per round',local_epochs=1,initialization='shared zero coefficients/intercept',threshold=.5,class_weight=None,scaler='StandardScaler fit on source training only',sklearn=sklearn.__version__),per_seed=rows,summary={k:summarize(rows,k) for k in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS]})
+ out=dict(seeds=SEEDS,clients=K,rounds=ROUNDS,features=FEATURES,source=dict(insdn_file=INSDN.name,mirrors={m:str(p.parent.name+'/'+p.name) for m,p in MIRRORS.items()},cicids2017_label_mapping={'1':'benign','0':'attack_ddos','2':'attack_portscan'},provenance='See data/README.md and evaluation/prepare_public_data.py'),hyperparameters=dict(model='SGDClassifier(log_loss)',penalty='l2',alpha=1e-4,eta0=.01,batch='full local partition per round',local_epochs=1,initialization='shared zero coefficients/intercept',threshold=.5,class_weight=None,scaler='StandardScaler fit on source training only',sklearn=sklearn.__version__),per_seed=rows,summary={k:summarize(rows,k) for k in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS]})
  for name,group in groups[1:]:
   out[f'ablation_{name}']=summarize(group,'fedavg_iid')
   for ck in CROSS_KEYS: out[f'ablation_{name}_{ck}']=summarize(group,ck)
  (OUT/'summary.json').write_text(json.dumps(out,indent=2),encoding='utf8')
- pd.DataFrame([{**{'seed':r['seed']},**{f'{m}_{q}':r[m][q] for m in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS] for q in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']}} for r in rows]).to_csv(OUT/'five_seed_metrics.csv',index=False)
+ pd.DataFrame([{**{'seed':r['seed']},**{f'{m}_{q}':r[m][q] for m in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS] for q in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']}} for r in rows]).to_csv(OUT/'five_seed_metrics.csv',index=False)
  pd.DataFrame([{'seed':z['seed'],'mirror':m,'setting':name,**{q:z[f'cross_{m}'][q] for q in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']}} for name,group in groups for z in group for m in MIRRORS]).to_csv(OUT/'external_ablation_metrics.csv',index=False)
  pd.DataFrame([{'seed':r['seed'],**a} for r in rows for a in r['feature_audit']]).to_csv(OUT/'feature_shift_audit.csv',index=False)
  pd.DataFrame([{'seed':r['seed'],**a} for r in rows for a in r['provenance_screen']]).to_csv(OUT/'provenance_screen.csv',index=False)
  r=rows[2];pd.DataFrame({'round':range(1,ROUNDS+1),'iid_f1':r['history_iid'],'noniid_f1':r['history_noniid']}).to_csv(OUT/'fedavg_history_seed42.csv',index=False)
- plt.rcParams.update({'font.size':8.5,'axes.labelsize':8.5,'xtick.labelsize':8,'ytick.labelsize':8,'legend.fontsize':8})
- rounds=np.arange(1,ROUNDS+1); fig,ax=plt.subplots(figsize=(3.45,2.25),dpi=300)
- ax.plot(rounds,r['history_iid'],color='black',linestyle='-',marker='o',markevery=2,markersize=3,label='IID')
- ax.plot(rounds,r['history_noniid'],color='0.4',linestyle='--',marker='s',markerfacecolor='white',markevery=2,markersize=3,label='Dirichlet $\\alpha=0.5$')
- lo=min(r['history_iid']+r['history_noniid']);hi=max(r['history_iid']+r['history_noniid']);pad=max((hi-lo)*.18,2e-4)
- ax.set(xlabel='Communication round',ylabel='Test F1',xlim=(1,ROUNDS),ylim=(lo-pad,hi+pad));ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'));ax.grid(alpha=.25);ax.legend(loc='best',frameon=True);fig.tight_layout();fig.savefig(FIG/'fedavg_convergence.png',bbox_inches='tight');plt.close(fig)
  print(json.dumps(out['summary'],indent=2))
 if __name__=='__main__': main()

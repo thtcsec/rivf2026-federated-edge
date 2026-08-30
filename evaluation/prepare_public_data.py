@@ -57,14 +57,20 @@ def cic_one(path:Path,notes:list)->pd.DataFrame:
  src_port=pd.to_numeric(d['Source Port'],errors='coerce') if has_src else pd.Series(-1,index=d.index)
  notes.append({'file':path.name,'protocol':'original Protocol column' if has_proto else 'inferred TCP(6)/0 from TCP flags',
                'source_port':'original Source Port column' if has_src else 'sentinel -1 (column absent)'})
- return pd.DataFrame({'ip_proto':proto,'tp_src':src_port,'tp_dst':pd.to_numeric(d['Destination Port'],errors='coerce'),
+ # Always carry the flag-derived surrogate. It is what the MachineLearningCVE
+ # release forces, and computing it here lets the counterfactual mirror reuse the
+ # very same rows rather than re-deriving a row set that would no longer align.
+ return pd.DataFrame({'ip_proto':proto,'tp_src':src_port,'ip_proto_surrogate':pd.Series(np.where(flags>0,6,0),index=d.index),
+  'tp_dst':pd.to_numeric(d['Destination Port'],errors='coerce'),
   'packet_count':pd.to_numeric(d['Total Fwd Packets'],errors='coerce').fillna(0)+pd.to_numeric(d['Total Backward Packets'],errors='coerce').fillna(0),
   'byte_count':pd.to_numeric(d['Total Length of Fwd Packets'],errors='coerce').fillna(0)+pd.to_numeric(d['Total Length of Bwd Packets'],errors='coerce').fillna(0),
   'duration_sec':pd.to_numeric(d['Flow Duration'],errors='coerce')/1e6,'packet_count_per_sec':pd.to_numeric(d['Flow Packets/s'],errors='coerce'),
   'byte_count_per_sec':pd.to_numeric(d['Flow Bytes/s'],errors='coerce'),'packet_size_avg':pd.to_numeric(d['Average Packet Size'],errors='coerce'),
   'flow_duration':pd.to_numeric(d['Flow Duration'],errors='coerce')/1e6,'label':d.Label.map(LABEL_MAP),'source_file':path.name})
 
-def prepare_cicids(root:Path,out:Path)->None:
+UNAFFECTED=[c for c in FEATURES if c not in ('ip_proto','tp_src')]
+
+def prepare_cicids(root:Path,out:Path,counterfactual_out:Path|None=None)->None:
  notes=[];frames=[cic_one(locate(root,name),notes) for name in CIC_FILES.values()];z=pd.concat(frames,ignore_index=True).dropna(subset=FEATURES+['label'])
  z=z.drop_duplicates(subset=FEATURES+['label','source_file']);le=LabelEncoder();y=le.fit_transform(z.label);x=z[FEATURES]
  _,xt,_,yt=train_test_split(x,y,test_size=.2,random_state=42,stratify=y);test=pd.DataFrame(xt,columns=FEATURES);test['label']=yt
@@ -72,13 +78,32 @@ def prepare_cicids(root:Path,out:Path)->None:
  summary={'dataset':'cicids2017_3class','rows_after_clean':len(z),'rows_test':len(test),'random_state':42,'labels':dict(zip(le.classes_,map(int,le.transform(le.classes_)))),'source_files':[p.name for p in map(lambda n:locate(root,n),CIC_FILES.values())],'field_provenance':notes,
   'protocol_values':sorted(int(v) for v in pd.unique(z.ip_proto)),'source_port_sentinel_rows':int((z.tp_src==-1).sum())}
  (out/'dataset_summary.json').write_text(json.dumps(summary,indent=2),encoding='utf8')
+ if counterfactual_out is None: return
+ # Row-matched counterfactual: the identical test rows in the identical order,
+ # with every other feature and the label untouched, and only the two
+ # provenance-sensitive fields overwritten by what MachineLearningCVE forces.
+ # Deriving it from `xt` rather than re-running the cleaner is essential, since
+ # dropna and drop_duplicates both key on the two columns being changed and
+ # would otherwise silently select a different row set.
+ cf=pd.DataFrame(xt,columns=FEATURES).copy()
+ cf['ip_proto']=z.loc[xt.index,'ip_proto_surrogate'].to_numpy();cf['tp_src']=-1;cf['label']=yt
+ left=test[UNAFFECTED+['label']].reset_index(drop=True);right=cf[UNAFFECTED+['label']].reset_index(drop=True)
+ if not left.equals(right): raise SystemExit('counterfactual mirror is not row-matched to the original mirror')
+ changed=[c for c in FEATURES if not test[c].reset_index(drop=True).equals(cf[c].reset_index(drop=True))]
+ counterfactual_out.mkdir(parents=True,exist_ok=True);cf.to_csv(counterfactual_out/'test.csv',index=False)
+ (counterfactual_out/'dataset_summary.json').write_text(json.dumps({**summary,
+  'dataset':'cicids2017_3class_counterfactual','derived_from':out.name,'rows_test':len(cf),
+  'row_matched':True,'columns_changed':changed,
+  'protocol_disagreement_rate':float((test.ip_proto.to_numpy()!=cf.ip_proto.to_numpy()).mean()),
+  'field_provenance':[{'file':n['file'],'protocol':'flag-derived surrogate substituted for the original column',
+                       'source_port':'sentinel -1 substituted for the original column'} for n in notes]},indent=2),encoding='utf8')
 
 def main()->None:
  # Either half can be rebuilt on its own so that a verifier who already holds one
  # checksum-matching prepared file does not need both raw corpora.
- ap=argparse.ArgumentParser();ap.add_argument('--insdn-src',type=Path);ap.add_argument('--cicids-root',type=Path);ap.add_argument('--cicids-out-name',default='cicids2017_mirror');ap.add_argument('--out-root',type=Path,default=Path(__file__).resolve().parents[1]/'data');a=ap.parse_args()
+ ap=argparse.ArgumentParser();ap.add_argument('--insdn-src',type=Path);ap.add_argument('--cicids-root',type=Path);ap.add_argument('--cicids-out-name',default='cicids2017_mirror');ap.add_argument('--cicids-counterfactual-name',default=None,help='also write a row-matched mirror whose protocol and source port are replaced by the MachineLearningCVE surrogates');ap.add_argument('--out-root',type=Path,default=Path(__file__).resolve().parents[1]/'data');a=ap.parse_args()
  if a.insdn_src is None and a.cicids_root is None: ap.error('supply --insdn-src and/or --cicids-root')
  if a.insdn_src is not None: prepare_insdn(a.insdn_src,a.out_root/'insdn')
- if a.cicids_root is not None: prepare_cicids(a.cicids_root,a.out_root/a.cicids_out_name)
+ if a.cicids_root is not None: prepare_cicids(a.cicids_root,a.out_root/a.cicids_out_name,a.out_root/a.cicids_counterfactual_name if a.cicids_counterfactual_name else None)
  print(f'Prepared data under {a.out_root}')
 if __name__=='__main__': main()

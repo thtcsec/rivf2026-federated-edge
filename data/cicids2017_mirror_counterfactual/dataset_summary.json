@@ -1,0 +1,46 @@
+{
+  "dataset": "cicids2017_3class_counterfactual",
+  "rows_after_clean": 1037315,
+  "rows_test": 207463,
+  "random_state": 42,
+  "labels": {
+    "ddos": 0,
+    "normal": 1,
+    "portscan": 2
+  },
+  "source_files": [
+    "Monday-WorkingHours.pcap_ISCX.csv.parquet",
+    "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet",
+    "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet"
+  ],
+  "field_provenance": [
+    {
+      "file": "Monday-WorkingHours.pcap_ISCX.csv.parquet",
+      "protocol": "flag-derived surrogate substituted for the original column",
+      "source_port": "sentinel -1 substituted for the original column"
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet",
+      "protocol": "flag-derived surrogate substituted for the original column",
+      "source_port": "sentinel -1 substituted for the original column"
+    },
+    {
+      "file": "Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet",
+      "protocol": "flag-derived surrogate substituted for the original column",
+      "source_port": "sentinel -1 substituted for the original column"
+    }
+  ],
+  "protocol_values": [
+    0,
+    6,
+    17
+  ],
+  "source_port_sentinel_rows": 0,
+  "derived_from": "cicids2017_mirror",
+  "row_matched": true,
+  "columns_changed": [
+    "ip_proto",
+    "tp_src"
+  ],
+  "protocol_disagreement_rate": 0.30319141244462866
+}
