@@ -142,17 +142,8 @@ for label, name in ABL:
 # --- feature audit table ----------------------------------------------------
 g = AUDIT.groupby(['mirror', 'feature'])[
     ['ks', 'source_mask_f1', 'mirror_auc_delta', 'mirror_mask_mcc']].mean()
-AUD = table_block('tab:audit')
-for label, feat in [('Protocol', 'ip_proto'), ('Destination port', 'tp_dst'),
-                    ('Mean packet size', 'packet_size_avg'), ('Source port', 'tp_src')]:
-    row = table_row(label, AUD)
-    check(f'{label}/source F1', q(g.loc[('trafficlabelling', feat), 'source_mask_f1']), where=row)
-    for view, _ in VIEWS:
-        check(f'{label}/{view} KS', q(g.loc[(view, feat), 'ks']), where=row)
-        d = g.loc[(view, feat), 'mirror_auc_delta']
-        # The paper writes an explicit sign for positive deltas, and exact zero plainly.
-        rendered = q(d) if d < 0 else ('0.0000' if abs(d) < 5e-5 else '$+$' + q(d))
-        check(f'{label}/{view} dAUC', rendered, where=row)
+# Table IV was retired for space; the audit is now reported in prose, so the
+# values the argument rests on are checked there instead of cell by cell.
 
 # --- label-free provenance screen ------------------------------------------
 sg = SCR.groupby(['mirror', 'feature']).agg(
@@ -222,6 +213,10 @@ SRC_PORT_CF_DMCC = (g.loc[('tl_counterfactual', 'tp_src'), 'mirror_mask_mcc']
 
 for label, value in [
     ('source-port CF dMCC', f"{SRC_PORT_CF_DMCC:+.4f}"),
+    ('protocol TL KS', f"{g.loc[('trafficlabelling', 'ip_proto'), 'ks']:.4f}"),
+    ('protocol CF KS', f"{g.loc[('tl_counterfactual', 'ip_proto'), 'ks']:.4f}"),
+    ('source-port TL dAUC', f"{g.loc[('trafficlabelling', 'tp_src'), 'mirror_auc_delta']:.4f}"),
+    ('dest-port TL dAUC', f"{abs(g.loc[('trafficlabelling', 'tp_dst'), 'mirror_auc_delta']):.4f}"),
     ('protocol TL dAUC', f"{abs(g.loc[('trafficlabelling', 'ip_proto'), 'mirror_auc_delta']):.4f}"),
     ('protocol CF dAUC', f"{g.loc[('tl_counterfactual', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
     ('protocol ML dAUC', f"{g.loc[('mlcve', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
@@ -246,8 +241,17 @@ for view, tag in VIEWS:
     b, a_ = c[f'{view}_benign'], c[f'{view}_attack']
     check(f'{tag} sampled benign/attack', f'{b:,} / {a_:,}')
     check(f'{tag} prevalence', f'{a_ / (a_ + b):.4f}')
-for cell in ['tn', 'fp', 'fn', 'tp']:
-    check(f'seed-11 confusion {cell}', f"{first['fedavg_iid'][cell]:,}")
+# The paper reports class-wise recall as a range over the four configurations
+# rather than one seed's confusion matrix.
+SRC_CFG = ['centralized', 'local_mean', 'fedavg_iid', 'fedavg_noniid']
+att = [SUM['summary'][k]['recall']['mean'] for k in SRC_CFG]
+ben = [2 * SUM['summary'][k]['balanced_accuracy']['mean'] - a for k, a in zip(SRC_CFG, att)]
+check('attack recall low', f'{min(att):.4f}')
+check('attack recall high', f'{max(att):.4f}')
+check('benign recall low', f'{min(ben):.4f}')
+check('benign recall high', f'{max(ben):.4f}')
+assert att.index(max(att)) == SRC_CFG.index('fedavg_noniid'), 'non-IID should top attack recall'
+assert ben.index(min(ben)) == SRC_CFG.index('fedavg_noniid'), 'non-IID should bottom benign recall'
 
 for view, _ in VIEWS:
     meta = json.loads((ROOT / 'data' / MIRROR_DIR[view] / 'dataset_summary.json').read_text(encoding='utf8'))
