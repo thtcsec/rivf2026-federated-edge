@@ -140,7 +140,8 @@ for label, name in ABL:
         check(f'{label}/{view} auc', q(blk['mean']), where=row)
 
 # --- feature audit table ----------------------------------------------------
-g = AUDIT.groupby(['mirror', 'feature'])[['ks', 'source_mask_f1', 'mirror_auc_delta']].mean()
+g = AUDIT.groupby(['mirror', 'feature'])[
+    ['ks', 'source_mask_f1', 'mirror_auc_delta', 'mirror_mask_mcc']].mean()
 AUD = table_block('tab:audit')
 for label, feat in [('Protocol', 'ip_proto'), ('Destination port', 'tp_dst'),
                     ('Mean packet size', 'packet_size_avg'), ('Source port', 'tp_src')]:
@@ -214,7 +215,13 @@ for label, value in [
 ]:
     check(label, value)
 
+# Masking the constant sentinel is AUC-neutral but not threshold-neutral, so the
+# paper quotes the operating-point shift as well.
+SRC_PORT_CF_DMCC = (g.loc[('tl_counterfactual', 'tp_src'), 'mirror_mask_mcc']
+                    - SUM['summary']['cross_tl_counterfactual']['mcc']['mean'])
+
 for label, value in [
+    ('source-port CF dMCC', f"{SRC_PORT_CF_DMCC:+.4f}"),
     ('protocol TL dAUC', f"{abs(g.loc[('trafficlabelling', 'ip_proto'), 'mirror_auc_delta']):.4f}"),
     ('protocol CF dAUC', f"{g.loc[('tl_counterfactual', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
     ('protocol ML dAUC', f"{g.loc[('mlcve', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
