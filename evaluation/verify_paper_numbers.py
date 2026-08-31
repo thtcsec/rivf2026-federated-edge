@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import statistics
 import sys
 from pathlib import Path
 
@@ -264,11 +265,34 @@ keys = [k for k, _ in SRC_CFG]
 assert att.index(max(att)) == keys.index('fedavg_noniid'), 'non-IID should top attack recall'
 assert ben.index(min(ben)) == keys.index('fedavg_noniid'), 'non-IID should bottom benign recall'
 
-# The oracle prose quotes dispersion, since the TL-CF oracle gap is inside 1 SD.
+# The oracle prose quotes marginal dispersion and then the paired difference.
+# Pairing matters: the marginal SDs are dominated by a seed effect that cancels,
+# so the TL-CF oracle gap is small but consistent rather than indistinguishable.
 for view, tag in [('trafficlabelling', 'TL'), ('tl_counterfactual', 'CF')]:
     blk = SUM['summary'][f'oracle_{view}']['roc_auc']
     check(f'oracle {tag} mean+-sd prose',
           f"${blk['mean']:.4f}\\pm{blk['std']:.4f}$")
+
+
+def paired(a_key, b_key):
+    """Per-seed differences a-b, both scored on the same seeded row sample."""
+    return [r[a_key]['roc_auc'] - r[b_key]['roc_auc'] for r in SUM['per_seed']]
+
+
+od = paired('oracle_trafficlabelling', 'oracle_tl_counterfactual')
+td = paired('cross_trafficlabelling', 'cross_tl_counterfactual')
+n = len(od)
+om = statistics.mean(od)
+ose = statistics.stdev(od) / n ** 0.5
+T_CRIT_DF4 = 2.776  # two-sided 0.05, df = 5 - 1
+half = T_CRIT_DF4 * ose
+check('oracle paired gap', f'${om:.4f}$')
+check('oracle paired 95% CI', f'$[{om - half:.4f},{om + half:.4f}]$')
+check('transfer paired gap',
+      f'${statistics.mean(td):.4f}\\pm{statistics.stdev(td):.4f}$')
+assert all(x > 0 for x in od), 'TL oracle should exceed CF on every seed'
+assert om - half > 0, 'paired oracle CI should exclude zero'
+assert round(statistics.mean(td) / om) == 22, 'transfer gap should be ~22x the oracle gap'
 
 for view, _ in VIEWS:
     meta = json.loads((ROOT / 'data' / MIRROR_DIR[view] / 'dataset_summary.json').read_text(encoding='utf8'))

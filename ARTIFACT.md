@@ -31,9 +31,11 @@ Cross-Dataset Federated Intrusion Detection*
    the label-predictive signal the view still holds: 0.8995 +- 0.0553 on TL,
    0.8820 +- 0.0630 on CF and 0.8956 +- 0.0635 on ML for the nine-field schema,
    and 0.7200 +- 0.0931 (TL and CF) against 0.7117 +- 0.0797 (ML) for the
-   seven-field intersection. The TL-CF oracle gap lies inside one standard
-   deviation, so the transfer reversal reflects changed feature meaning rather
-   than lost information.
+   seven-field intersection. TL and CF are scored per seed on the same rows, so
+   the paired difference is the informative quantity: the oracle gap is 0.0175
+   (95% CI [0.0069, 0.0280], TL ahead on all five seeds) against a zero-shot gap
+   of 0.3813 +- 0.0052 on those same rows. Reconstruction therefore costs a small
+   but consistent amount of in-domain signal while changing far more meaning.
 6. A label-free preflight check using only source-training statistics and
    unlabelled target values. It flags exactly the two substituted source-port
    columns among 27 column--view pairs, on all five seeds, and does not flag the
