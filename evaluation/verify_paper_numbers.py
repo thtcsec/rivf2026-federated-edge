@@ -115,12 +115,13 @@ for label, key in [('Central', 'centralized'), ('Local-only', 'local_mean'),
 CROSS = table_block('tab:cross')
 FED_PANEL, CEN_PANEL = split_at(CROSS, 'Centralized model')
 ROW_LABEL = {'trafficlabelling': r'\textsc{tl} (original)',
-             'tl_counterfactual': r'\textsc{cf} (row-matched)',
-             'mlcve': r'\textsc{ml} (real release)'}
+             'tl_counterfactual': r'\textsc{cf} (matched)',
+             'mlcve': r'\textsc{ml} (real)'}
 for prefix, panel in [('cross_', FED_PANEL), ('central_cross_', CEN_PANEL)]:
     for view, _ in VIEWS:
         row = table_row(ROW_LABEL[view], panel)
-        for metric in ['f1', 'roc_auc', 'pr_auc', 'balanced_accuracy', 'mcc']:
+        # F1 was dropped from Table III to widen it; it stays in the artifact.
+        for metric in ['roc_auc', 'pr_auc', 'balanced_accuracy', 'mcc']:
             blk = SUM['summary'][f'{prefix}{view}'][metric]
             check(f'{prefix}{view}/{metric}', f"{q(blk['mean'])}$\\pm${q(blk['std'])}", where=row)
 
