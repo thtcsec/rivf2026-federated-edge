@@ -26,12 +26,20 @@ Cross-Dataset Federated Intrusion Detection*
    fields `MachineLearningCVE` does not supply, reaches 0.5075 and returns the
    same five-seed metrics on TL and CF to four decimals, since removing those two
    columns makes the two views the same data.
-5. A label-free preflight check using only source-training statistics and
+5. A target-trained oracle that fits and evaluates entirely inside one target
+   view (its own scaler, an 80/20 split of that view's sampled rows), bounding
+   the label-predictive signal the view still holds: 0.8995 +- 0.0553 on TL,
+   0.8820 +- 0.0630 on CF and 0.8956 +- 0.0635 on ML for the nine-field schema,
+   and 0.7200 +- 0.0931 (TL and CF) against 0.7117 +- 0.0797 (ML) for the
+   seven-field intersection. The TL-CF oracle gap lies inside one standard
+   deviation, so the transfer reversal reflects changed feature meaning rather
+   than lost information.
+6. A label-free preflight check using only source-training statistics and
    unlabelled target values. It flags exactly the two substituted source-port
    columns among 27 column--view pairs, on all five seeds, and does not flag the
    reconstructed protocol; the rejected mass-collapse rule fires on all three
    views, demonstrating that it cannot discriminate.
-6. Full regeneration of all prepared views from public source files, with
+7. Full regeneration of all prepared views from public source files, with
    per-file field provenance recorded and published SHA-256 checksums.
 
 No deployment, latency, privacy guarantee, secure aggregation, deep model,

@@ -124,20 +124,30 @@ for prefix, panel in [('cross_', FED_PANEL), ('central_cross_', CEN_PANEL)]:
             check(f'{prefix}{view}/{metric}', f"{q(blk['mean'])}$\\pm${q(blk['std'])}", where=row)
 
 # --- retraining ablation table ---------------------------------------------
-ABL = [('All nine', None), ('Without ports', 'without_ports'),
-       ('Without protocol', 'without_protocol'), ('One-hot protocol', 'onehot_protocol'),
-       ('Intersection (primary)', 'intersection')]
+ABL = [('All nine (reconstructed)', None), (r'\quad without ports', 'without_ports'),
+       (r'\quad without protocol', 'without_protocol'),
+       (r'\quad one-hot protocol', 'onehot_protocol'),
+       ('Intersection, 7 fields', 'intersection')]
 ABLT = table_block('tab:ablation')
+# Panel (a) reports source means without dispersion; the per-seed spread stays in
+# five_seed_metrics.csv. Panel (b) is the target-trained oracle and has no source column.
+TRANSFER, ORACLE = split_at(ABLT, '(b) Target-trained oracle')
 for label, name in ABL:
-    row = table_row(label, ABLT)
+    row = table_row(label, TRANSFER)
     src = SUM['summary']['fedavg_iid'] if name is None else SUM[f'ablation_{name}']
     for metric in ['f1', 'roc_auc']:
-        check(f'{label}/src {metric}',
-              f"{q(src[metric]['mean'])}$\\pm${q(src[metric]['std'])}", where=row)
+        check(f'{label}/src {metric}', q(src[metric]['mean']), where=row)
     for view, _ in VIEWS:
         blk = (SUM['summary'][f'cross_{view}'] if name is None
                else SUM[f'ablation_{name}_cross_{view}'])['roc_auc']
         check(f'{label}/{view} auc', q(blk['mean']), where=row)
+
+for label, name in [('All nine', None), ('Intersection, 7 fields', 'intersection')]:
+    row = table_row(label, ORACLE)
+    for view, _ in VIEWS:
+        blk = (SUM['summary'][f'oracle_{view}'] if name is None
+               else SUM[f'ablation_{name}_oracle_{view}'])['roc_auc']
+        check(f'oracle {label}/{view} auc', q(blk['mean']), where=row)
 
 # --- feature audit table ----------------------------------------------------
 g = AUDIT.groupby(['mirror', 'feature'])[
@@ -241,17 +251,24 @@ for view, tag in VIEWS:
     b, a_ = c[f'{view}_benign'], c[f'{view}_attack']
     check(f'{tag} sampled benign/attack', f'{b:,} / {a_:,}')
     check(f'{tag} prevalence', f'{a_ / (a_ + b):.4f}')
-# The paper reports class-wise recall as a range over the four configurations
-# rather than one seed's confusion matrix.
-SRC_CFG = ['centralized', 'local_mean', 'fedavg_iid', 'fedavg_noniid']
-att = [SUM['summary'][k]['recall']['mean'] for k in SRC_CFG]
-ben = [2 * SUM['summary'][k]['balanced_accuracy']['mean'] - a for k, a in zip(SRC_CFG, att)]
-check('attack recall low', f'{min(att):.4f}')
-check('attack recall high', f'{max(att):.4f}')
-check('benign recall low', f'{min(ben):.4f}')
-check('benign recall high', f'{max(ben):.4f}')
-assert att.index(max(att)) == SRC_CFG.index('fedavg_noniid'), 'non-IID should top attack recall'
-assert ben.index(min(ben)) == SRC_CFG.index('fedavg_noniid'), 'non-IID should bottom benign recall'
+# Class-wise recall is reported per configuration. Benign recall is not stored
+# directly; balanced accuracy is the mean of the two recalls, so it recovers it.
+SRC_CFG = [('centralized', 'centralized'), ('local_mean', 'local-only'),
+           ('fedavg_iid', 'IID'), ('fedavg_noniid', 'non-IID')]
+att = [SUM['summary'][k]['recall']['mean'] for k, _ in SRC_CFG]
+ben = [2 * SUM['summary'][k]['balanced_accuracy']['mean'] - a
+       for (k, _), a in zip(SRC_CFG, att)]
+for (_, tag), a_, b_ in zip(SRC_CFG, att, ben):
+    check(f'{tag} attack/benign recall', f'${a_:.4f}$/${b_:.4f}$')
+keys = [k for k, _ in SRC_CFG]
+assert att.index(max(att)) == keys.index('fedavg_noniid'), 'non-IID should top attack recall'
+assert ben.index(min(ben)) == keys.index('fedavg_noniid'), 'non-IID should bottom benign recall'
+
+# The oracle prose quotes dispersion, since the TL-CF oracle gap is inside 1 SD.
+for view, tag in [('trafficlabelling', 'TL'), ('tl_counterfactual', 'CF')]:
+    blk = SUM['summary'][f'oracle_{view}']['roc_auc']
+    check(f'oracle {tag} mean+-sd prose',
+          f"${blk['mean']:.4f}\\pm{blk['std']:.4f}$")
 
 for view, _ in VIEWS:
     meta = json.loads((ROOT / 'data' / MIRROR_DIR[view] / 'dataset_summary.json').read_text(encoding='utf8'))

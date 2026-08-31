@@ -28,6 +28,7 @@ MIRRORS={'trafficlabelling':Path(os.environ.get('CICIDS2017_MIRROR_CSV',ROOT/'da
          'mlcve':Path(os.environ.get('CICIDS2017_MLCVE_MIRROR_CSV',ROOT/'data'/'cicids2017_mirror_mlcve'/'test.csv'))}
 CROSS_KEYS=[f'cross_{m}' for m in MIRRORS]
 CENTRAL_CROSS_KEYS=[f'central_cross_{m}' for m in MIRRORS]
+ORACLE_KEYS=[f'oracle_{m}' for m in MIRRORS]
 PROVENANCE_FIELDS=('ip_proto','tp_src')
 # The prepared InSDN and mirror CSVs also carry a `flow_duration` column that is
 # byte-identical to `duration_sec` in every row; it is excluded here so that the
@@ -143,9 +144,22 @@ def one(seed,ablation='all'):
     sx=xte.copy();tx=xc.copy();sx[:,j]=0.;tx[:,j]=0.
     sm=met(yte,prob(wi,bi,sx));tm=met(yc,prob(wi,bi,tx))
     audit.append(dict(mirror=m,feature=name,ks=ks_distance(xtr[:,j],xc[:,j]),target_abs_z_mean=float(abs(xc[:,j].mean())),source_mask_f1=float(sm['f1']),mirror_mask_roc_auc=float(tm['roc_auc']),mirror_mask_mcc=float(tm['mcc']),mirror_auc_delta=float(tm['roc_auc']-cross[m]['roc_auc'])))
+ # Target-trained oracle: fit and evaluate entirely inside one target view, so it
+ # measures how much label-predictive signal that view still holds, independently
+ # of whether a source model can use it. A high oracle next to a below-random
+ # transfer score means the field changed meaning, not that it lost information.
+ oracle={}
+ if ablation in ('all','intersection'):
+  for m in tg:
+   xr,yr=raw_tg[m],tg[m][1]
+   xo_tr,xo_te,yo_tr,yo_te=train_test_split(xr,yr,test_size=.2,stratify=yr,random_state=seed)
+   so=StandardScaler().fit(xo_tr)
+   om=fit(so.transform(xo_tr),yo_tr,seed)
+   oracle[m]=compact(met(yo_te,om.predict_proba(so.transform(xo_te))[:,1]))
  out=dict(seed=seed,centralized=compact(cen),local_mean={k:float(np.mean([a[k] for a in local])) for k in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall','precision']},fedavg_iid=compact(fi),fedavg_noniid=compact(fn),feature_audit=audit,provenance_screen=screen,iid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pi],noniid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pn],history_iid=hi,history_noniid=hn,counts=dict(insdn_benign=int((yi==0).sum()),insdn_attack=int((yi==1).sum())))
  for m,(x,y) in tg.items():
   out[f'cross_{m}']=compact(cross[m]);out[f'central_cross_{m}']=compact(central_cross[m]);out['counts'][f'{m}_benign']=int((y==0).sum());out['counts'][f'{m}_attack']=int((y==1).sum())
+  if m in oracle: out[f'oracle_{m}']=oracle[m]
  return out
 FULL_METRICS=['precision','recall','f1','roc_auc','pr_auc','balanced_accuracy','mcc','tn','fp','fn','tp']
 def summarize(rows,key):
@@ -155,10 +169,12 @@ def main():
  if missing: raise SystemExit('Missing prepared dataset file(s): '+', '.join(missing)+'\nSee data/README.md or set INSDN_CSV, CICIDS2017_MIRROR_CSV and CICIDS2017_MLCVE_MIRROR_CSV.')
  rows=[one(s) for s in SEEDS]; ab=[one(s,'no_ports') for s in SEEDS]; npv=[one(s,'no_protocol') for s in SEEDS]; oh=[one(s,'onehot_protocol') for s in SEEDS]; isec=[one(s,'intersection') for s in SEEDS]
  groups=[('all_nine',rows),('without_ports',ab),('without_protocol',npv),('onehot_protocol',oh),('intersection',isec)]
- out=dict(seeds=SEEDS,clients=K,rounds=ROUNDS,features=FEATURES,source=dict(insdn_file=INSDN.name,mirrors={m:str(p.parent.name+'/'+p.name) for m,p in MIRRORS.items()},cicids2017_label_mapping={'1':'benign','0':'attack_ddos','2':'attack_portscan'},provenance='See data/README.md and evaluation/prepare_public_data.py'),hyperparameters=dict(model='SGDClassifier(log_loss)',penalty='l2',alpha=1e-4,eta0=.01,batch='full local partition per round',local_epochs=1,initialization='shared zero coefficients/intercept',threshold=.5,class_weight=None,scaler='StandardScaler fit on source training only',sklearn=sklearn.__version__),per_seed=rows,summary={k:summarize(rows,k) for k in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS]})
+ out=dict(seeds=SEEDS,clients=K,rounds=ROUNDS,features=FEATURES,source=dict(insdn_file=INSDN.name,mirrors={m:str(p.parent.name+'/'+p.name) for m,p in MIRRORS.items()},cicids2017_label_mapping={'1':'benign','0':'attack_ddos','2':'attack_portscan'},provenance='See data/README.md and evaluation/prepare_public_data.py'),hyperparameters=dict(model='SGDClassifier(log_loss)',penalty='l2',alpha=1e-4,eta0=.01,batch='full local partition per round',local_epochs=1,initialization='shared zero coefficients/intercept',threshold=.5,class_weight=None,scaler='StandardScaler fit on source training only',sklearn=sklearn.__version__),per_seed=rows,summary={k:summarize(rows,k) for k in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS,*ORACLE_KEYS]})
  for name,group in groups[1:]:
   out[f'ablation_{name}']=summarize(group,'fedavg_iid')
   for ck in CROSS_KEYS: out[f'ablation_{name}_{ck}']=summarize(group,ck)
+  if name=='intersection':
+   for ok in ORACLE_KEYS: out[f'ablation_{name}_{ok}']=summarize(group,ok)
  (OUT/'summary.json').write_text(json.dumps(out,indent=2),encoding='utf8')
  pd.DataFrame([{**{'seed':r['seed']},**{f'{m}_{q}':r[m].get(q) for m in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS] for q in FULL_METRICS}} for r in rows]).to_csv(OUT/'five_seed_metrics.csv',index=False)
  pd.DataFrame([{'seed':z['seed'],'mirror':m,'setting':name,**{q:z[f'cross_{m}'].get(q) for q in FULL_METRICS}} for name,group in groups for z in group for m in MIRRORS]).to_csv(OUT/'external_ablation_metrics.csv',index=False)
