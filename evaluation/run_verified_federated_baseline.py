@@ -143,12 +143,13 @@ def one(seed,ablation='all'):
     sx=xte.copy();tx=xc.copy();sx[:,j]=0.;tx[:,j]=0.
     sm=met(yte,prob(wi,bi,sx));tm=met(yc,prob(wi,bi,tx))
     audit.append(dict(mirror=m,feature=name,ks=ks_distance(xtr[:,j],xc[:,j]),target_abs_z_mean=float(abs(xc[:,j].mean())),source_mask_f1=float(sm['f1']),mirror_mask_roc_auc=float(tm['roc_auc']),mirror_mask_mcc=float(tm['mcc']),mirror_auc_delta=float(tm['roc_auc']-cross[m]['roc_auc'])))
- out=dict(seed=seed,centralized=compact(cen),local_mean={k:float(np.mean([a[k] for a in local])) for k in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall']},fedavg_iid=compact(fi),fedavg_noniid=compact(fn),feature_audit=audit,provenance_screen=screen,iid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pi],noniid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pn],history_iid=hi,history_noniid=hn,counts=dict(insdn_benign=int((yi==0).sum()),insdn_attack=int((yi==1).sum())))
+ out=dict(seed=seed,centralized=compact(cen),local_mean={k:float(np.mean([a[k] for a in local])) for k in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall','precision']},fedavg_iid=compact(fi),fedavg_noniid=compact(fn),feature_audit=audit,provenance_screen=screen,iid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pi],noniid_clients=[dict(n=len(y),benign=int((y==0).sum()),attack=int((y==1).sum())) for _,y in pn],history_iid=hi,history_noniid=hn,counts=dict(insdn_benign=int((yi==0).sum()),insdn_attack=int((yi==1).sum())))
  for m,(x,y) in tg.items():
   out[f'cross_{m}']=compact(cross[m]);out[f'central_cross_{m}']=compact(central_cross[m]);out['counts'][f'{m}_benign']=int((y==0).sum());out['counts'][f'{m}_attack']=int((y==1).sum())
  return out
+FULL_METRICS=['precision','recall','f1','roc_auc','pr_auc','balanced_accuracy','mcc','tn','fp','fn','tp']
 def summarize(rows,key):
- keys=['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall'];return {k:{'mean':float(np.mean([r[key][k] for r in rows])),'std':float(np.std([r[key][k] for r in rows],ddof=1))} for k in keys}
+ keys=['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall','precision'];return {k:{'mean':float(np.mean([r[key][k] for r in rows])),'std':float(np.std([r[key][k] for r in rows],ddof=1))} for k in keys}
 def main():
  missing=[str(p) for p in [INSDN,*MIRRORS.values()] if not p.exists()]
  if missing: raise SystemExit('Missing prepared dataset file(s): '+', '.join(missing)+'\nSee data/README.md or set INSDN_CSV, CICIDS2017_MIRROR_CSV and CICIDS2017_MLCVE_MIRROR_CSV.')
@@ -159,8 +160,8 @@ def main():
   out[f'ablation_{name}']=summarize(group,'fedavg_iid')
   for ck in CROSS_KEYS: out[f'ablation_{name}_{ck}']=summarize(group,ck)
  (OUT/'summary.json').write_text(json.dumps(out,indent=2),encoding='utf8')
- pd.DataFrame([{**{'seed':r['seed']},**{f'{m}_{q}':r[m][q] for m in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS] for q in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']}} for r in rows]).to_csv(OUT/'five_seed_metrics.csv',index=False)
- pd.DataFrame([{'seed':z['seed'],'mirror':m,'setting':name,**{q:z[f'cross_{m}'][q] for q in ['f1','roc_auc','pr_auc','balanced_accuracy','mcc']}} for name,group in groups for z in group for m in MIRRORS]).to_csv(OUT/'external_ablation_metrics.csv',index=False)
+ pd.DataFrame([{**{'seed':r['seed']},**{f'{m}_{q}':r[m].get(q) for m in ['centralized','local_mean','fedavg_iid','fedavg_noniid',*CROSS_KEYS,*CENTRAL_CROSS_KEYS] for q in FULL_METRICS}} for r in rows]).to_csv(OUT/'five_seed_metrics.csv',index=False)
+ pd.DataFrame([{'seed':z['seed'],'mirror':m,'setting':name,**{q:z[f'cross_{m}'].get(q) for q in FULL_METRICS}} for name,group in groups for z in group for m in MIRRORS]).to_csv(OUT/'external_ablation_metrics.csv',index=False)
  pd.DataFrame([{'seed':r['seed'],**a} for r in rows for a in r['feature_audit']]).to_csv(OUT/'feature_shift_audit.csv',index=False)
  pd.DataFrame([{'seed':r['seed'],**a} for r in rows for a in r['provenance_screen']]).to_csv(OUT/'provenance_screen.csv',index=False)
  r=rows[2];pd.DataFrame({'round':range(1,ROUNDS+1),'iid_f1':r['history_iid'],'noniid_f1':r['history_noniid']}).to_csv(OUT/'fedavg_history_seed42.csv',index=False)

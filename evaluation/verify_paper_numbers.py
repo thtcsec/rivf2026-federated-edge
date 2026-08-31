@@ -126,7 +126,7 @@ for prefix, panel in [('cross_', FED_PANEL), ('central_cross_', CEN_PANEL)]:
 # --- retraining ablation table ---------------------------------------------
 ABL = [('All nine', None), ('Without ports', 'without_ports'),
        ('Without protocol', 'without_protocol'), ('One-hot protocol', 'onehot_protocol'),
-       ('Intersection', 'intersection')]
+       ('Intersection (primary)', 'intersection')]
 ABLT = table_block('tab:ablation')
 for label, name in ABL:
     row = table_row(label, ABLT)
