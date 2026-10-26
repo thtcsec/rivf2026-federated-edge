@@ -130,12 +130,11 @@ seven-field models (policy P2). Do not fit on target labels, do not tune after
 inspecting target metrics, and do not call `run_verified_federated_baseline.py`
 from Phase B.
 
-**Publication state.** These scripts and `results/phase_b/` are part of the
-local `camera-ready-integrated` freeze. They are not on `origin/main` (accepted
-submission `9a2f461`) and are not a public GitHub snapshot until that commit is
-pushed. The claim map is `evaluation/phase_b_claim_manifest.md`. Quoted numbers
-can be checked against tracked JSON without redistributing third-party CSVs
-(Level A). Regenerating models from source files is Level B and needs the
-prepared datasets. The manuscript quotes only the subset checked by
-`evaluation/verify_paper_numbers.py`; the full missingness matrix stays in
-`results/phase_b/missingness/`.
+**Publication state.** Quoted numbers can be checked against tracked JSON
+without redistributing third-party CSVs (Level A). Regenerating models from
+source files is Level B and needs the prepared datasets. B.2 and some
+missingness policies replay tracked checkpoints; B.1/B.3/B.4 retrain source-only
+models. The camera-ready tag is `rivf2026-camera-ready`. The claim map is
+`evaluation/phase_b_claim_manifest.md`. The manuscript quotes only the subset
+checked by `evaluation/verify_paper_numbers.py`; the full missingness matrix
+stays in `results/phase_b/missingness/`.

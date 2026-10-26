@@ -461,9 +461,20 @@ for label, snippet in [
      'delimiting the finding to the tested linear settings'),
     ('Phase B claimed already committed on GitHub',
      'committed outputs, including the Phase'),
+    ('AI disclosure denies pipeline execution',
+     'did not execute the intrusion-detection experiments'),
+    ('artifact section still time-dependent unpublished-on-main',
+     'not yet published on that branch'),
+    ('artifact section still says working tree',
+     'this working tree'),
 ]:
     if snippet in TEX:
         failures.append(label)
+
+check('camera-ready tag url',
+      'https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready')
+check('lanvin DOI', r'10.1007/978-3-031-31108-6\textunderscore 2')
+check('AI disclosure orchestration', 'experiment orchestration')
 
 # --- checksums published in data/README.md ---------------------------------
 README = (ROOT / 'data' / 'README.md').read_text(encoding='utf8')

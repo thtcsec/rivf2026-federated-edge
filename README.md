@@ -7,8 +7,8 @@ may require EDAS/TPC confirmation. This freeze contains the logistic-regression
 FedAvg audit plus the Phase B robustness controls quoted in the camera-ready
 manuscript. It makes no TCN/GRU, reinforcement-learning, OpenFlow, latency,
 resource, or physical-deployment claim. Do not treat integer protocol codes as
-established IANA identities. The public GitHub `main` branch still hosts the
-accepted submission until this commit is pushed.
+established IANA identities. The camera-ready artifact is Git tag
+`rivf2026-camera-ready`.
 
 ## Headline result
 

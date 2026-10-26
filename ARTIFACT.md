@@ -85,3 +85,10 @@ reinforcement-learning, or SDN-actuation claim is supported or made.
 The experiment is deterministic for the specified package versions and seeds.
 Report platform-dependent floating-point differences rather than silently
 overwriting the committed reference outputs.
+
+`results/verified/summary.json` is the frozen original. It uses Python's
+default JSON encoder, so undefined total-variation diagnostics on continuous
+features are stored as bare `NaN` tokens. Those tokens are not ROC-AUC values.
+A RFC 8259 copy with `null` in those positions is
+`results/verified/summary.strict.json`; generating it must not overwrite the
+original. Finite metrics in the two files are numerically identical.
