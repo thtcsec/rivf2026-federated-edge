@@ -3,7 +3,7 @@
 Author-specified policies in this script. Source-only fitting. Writes only
 under results/phase_b/missingness/. HGB is not a federated model.
 
-Experimental matrix (specified in this file; not a timestamped preregistration):
+Experimental matrix (author-specified configuration in this file):
   Models: lr_fedavg_iid, lr_centralized, hgb_categorical, hgb_numeric
   Policies:
     P0 observed nine-field TL (not MLCVE-feasible)
@@ -17,6 +17,7 @@ from __future__ import annotations
 import inspect
 import json
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -55,7 +56,7 @@ VIEWS = ('source_test', 'trafficlabelling', 'tl_counterfactual', 'mlcve')
 PROTO_I = FEATURES.index('ip_proto')
 PORT_I = FEATURES.index('tp_src')
 UNAFFECTED_I = [i for i, f in enumerate(FEATURES) if f not in PROVENANCE_FIELDS]
-# Pre-registered 2026-10-26. Not chosen from target scores.
+# Author-specified 2026-10-26. Not chosen from target scores.
 MASK_P = 0.5
 MASK_OFFSET = 10007
 PAPER = {
@@ -248,48 +249,76 @@ def source_partition(seed: int):
     return xtr, xte, ytr, yte
 
 
+def _vector_key(row: np.ndarray) -> tuple:
+    return tuple(np.round(np.asarray(row, dtype=float), 10))
+
+
+def _label_sets(rows: np.ndarray, labels: np.ndarray) -> dict[tuple, set[int]]:
+    grouped: dict[tuple, set[int]] = defaultdict(set)
+    for row, lab in zip(rows, labels):
+        grouped[_vector_key(row)].add(int(lab))
+    return grouped
+
+
 def leakage_audit(xtr: np.ndarray, xte: np.ndarray, ytr: np.ndarray, yte: np.ndarray) -> dict:
+    """Permutation-invariant feature-vector overlap diagnostics.
+
+    Counts use complete label *sets* per rounded feature-vector key, never the
+    first-seen label. Schema notes versus 2fa428b:
+
+    - ``train_internal_label_conflicts`` / ``test_internal_label_conflicts``
+      count unique vector *groups* with more than one label, not extra rows.
+    - ``label_conflicts_in_this_split_overlap`` counts overlapping groups whose
+      train and test label sets differ (was an order-dependent test-row count).
+    """
     if any(name in FEATURES for name in ('label', 'target', 'is_synthetic', 'run_id')):
         raise SystemExit('label or identifier leaked into FEATURES')
-    keys_tr = [tuple(np.round(r, 10)) for r in xtr]
-    keys_te = [tuple(np.round(r, 10)) for r in xte]
-    tr_labels: dict[tuple, int] = {}
-    train_internal_conflicts = 0
-    for k, lab in zip(keys_tr, ytr):
-        lab_i = int(lab)
-        prev = tr_labels.get(k)
-        if prev is None:
-            tr_labels[k] = lab_i
-        elif prev != lab_i:
-            train_internal_conflicts += 1
-    overlap = set(keys_tr).intersection(keys_te)
+    if len(yte) == 0:
+        raise SystemExit('leakage_audit requires a non-empty test split')
+    keys_tr = [_vector_key(r) for r in xtr]
+    keys_te = [_vector_key(r) for r in xte]
+    tr_sets = _label_sets(xtr, ytr)
+    te_sets = _label_sets(xte, yte)
+    overlap = set(tr_sets).intersection(te_sets)
     te_in = int(sum(k in overlap for k in keys_te))
-    split_conflicts = int(sum(
-        1 for k, lab in zip(keys_te, yte)
-        if k in tr_labels and tr_labels[k] != int(lab)))
-    consistent = split_conflicts == 0 and train_internal_conflicts == 0
-    if consistent:
-        consistency = 'Duplicate groups in this split are label-consistent. '
+    train_internal = int(sum(len(s) > 1 for s in tr_sets.values()))
+    test_internal = int(sum(len(s) > 1 for s in te_sets.values()))
+    cross_split = int(sum(tr_sets[k] != te_sets[k] for k in overlap))
+    bits = []
+    if overlap:
+        bits.append(
+            f'{len(overlap)} unique feature vectors appear in both splits '
+            f'({te_in} test rows; fraction {te_in / len(yte):.4f}).'
+        )
     else:
-        consistency = (
-            f'This split has {split_conflicts} train-test label conflicts '
-            f'on overlapping vectors '
-            f'({train_internal_conflicts} train-internal). ')
+        bits.append('No identical feature vector appears in both source splits.')
+    if train_internal:
+        bits.append(f'{train_internal} training vector groups have conflicting labels.')
+    if test_internal:
+        bits.append(f'{test_internal} test vector groups have conflicting labels.')
+    if cross_split:
+        bits.append(
+            f'{cross_split} overlapping vector groups have train/test label disagreement.'
+        )
+    elif overlap and not train_internal and not test_internal:
+        bits.append('Overlapping groups are label-consistent in this split.')
+    bits.append(
+        'This audit does not measure source-AUC inflation or unseen-row performance.'
+    )
     return {
         'n_train': int(len(ytr)),
         'n_test': int(len(yte)),
+        'unique_train_vectors': int(len(tr_sets)),
+        'unique_test_vectors': int(len(te_sets)),
         'unique_exact_overlap': int(len(overlap)),
         'test_rows_matching_a_train_vector': te_in,
         'test_overlap_frac': float(te_in / len(yte)),
-        'label_conflicts_in_this_split_overlap': split_conflicts,
-        'train_internal_label_conflicts': train_internal_conflicts,
+        'label_conflicts_in_this_split_overlap': cross_split,
+        'train_internal_label_conflicts': train_internal,
+        'test_internal_label_conflicts': test_internal,
+        'cross_split_conflicting_groups': cross_split,
         'features': list(FEATURES),
-        'verdict': (
-            'Repeated identical InSDN flow-stat vectors exist and appear in both '
-            'source splits. ' + consistency +
-            'This inflates source AUC but is not target-label leakage. '
-            'This audit does not compute an unseen-row source AUC.'
-        ),
+        'verdict': ' '.join(bits),
     }
 
 
@@ -380,8 +409,8 @@ def write_report(summary: dict) -> None:
         '',
         'Controlled comparison of source-only missingness policies when Protocol',
         'and Source Port are unavailable in a target release. **HGB is not a',
-        'federated model.** Policies and the masking probability are specified in',
-        'this script; that is not a timestamped preregistration.',
+        'federated model.** Policies and the masking probability are an',
+        'author-specified configuration in this script.',
         '',
         f"- Git commit: `{git_sha()}`",
         f"- sklearn: `{sklearn.__version__}`",
