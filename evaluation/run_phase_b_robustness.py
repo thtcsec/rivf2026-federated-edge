@@ -188,7 +188,7 @@ def write_report(summary: dict, hashes: dict) -> None:
     if verdict == 'observed_in_one_additional_centralized_nonlinear_classifier':
         generality = (
             'Strengthens the claim only for this one additional centralized '
-            'nonlinear family under the pre-registered configuration. It does '
+            'nonlinear family under the author-specified configuration. It does '
             'not establish generality across classifier families.'
         )
         shortcut = (
@@ -220,7 +220,7 @@ def write_report(summary: dict, hashes: dict) -> None:
         '',
         'Centralized `HistGradientBoostingClassifier` with protocol as a native',
         'categorical feature. **Not a federated model.** Hyperparameters were',
-        'pre-registered and were not changed after seeing target scores.',
+        'specified in this script; that is not a timestamped preregistration.',
         'The camera-ready manuscript was not modified.',
         '',
         f'- Git commit: `{git_sha()}`',

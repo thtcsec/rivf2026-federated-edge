@@ -79,9 +79,20 @@ class ContractTests(unittest.TestCase):
             self.skipTest('prepared CSVs absent')
         self.assertEqual(validate_inputs()['hashes'], REFERENCE_HASHES)
 
-    def test_mask_pre_registered(self):
+    def test_mask_probability_specified(self):
         self.assertEqual(miss.MASK_P, 0.5)
         self.assertIn('MASK_P = 0.5', SRC)
+        self.assertNotIn('near-perfect on unseen source rows', SRC)
+
+    def test_leakage_audit_computes_conflicts_without_unseen_auc(self):
+        xtr = np.array([[1.0] * 9, [2.0] * 9])
+        ytr = np.array([0, 1])
+        xte = np.array([[1.0] * 9])
+        yte = np.array([1])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertGreater(d['label_conflicts_in_this_split_overlap'], 0)
+        self.assertNotIn('near-perfect', d['verdict'])
+        self.assertIn('does not compute an unseen-row source AUC', d['verdict'])
 
     def test_mask_deterministic_and_label_independent(self):
         a = miss.provenance_masks(20, 11)

@@ -15,11 +15,12 @@ has been assigned.
 
 1. Five-seed centralized, local-only, IID FedAvg, and Dirichlet non-IID
    logistic-regression controls on InSDN, with no FedAvg accuracy advantage.
-2. A row-matched counterfactual target view: the same 207,463 `TrafficLabelling`
-   test rows in the same order, with identical labels, identical attack
-   prevalence and seven bit-identical features, differing only in `ip_proto` and
-   `tp_src`. Scoring the same five source models on it moves ROC-AUC from 0.7357
-   to 0.3545 and MCC from +0.2511 to -0.1915.
+2. A row-matched counterfactual target view: the same 207,463-row
+   `TrafficLabelling` **pool** in the same order, with identical labels, identical
+   attack prevalence and seven bit-identical features, differing only in
+   `ip_proto` and `tp_src`. Each seed scores a stratified **30,000-row sample**
+   of that pool. Scoring the same five source models on those samples moves
+   ROC-AUC from 0.7357 to 0.3545 and MCC from +0.2511 to -0.1915.
 3. Ecological validation on the real `MachineLearningCVE` release (ROC-AUC
    0.3441 / MCC -0.2698) and a centralized control on all three views
    (0.7490 / 0.3544 / 0.3447), showing the effect is neither an artifact of the
@@ -90,6 +91,15 @@ reinforcement-learning, or SDN-actuation claim is supported or made.
 The experiment is deterministic for the specified package versions and seeds.
 Report platform-dependent floating-point differences rather than silently
 overwriting the committed reference outputs.
+
+Historical Phase B manifests store a git commit and prepared-file hashes. They
+do not store executed-source hashes and are not a timestamped preregistration.
+Re-running a current script against frozen outputs is a current reproduction,
+not proof of the original runtime tree. Do not rewrite those manifests to look
+more complete. The leakage audit reports source-split overlap; it does not
+compute an unseen-row source AUC. Frozen JSON may still contain an older
+qualitative sentence to that effect; that sentence is historical, not a
+calculated metric.
 
 `results/verified/summary.json` is the frozen original. It uses Python's
 default JSON encoder, so undefined total-variation diagnostics on continuous

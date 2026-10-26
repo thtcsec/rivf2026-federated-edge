@@ -11,9 +11,26 @@ original providers and run `evaluation/prepare_public_data.py`.
   appear in the release CSV. Code 0 is not treated as an IANA protocol identity;
   in the prepared file every such row has source and destination port 0.
   Dataset paper: <https://doi.org/10.1109/ACCESS.2020.3022633>.
+
+  The CSV used here is the **third-party Hugging Face derivative**
+  [`Sharukesh/INSDN`](https://huggingface.co/datasets/Sharukesh/INSDN) at
+  revision `f59330c8ff0f1b231b382e05fc41b1e8fb0df6b4`
+  (`Dataset.csv` SHA-256
+  `a93d51e1c2debc7246728578f22d84a442f156628be64b8c9bae5ccc5dd88a42`).
+  That file is not an authenticated dump from the original publisher.
+  Prepared InSDN `data/insdn/flow_stats.csv` is a cleaned derivative of that
+  CSV (SHA-256 `c05f1f40…` below).
 - **CICIDS2017**, Monday, Friday DDoS, and Friday PortScan. Obtain them from
   <https://www.unb.ca/cic/datasets/ids-2017.html>. CSV and Parquet inputs are
   both accepted.
+
+  This preparation ingested Parquet mirrors of the UNB CSVs. The committed
+  `dataset_summary.json` files record these source filenames (no independent
+  SHA-256 of those Parquet archives is published here):
+
+  - `Monday-WorkingHours.pcap_ISCX.csv.parquet`
+  - `Friday-WorkingHours-Afternoon-PortScan.pcap_ISCX.csv.parquet`
+  - `Friday-WorkingHours-Afternoon-DDos.pcap_ISCX.csv.parquet`
 
   CICIDS2017 is published in two flow-feature distributions that do **not**
   expose the same columns, and the paper's central result is that the choice
@@ -137,7 +154,11 @@ from Phase B.
 without redistributing third-party CSVs (Level A). Regenerating models from
 source files is Level B and needs the prepared datasets. B.2 and some
 missingness policies replay tracked checkpoints; B.1/B.3/B.4 retrain source-only
-models. The camera-ready tag is `rivf2026-camera-ready`. The claim map is
-`evaluation/phase_b_claim_manifest.md`. The manuscript quotes only the subset
+models. The scientific freeze tag is `rivf2026-camera-ready` and must not be
+moved. Historical Phase B manifests record a git commit SHA and prepared-CSV
+hashes; they do **not** record executed-source hashes and are not a timestamped
+preregistration. Re-running a current script against frozen outputs is a
+**current reproduction**, not proof of the original runtime tree. The claim map
+is `evaluation/phase_b_claim_manifest.md`. The manuscript quotes only the subset
 checked by `evaluation/verify_paper_numbers.py`; the full missingness matrix
 stays in `results/phase_b/missingness/`.

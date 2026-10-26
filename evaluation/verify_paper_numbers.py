@@ -190,11 +190,14 @@ if collapse != sorted(v for v, _ in VIEWS):
     failures.append(f'mass-collapse rule fires on {collapse}, not on all three views')
 
 unflagged = sg[~sg.any_flag]
+unflagged_obs = SCR[~SCR.flagged]
 for label, value in [
     ('screen flagged ratio', f"{sg.loc[('tl_counterfactual', 'tp_src'), 'ratio']:.4f}"),
     ('screen flagged OOR', f"{sg.loc[('tl_counterfactual', 'tp_src'), 'oor']:.4f}"),
-    ('screen min unflagged ratio', f"{unflagged.ratio.min():.3f}"),
-    ('screen max unflagged OOR', f"{unflagged.oor.max():.4f}"),
+    ('screen min unflagged mean ratio', f"{unflagged.ratio.min():.3f}"),
+    ('screen max unflagged mean OOR', f"{unflagged.oor.max():.4f}"),
+    ('screen min unflagged observation ratio', f"{unflagged_obs.std_ratio.min():.4f}"),
+    ('screen max unflagged observation OOR', f"{unflagged_obs.out_of_range.max():.4f}"),
     ('screen TL protocol TV', f"{sg.loc[('trafficlabelling', 'ip_proto'), 'tv']:.4f}"),
     ('screen CF protocol TV', f"{sg.loc[('tl_counterfactual', 'ip_proto'), 'tv']:.4f}"),
     ('screen CF protocol ratio', f"{sg.loc[('tl_counterfactual', 'ip_proto'), 'ratio']:.4f}"),
@@ -235,6 +238,9 @@ for label, value in [
     ('protocol TL dAUC', f"{abs(g.loc[('trafficlabelling', 'ip_proto'), 'mirror_auc_delta']):.4f}"),
     ('protocol CF dAUC', f"{g.loc[('tl_counterfactual', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
     ('protocol ML dAUC', f"{g.loc[('mlcve', 'ip_proto'), 'mirror_auc_delta']:.4f}"),
+    ('byte-count TL dAUC', f"{g.loc[('trafficlabelling', 'byte_count'), 'mirror_auc_delta']:+.4f}"),
+    ('byte-count CF dAUC', f"{g.loc[('tl_counterfactual', 'byte_count'), 'mirror_auc_delta']:.4f}"),
+    ('byte-rate CF dAUC', f"{g.loc[('tl_counterfactual', 'byte_count_per_sec'), 'mirror_auc_delta']:.4f}"),
     ('protocol TL KS', f"{g.loc[('trafficlabelling', 'ip_proto'), 'ks']:.4f}"),
     ('protocol CF KS', f"{g.loc[('tl_counterfactual', 'ip_proto'), 'ks']:.4f}"),
     ('no-protocol source F1', f"{SUM['ablation_without_protocol']['f1']['mean']:.4f}"),
@@ -467,6 +473,14 @@ for label, snippet in [
      'not yet published on that branch'),
     ('artifact section still says working tree',
      'this working tree'),
+    ('protocol uniqueness overstated',
+     'the only field whose'),
+    ('byte-rate dAUC claimed exactly zero',
+     r'$\Delta$AUC $0.0000$'),
+    ('manuscript claims preregistration',
+     'pre-registered'),
+    ('unseen-row HGB AUC claimed',
+     'near-perfect on unseen'),
 ]:
     if snippet in TEX:
         failures.append(label)
@@ -475,6 +489,12 @@ check('camera-ready tag url',
       'https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready')
 check('lanvin DOI', r'10.1007/978-3-031-31108-6\textunderscore 2')
 check('AI disclosure orchestration', 'experiment orchestration')
+check('pool vs sample abstract', 'Each seed scores a stratified 30,000-row sample')
+check('pool vs sample conclusion', 'each seed scoring a stratified 30,000-row sample')
+check('InSDN Hugging Face derivative', 'Sharukesh/INSDN')
+check('screen means not observations', r'feature/view \emph{means}')
+check('no unseen-row AUC in threats', 'does not compute an unseen-row source AUC')
+check('no timestamped preregistration', 'not a timestamped preregistration')
 
 # --- checksums published in data/README.md ---------------------------------
 README = (ROOT / 'data' / 'README.md').read_text(encoding='utf8')

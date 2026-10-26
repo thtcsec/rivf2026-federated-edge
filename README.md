@@ -45,7 +45,7 @@ Same InSDN-trained FedAvg IID logistic-regression models, five seeds, no target 
 | `CF` counterfactual | flag surrogate / sentinel `-1` | **yes** | **0.3545** | **−0.1915** |
 | `MLCVE` real release | flag surrogate / sentinel `-1` | **no** | 0.3441 | −0.2698 |
 
-`CF` holds 207,463 flows, labels, prevalence, and seven features fixed and overwrites only two encodings. That matched contrast is the causal comparison. `MLCVE` is an unmatched ecological check: it corroborates that a public release can land near the counterfactual, but it is **not** row-matched and is **not** the identified mechanism.
+`CF` holds a 207,463-flow pool with labels, prevalence, and seven features fixed and overwrites only two encodings. Each seed scores a stratified 30,000-row sample of that pool. That matched contrast is the causal comparison. `MLCVE` is an unmatched ecological check: it corroborates that a public release can land near the counterfactual, but it is **not** row-matched and is **not** the identified mechanism.
 
 A centralized LR model reverses on the same matched views (0.7490 → 0.3544), so FedAvg aggregation is not required for the sign change.
 
@@ -69,7 +69,7 @@ InSDN source training (no target labels)
 
 ## Datasets and provenance
 
-Third-party CSVs are **not** in Git. Prepare them with `evaluation/prepare_public_data.py` and the checksums in `data/README.md`.
+Third-party CSVs are **not** in Git. Prepare them with `evaluation/prepare_public_data.py` and the checksums in `data/README.md`. InSDN is the Hugging Face third-party derivative `Sharukesh/INSDN` (revision `f59330c8…`), not an authenticated publisher dump. CICIDS2017 was ingested from Parquet mirrors of the UNB CSVs; filenames are in each `dataset_summary.json`.
 
 | File | Role | Rows | SHA-256 prefix |
 |---|---|---|---|
