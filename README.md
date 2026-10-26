@@ -1,116 +1,157 @@
-# Two Distributions, Opposite Verdicts
+<p align="center">
+  <img src="vinuni.png" height="72" alt="VinUniversity, venue of IEEE RIVF 2026" />
+  <br />
+  <sub>Conference venue. Authors are affiliated with HUFLIT, not VinUniversity.</sub>
+</p>
 
-Reproduction package for the IEEE RIVF 2026 submission by Hoang Tu Trinh and
-Tien Thanh Cao. The repository contains only the logistic-regression FedAvg
-audit reported in the paper; it makes no TCN/GRU, reinforcement-learning,
-OpenFlow, latency, resource, or physical-deployment claim.
+<h1 align="center">Same Flows, Opposite Verdicts</h1>
+<p align="center"><em>Feature reconstruction and provenance in cross-dataset intrusion detection</em></p>
 
-## Headline result
+<p align="center">
+  <a href="https://rivf2026.org/"><img src="https://img.shields.io/badge/IEEE-RIVF%202026-003147.svg" alt="IEEE RIVF 2026" /></a>
+  <a href="https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready"><img src="https://img.shields.io/badge/artifact-rivf2026--camera--ready-2ea44f.svg" alt="Camera-ready artifact tag" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/code%20license-MIT-blue.svg" alt="MIT license" /></a>
+  <a href="evaluation/phase_b_claim_manifest.md"><img src="https://img.shields.io/badge/reproducibility-Level%20A%20verifier-informational.svg" alt="Level A result verification" /></a>
+</p>
 
-CICIDS2017 is published in two flow-feature distributions that expose different
-columns. The primary experiment is a **row-matched counterfactual**: the same
-207,463 target flows in the same order, with identical labels, identical attack
-prevalence and seven bit-identical features, in which only `Protocol` and
-`Source Port` are replaced by the surrogates the `MachineLearningCVE` release
-forces. That is enough to reverse the cross-dataset verdict.
+## Paper metadata
+
+| Field | Record |
+|---|---|
+| **Title** | *Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection* |
+| **Authors** | Tu Hoang Trinh and Thanh Tien Cao* |
+| **Affiliation** | Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages — Information Technology |
+| **Venue** | IEEE RIVF 2026, VinUniversity, Hanoi, 18–20 December 2026 |
+| **Status** | Accepted; camera-ready candidate (EDAS #1571348135). No IEEE Xplore DOI yet. |
+| **Track** | Cyber-Security, Cryptography, Blockchain |
+| **Artifact tag** | [`rivf2026-camera-ready`](https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready) |
+| **Code license** | MIT (`LICENSE`). InSDN and CICIDS2017 remain under their owners' terms. |
+
+\*Corresponding author: `thanhct@huflit.edu.vn`
+
+## Overview
+
+CICIDS2017 ships two flow-feature releases that do not expose the same columns. Aligning the MachineLearningCVE schema to a nine-field InSDN model therefore requires dropping Protocol and Source Port or reconstructing them. This artifact evaluates **one specified reconstruction** as a controlled failure mode, not as documented practice.
+
+Federated averaging is the evaluation setting, not the identified cause. Integer protocol codes are empirical labels, not IANA identities.
+
+## Headline comparison
+
+Same InSDN-trained FedAvg IID logistic-regression models, five seeds, no target refit:
 
 | Target view | Protocol / source port | Row-matched | ROC-AUC | MCC |
 |---|---|---|---|---|
-| `TL` original | original columns | — | 0.7357 | +0.2511 |
-| `CF` counterfactual | flag surrogate / sentinel `-1` | **yes** | 0.3545 | -0.1915 |
-| `ML` real release | flag surrogate / sentinel `-1` | no | 0.3441 | -0.2698 |
+| `TL` original TrafficLabelling | original columns | — | **0.7357** | **+0.2511** |
+| `CF` counterfactual | flag surrogate / sentinel `-1` | **yes** | **0.3545** | **−0.1915** |
+| `MLCVE` real release | flag surrogate / sentinel `-1` | **no** | 0.3441 | −0.2698 |
 
-Because `CF` shares its rows, labels and prevalence with `TL`, the difference
-cannot be attributed to attack mix, labeling, collection environment or
-sampling. The real `ML` release lands next to the counterfactual, so the
-mechanism isolated on matched rows is what dominates in an actual public
-release. A centralized model shows the same pattern (0.7490 / 0.3544 / 0.3447),
-so this is not an artifact of FedAvg aggregation.
+`CF` holds 207,463 flows, labels, prevalence, and seven features fixed and overwrites only two encodings. That matched contrast is the causal comparison. `MLCVE` is an unmatched ecological check: it corroborates that a public release can land near the counterfactual, but it is **not** row-matched and is **not** the identified mechanism.
 
-Masking localizes the reversal to protocol, whose contribution changes sign
-(-0.1438 on `TL` vs +0.2647 on `CF`) even though its marginal KS distance is the
-*smaller* of the two. On those identical rows, **dropping** the unavailable field
-reaches 0.5157 while **reconstructing** it reaches only 0.3545: incorrect
-reconstruction is worse than admitting the field is missing.
+A centralized LR model reverses on the same matched views (0.7490 → 0.3544), so FedAvg aggregation is not required for the sign change.
 
-A label-free preflight check (source-training statistics vs unlabelled target
-values) flags the substituted port on all five seeds and nothing else among the
-27 column-view pairs, but it does **not** flag the reconstructed protocol, which
-stays in range with a plausible variance. None of the marginal distance rules we
-tested separates the two protocol encodings. Placeholder substitution is
-statistically obvious; semantic reconstruction has to be declared.
+## Experimental design
 
-## What is evaluated
+```text
+InSDN source training (no target labels)
+        │  zero-shot scores
+        ▼
+   ┌────┴──────────────┬────────────────────┐
+   │                   │                    │
+  TL                  CF                 MLCVE
+ original          reconstruction      real release
+ row-matched  ←── identical rows ──→   unmatched
+                                      ecological
+```
 
-- centralized, five-client local-only, IID FedAvg, and Dirichlet non-IID
-  FedAvg controls over five fixed seeds;
-- leakage-safe source-fitted preprocessing;
-- zero-shot transfer from InSDN to **all three** CICIDS2017 views, scored by the
-  same models in a single run, plus the centralized model on the same views;
-- port/protocol retraining ablations against every view, which quantify dropping
-  a field against reconstructing it, including the schema-intersection setting
-  that drops both fields the `MachineLearningCVE` release does not supply;
-- a feature-level audit using two-sample KS distance and source-mean masking,
-  reported per view; and
-- a label-free preflight provenance check, reported against that audit.
+- **Source.** Models are trained on InSDN only. Target labels are never used for training, scaling, or threshold selection in the zero-shot evaluation.
+- **TL vs CF.** Same rows, same order, same labels. Only `ip_proto` and `tp_src` differ. This is the primary result.
+- **MLCVE.** Independent public CSV distribution. Different row set and prevalence. Not a matched intervention.
 
-The counterfactual view is asserted to be row-matched at three independent
-points: when it is written, after seeded subsampling in the evaluation, and
-against the committed CSVs in `verify_paper_numbers.py`.
+## Datasets and provenance
 
-## Reproduce
+Third-party CSVs are **not** in Git. Prepare them with `evaluation/prepare_public_data.py` and the checksums in `data/README.md`.
 
-Python 3.11 is recommended.
+| File | Role | Rows | SHA-256 prefix |
+|---|---|---|---|
+| `data/insdn/flow_stats.csv` | source | 343,889 | `c05f1f40…` |
+| `data/cicids2017_mirror/test.csv` | TL | 207,463 | `4ff3075e…` |
+| `data/cicids2017_mirror_counterfactual/test.csv` | CF | 207,463 | `957b4170…` |
+| `data/cicids2017_mirror_mlcve/test.csv` | MLCVE | 176,036 | `af5f02ad…` |
+
+When Protocol is absent, the specified rule writes 6 if any TCP flag is positive and 0 otherwise; every reconstructed source port is `-1`. The script records the branch taken in `dataset_summary.json`.
+
+## Key robustness findings
+
+Limited to the evaluated models, seeds, and this CICIDS2017 slice:
+
+- Protocol-only replacement reverses the tested LR (factorial 0.7357 → 0.3365). Source-port substitution does not (0.7522).
+- Dirichlet non-IID FedAvg (`α=0.5`) also reverses on the matched views (0.7297 / 0.3507).
+- A **centralized** nine-field categorical HistGradientBoostingClassifier does **not** reverse (0.9602 / 0.9080). It is not a federated model and is not capacity-matched to LR.
+- Source-retrained seven-field LR transfers near chance (0.5075). A different source-retrained seven-field HGB remains strong (0.9603 / 0.9592).
+- These results do not imply that every reconstruction fails, or that the reversal holds for every classifier.
+
+The claim-to-file map is `evaluation/phase_b_claim_manifest.md`.
+
+## Repository structure
+
+```text
+rivf2026-federated-edge/
+├── rivf2026.tex / rivf2026.pdf   # IEEE A4 camera-ready manuscript
+├── evaluation/                   # runners, verifier, tests
+├── results/verified/             # frozen original LR outputs
+├── results/phase_b/              # non-IID, factorial, HGB, missingness
+├── data/README.md                # provenance and checksums (no CSVs)
+├── CITATION.cff
+└── ARTIFACT.md
+```
+
+## Level A — result verification (no third-party data)
+
+A clean checkout can check every quoted number against **tracked** files under `results/verified/` and `results/phase_b/`. Prepared CSVs are optional; when they are absent the verifier skips row-matching, protocol-label audit, and checksums instead of reporting those checks as passing.
 
 ```bash
 python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
 # Windows: .venv\Scripts\activate
 python -m pip install -r requirements.txt
-
-python evaluation/prepare_public_data.py --insdn-src /path/to/Dataset.csv
-python evaluation/prepare_public_data.py \
-  --cicids-root /path/to/cicids2017/TrafficLabelling \
-  --cicids-out-name cicids2017_mirror \
-  --cicids-counterfactual-name cicids2017_mirror_counterfactual
-python evaluation/prepare_public_data.py \
-  --cicids-root /path/to/cicids2017/MachineLearningCVE \
-  --cicids-out-name cicids2017_mirror_mlcve
-
-python evaluation/run_verified_federated_baseline.py
 python evaluation/verify_paper_numbers.py
-pdflatex -interaction=nonstopmode rivf2026.tex
-pdflatex -interaction=nonstopmode rivf2026.tex
+python -m unittest discover -s evaluation -p "test_*.py"
 ```
 
-`verify_paper_numbers.py` re-reads `rivf2026.tex` and fails if any table cell,
-prose figure, count, or published checksum disagrees with `results/verified/`.
+`results/verified/summary.json` is the frozen original (Python `NaN` for undefined TV diagnostics). `results/verified/summary.strict.json` is an RFC 8259 copy with `null` in those positions. Do not overwrite the original.
 
-Data licenses prevent redistribution. See `data/README.md` for source files,
-feature conversion, per-file field provenance, expected rows, and SHA-256
-checksums. Prepared files may also be supplied using `INSDN_CSV`,
-`CICIDS2017_MIRROR_CSV`, `CICIDS2017_COUNTERFACTUAL_CSV`, and
-`CICIDS2017_MLCVE_MIRROR_CSV`.
+## Level B — experimental reproduction
 
-## Outputs
+Requires the four prepared CSVs (or the public InSDN and CICIDS2017 releases). After checksums match `data/README.md`:
 
-The evaluation writes all computed artifacts under `results/verified/`. The
-machine-readable outputs are `five_seed_metrics.csv`,
-`external_ablation_metrics.csv`, `feature_shift_audit.csv`,
-`provenance_screen.csv`, and `summary.json`. All but the first carry a `mirror`
-column or key so that every number can be traced to one provenance.
+```bash
+python evaluation/run_verified_federated_baseline.py
+python evaluation/run_phase_b_noniid_cross.py
+python evaluation/run_phase_b_mechanism.py      # replays tracked checkpoints
+python evaluation/run_phase_b_robustness.py     # retrains centralized HGB
+python evaluation/run_phase_b_missingness.py
+python evaluation/verify_paper_numbers.py
+```
 
-## Scope and interpretation
+Phase B must write only under `results/phase_b/`. B.2 and some missingness policies replay the 30 tracked checkpoints; B.1, B.3, and B.4 retrain source-only models.
 
-All three views contain only Monday benign, Friday DDoS, and Friday PortScan
-traffic, so the external experiment is a feature-provenance interoperability
-audit rather than a CICIDS2017 leaderboard. The below-random results are evidence
-about harmonization, not a deployment benchmark, and the paper does not present
-them as a property of the traffic. The counterfactual establishes what these two
-fields do to this model on these rows; it does not establish that provenance is
-the largest source of cross-dataset error in general.
+## Limitations
+
+One source corpus, one CICIDS2017 slice, five repeated holdouts, one reconstruction rule, and the tested LR/HGB configurations. Near-ceiling source HGB AUC is not external validity. About 34.86% of source-test rows match a training feature vector; that overlap is label-consistent and is not target-label leakage.
+
+## Citation
+
+```bibtex
+@inproceedings{trinh2026sameflows,
+  author    = {Tu Hoang Trinh and Thanh Tien Cao},
+  title     = {Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection},
+  booktitle = {Proc. IEEE RIVF},
+  year      = {2026},
+  note      = {Accepted camera-ready manuscript. Artifact: https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready}
+}
+```
+
+Machine-readable citation: [`CITATION.cff`](CITATION.cff). Evaluation protocol: [`ARTIFACT.md`](ARTIFACT.md).
 
 ## License
 
-Code is released under the MIT License. InSDN and CICIDS2017 remain subject to
-their respective owners' terms.
+Code is MIT. InSDN and CICIDS2017 must be obtained from their original providers and must not be redistributed from this repository.

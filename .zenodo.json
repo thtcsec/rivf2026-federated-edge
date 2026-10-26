@@ -1,27 +1,28 @@
 {
-  "title": "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection",
+  "title": "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection",
   "upload_type": "publication",
   "publication_type": "conferencepaper",
-  "description": "Research artifact for an IEEE RIVF 2026 submission showing that the published CSV distribution supplying target features, not the target traffic, can decide the sign of a cross-dataset federated intrusion-detection result.",
+  "description": "Camera-ready research artifact for IEEE RIVF 2026 paper #1571348135. A specified reconstruction of two MachineLearningCVE-absent fields reverses the sign of InSDN-trained logistic regression on row-matched CICIDS2017 flows. Federated averaging is the evaluation setting, not the identified cause. No IEEE Xplore DOI is claimed.",
   "creators": [
     {
-      "name": "Trinh, Hoang Tu",
-      "affiliation": "Faculty of Information Technology, HUFLIT"
+      "name": "Trinh, Tu Hoang",
+      "affiliation": "Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages -- Information Technology"
     },
     {
-      "name": "Cao, Tien Thanh",
-      "affiliation": "Faculty of Information Technology, HUFLIT"
+      "name": "Cao, Thanh Tien",
+      "affiliation": "Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages -- Information Technology"
     }
   ],
   "access_right": "open",
   "license": "MIT",
   "keywords": [
-    "Federated Learning",
     "Intrusion Detection",
-    "Logistic Regression",
-    "Cross-Dataset Evaluation",
     "Feature Provenance",
+    "Cross-Dataset Evaluation",
+    "Federated Learning",
     "Reproducible Research",
+    "CICIDS2017",
+    "InSDN",
     "IEEE RIVF 2026"
   ]
 }

@@ -1,0 +1,767 @@
+{
+  "models": {
+    "centralized": {
+      "conditions_roc_auc": {
+        "A": {
+          "n": 5,
+          "mean": 0.7489735414558663,
+          "std": 0.016487551701060935,
+          "se": 0.007373457277222908,
+          "ci95": [
+            0.7285048240542955,
+            0.769442258857437
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "B": {
+          "n": 5,
+          "mean": 0.3456915372565911,
+          "std": 0.009936182286371114,
+          "se": 0.004443595805831019,
+          "ci95": [
+            0.3333561152996042,
+            0.35802695921357797
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "C": {
+          "n": 5,
+          "mean": 0.7575787347437466,
+          "std": 0.011847306963192606,
+          "se": 0.005298276744001053,
+          "ci95": [
+            0.7428707185023997,
+            0.7722867509850935
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "D": {
+          "n": 5,
+          "mean": 0.3543911035684675,
+          "std": 0.003288062156297257,
+          "se": 0.0014704660991450408,
+          "ci95": [
+            0.35030908967724084,
+            0.3584731174596941
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        }
+      },
+      "effects_roc_auc": {
+        "protocol_only_original_ports_B_minus_A": {
+          "n": 5,
+          "mean": -0.40328200419927523,
+          "std": 0.010434022280722162,
+          "se": 0.004666236619688429,
+          "ci95": [
+            -0.4162354770555303,
+            -0.39032853134302015
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.39954143725963215,
+            "23": -0.40230543846545525,
+            "42": -0.4165858012510624,
+            "77": -0.3888232073481345,
+            "101": -0.4091541366720917
+          }
+        },
+        "port_only_original_protocol_C_minus_A": {
+          "n": 5,
+          "mean": 0.00860519328788023,
+          "std": 0.009943915895805745,
+          "se": 0.004447054381112472,
+          "ci95": [
+            -0.0037398296740879904,
+            0.02095021624984845
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.0019480626778133336,
+            "23": 0.0015700640361002716,
+            "42": 0.0012010132580846378,
+            "77": 0.015663165974678983,
+            "101": 0.022643660492723927
+          }
+        },
+        "protocol_under_sentinel_D_minus_C": {
+          "n": 5,
+          "mean": -0.403187631175279,
+          "std": 0.011436005433341313,
+          "se": 0.005114337108001623,
+          "ci95": [
+            -0.4173850309870915,
+            -0.3889902313634665
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.3995767177253097,
+            "23": -0.40258221127483584,
+            "42": -0.4171395023882492,
+            "77": -0.3867509687617636,
+            "101": -0.4098887557262369
+          }
+        },
+        "port_under_reconstructed_D_minus_B": {
+          "n": 5,
+          "mean": 0.008699566311876383,
+          "std": 0.01026996534314785,
+          "se": 0.004592868126769109,
+          "ci95": [
+            -0.0040502356080346635,
+            0.02144936823178743
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.0019127822121357552,
+            "23": 0.0012932912267196728,
+            "42": 0.0006473121208978583,
+            "77": 0.017735404561049883,
+            "101": 0.021909041438578747
+          }
+        },
+        "combined_D_minus_A": {
+          "n": 5,
+          "mean": -0.3945824378873988,
+          "std": 0.016677349922351457,
+          "se": 0.007458337622185739,
+          "ci95": [
+            -0.4152867831265864,
+            -0.37387809264821115
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.3976286550474964,
+            "23": -0.4010121472387356,
+            "42": -0.41593848913016457,
+            "77": -0.37108780278708464,
+            "101": -0.38724509523351297
+          }
+        },
+        "interaction_D_minus_C_minus_B_plus_A": {
+          "n": 5,
+          "mean": 9.437302399617487e-05,
+          "std": 0.0011372927749550357,
+          "se": 0.000508612791023766,
+          "ci95": [
+            -0.0013175360838857994,
+            0.001506282131878149
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": false,
+          "per_seed": {
+            "11": -3.5280465677578476e-05,
+            "23": -0.00027677280938054327,
+            "42": -0.0005537011371867795,
+            "77": 0.002072238586370956,
+            "101": -0.0007346190541451803
+          }
+        }
+      },
+      "code17": {
+        "delta_contribution_mean": {
+          "n": 5,
+          "mean": 0.4034037873457712,
+          "std": 0.010469889580017235,
+          "se": 0.0046822769635670525,
+          "ci95": [
+            0.3904057864949091,
+            0.4164017881966333
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "total_delta_mean": {
+          "n": 5,
+          "mean": 0.39458243788739883,
+          "std": 0.016677349922351495,
+          "se": 0.007458337622185756,
+          "ci95": [
+            0.37387809264821115,
+            0.4152867831265865
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "share_per_seed": {
+          "11": {
+            "share": 1.004870412094966,
+            "share_percent": 100.48704120949661,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "23": {
+            "share": 1.0033570352781227,
+            "share_percent": 100.33570352781227,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "42": {
+            "share": 1.0015675392098125,
+            "share_percent": 100.15675392098125,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "77": {
+            "share": 1.0480035009409723,
+            "share_percent": 104.80035009409723,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "101": {
+            "share": 1.0577370937685862,
+            "share_percent": 105.77370937685862,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          }
+        },
+        "share_mean_percent": 102.3107116258492,
+        "share_note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+      }
+    },
+    "fedavg_iid": {
+      "conditions_roc_auc": {
+        "A": {
+          "n": 5,
+          "mean": 0.7357322367062642,
+          "std": 0.007017062198393504,
+          "se": 0.003138125615590398,
+          "ci95": [
+            0.7270207999973852,
+            0.7444436734151432
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "B": {
+          "n": 5,
+          "mean": 0.33652912867053,
+          "std": 0.00773027858130397,
+          "se": 0.0034570856785612622,
+          "ci95": [
+            0.3269322588268439,
+            0.34612599851421605
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "C": {
+          "n": 5,
+          "mean": 0.7522439051009906,
+          "std": 0.0059794048155252634,
+          "se": 0.0026740711265008156,
+          "ci95": [
+            0.7448206836538244,
+            0.7596671265481568
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "D": {
+          "n": 5,
+          "mean": 0.3544798351615774,
+          "std": 0.0031263296760938456,
+          "se": 0.0013981371351641475,
+          "ci95": [
+            0.3505986064743617,
+            0.35836106384879307
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        }
+      },
+      "effects_roc_auc": {
+        "protocol_only_original_ports_B_minus_A": {
+          "n": 5,
+          "mean": -0.3992031080357343,
+          "std": 0.007118746744936714,
+          "se": 0.00318360032725677,
+          "ci95": [
+            -0.40804078254419907,
+            -0.3903654335272695
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.39197719322289576,
+            "23": -0.3996213848388142,
+            "42": -0.4069215752516866,
+            "77": -0.39202728126437586,
+            "101": -0.40546810560089896
+          }
+        },
+        "port_only_original_protocol_C_minus_A": {
+          "n": 5,
+          "mean": 0.016511668394726287,
+          "std": 0.0050091700730548645,
+          "se": 0.0022401689588416526,
+          "ci95": [
+            0.010292959364981858,
+            0.022730377424470715
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.013035776597226323,
+            "23": 0.02109986796207952,
+            "42": 0.013723995618268314,
+            "77": 0.01196143865096655,
+            "101": 0.022737263145090725
+          }
+        },
+        "protocol_under_sentinel_D_minus_C": {
+          "n": 5,
+          "mean": -0.3977640699394131,
+          "std": 0.006267356416713685,
+          "se": 0.00280284699739826,
+          "ci95": [
+            -0.4055447732041907,
+            -0.3899833666746355
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.39044318169037145,
+            "23": -0.40021088853925013,
+            "42": -0.40416551659402433,
+            "77": -0.39173769484757737,
+            "101": -0.4022630680258422
+          }
+        },
+        "port_under_reconstructed_D_minus_B": {
+          "n": 5,
+          "mean": 0.017950706491047463,
+          "std": 0.005396693929056259,
+          "se": 0.0024134748958260445,
+          "ci95": [
+            0.011250900180234363,
+            0.024650512801860563
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.014569788129750627,
+            "23": 0.0205103642616436,
+            "42": 0.016480054275930578,
+            "77": 0.012251025067765042,
+            "101": 0.02594230072014747
+          }
+        },
+        "combined_D_minus_A": {
+          "n": 5,
+          "mean": -0.38125240154468676,
+          "std": 0.005219424470365994,
+          "se": 0.00233419758383284,
+          "ci95": [
+            -0.3877321340374067,
+            -0.3747726690519668
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.37740740509314513,
+            "23": -0.3791110205771706,
+            "42": -0.390441520975756,
+            "77": -0.3797762561966108,
+            "101": -0.3795258048807515
+          }
+        },
+        "interaction_D_minus_C_minus_B_plus_A": {
+          "n": 5,
+          "mean": 0.0014390380963211769,
+          "std": 0.0016045667839187827,
+          "se": 0.0007175840806561229,
+          "ci95": [
+            -0.0005529753115802202,
+            0.003431051504222574
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": false,
+          "per_seed": {
+            "11": 0.0015340115325243042,
+            "23": -0.0005895037004359782,
+            "42": 0.0027560586576622637,
+            "77": 0.00028958641679854846,
+            "101": 0.003205037575056746
+          }
+        }
+      },
+      "code17": {
+        "delta_contribution_mean": {
+          "n": 5,
+          "mean": 0.3994488249263822,
+          "std": 0.007129058999007391,
+          "se": 0.0031882121074774264,
+          "ci95": [
+            0.39059834811602484,
+            0.4082993017367395
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "total_delta_mean": {
+          "n": 5,
+          "mean": 0.38125240154468676,
+          "std": 0.00521942447036598,
+          "se": 0.0023341975838328333,
+          "ci95": [
+            0.3747726690519668,
+            0.3877321340374067
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "share_per_seed": {
+          "11": {
+            "share": 1.0394277066020983,
+            "share_percent": 103.94277066020983,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "23": {
+            "share": 1.0552737450838952,
+            "share_percent": 105.52737450838951,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "42": {
+            "share": 1.0421997456962606,
+            "share_percent": 104.21997456962606,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "77": {
+            "share": 1.0323952187525554,
+            "share_percent": 103.23952187525553,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "101": {
+            "share": 1.0694747351328542,
+            "share_percent": 106.94747351328542,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          }
+        },
+        "share_mean_percent": 104.77542302535328,
+        "share_note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+      }
+    },
+    "fedavg_noniid": {
+      "conditions_roc_auc": {
+        "A": {
+          "n": 5,
+          "mean": 0.7297433509971716,
+          "std": 0.017309602060050472,
+          "se": 0.00774108937394865,
+          "ci95": [
+            0.7082540868950902,
+            0.751232615099253
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "B": {
+          "n": 5,
+          "mean": 0.3385707312379169,
+          "std": 0.011705244203573942,
+          "se": 0.005234744346485344,
+          "ci95": [
+            0.3240390809320736,
+            0.3531023815437602
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "C": {
+          "n": 5,
+          "mean": 0.7416429810716025,
+          "std": 0.021780159174427566,
+          "se": 0.009740383294957147,
+          "ci95": [
+            0.7146036770448015,
+            0.7686822850984035
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "D": {
+          "n": 5,
+          "mean": 0.3506598627355496,
+          "std": 0.00911904269364457,
+          "se": 0.0040781598705424095,
+          "ci95": [
+            0.33933889093492386,
+            0.36198083453617536
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        }
+      },
+      "effects_roc_auc": {
+        "protocol_only_original_ports_B_minus_A": {
+          "n": 5,
+          "mean": -0.3911726197592547,
+          "std": 0.017207649451558865,
+          "se": 0.007695494781334519,
+          "ci95": [
+            -0.41253531327223936,
+            -0.36980992624627007
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.39233004786773823,
+            "23": -0.3847632100058334,
+            "42": -0.40319507051024905,
+            "77": -0.3657132637360608,
+            "101": -0.40986150667639215
+          }
+        },
+        "port_only_original_protocol_C_minus_A": {
+          "n": 5,
+          "mean": 0.011899630074430867,
+          "std": 0.011555263145153446,
+          "se": 0.005167670778092224,
+          "ci95": [
+            -0.0024458240055531474,
+            0.026245084154414882
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.0037992484849798114,
+            "23": 0.004739162969285671,
+            "42": 0.031317067494580186,
+            "77": 0.005850664265017791,
+            "101": 0.013792007158290875
+          }
+        },
+        "protocol_under_sentinel_D_minus_C": {
+          "n": 5,
+          "mean": -0.39098311833605287,
+          "std": 0.017310048294687016,
+          "se": 0.007741288936144896,
+          "ci95": [
+            -0.4124729364227911,
+            -0.36949330024931465
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.3917691484491412,
+            "23": -0.38467283158368176,
+            "42": -0.4026264007246049,
+            "77": -0.36552018761076344,
+            "101": -0.4103270233120731
+          }
+        },
+        "port_under_reconstructed_D_minus_B": {
+          "n": 5,
+          "mean": 0.01208913149763271,
+          "std": 0.011644980113933437,
+          "se": 0.005207793426277682,
+          "ci95": [
+            -0.0023677030537141344,
+            0.026545966048979554
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": true,
+          "per_seed": {
+            "11": 0.004360147903576861,
+            "23": 0.00482954139143732,
+            "42": 0.03188573728022431,
+            "77": 0.006043740390315133,
+            "101": 0.013326490522609924
+          }
+        },
+        "combined_D_minus_A": {
+          "n": 5,
+          "mean": -0.37908348826162197,
+          "std": 0.014331664815717546,
+          "se": 0.006409315351737286,
+          "ci95": [
+            -0.3968757476780447,
+            -0.36129122884519926
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": true,
+          "all_positive": false,
+          "per_seed": {
+            "11": -0.38796989996416137,
+            "23": -0.3799336686143961,
+            "42": -0.37130933323002474,
+            "77": -0.35966952334574565,
+            "101": -0.3965350161537822
+          }
+        },
+        "interaction_D_minus_C_minus_B_plus_A": {
+          "n": 5,
+          "mean": 0.00018950142320184327,
+          "std": 0.00042443842997411053,
+          "se": 0.0001898146363370791,
+          "ci95": [
+            -0.00033742400726988826,
+            0.0007164268536735748
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets.",
+          "all_negative": false,
+          "all_positive": false,
+          "per_seed": {
+            "11": 0.0005608994185970495,
+            "23": 9.037842215164904e-05,
+            "42": 0.0005686697856440714,
+            "77": 0.00019307612529739782,
+            "101": -0.0004655166356809515
+          }
+        }
+      },
+      "code17": {
+        "delta_contribution_mean": {
+          "n": 5,
+          "mean": 0.3912648021951426,
+          "std": 0.017297410272509823,
+          "se": 0.0077356370408070245,
+          "ci95": [
+            0.3697906737698623,
+            0.4127389306204229
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "total_delta_mean": {
+          "n": 5,
+          "mean": 0.37908348826162197,
+          "std": 0.014331664815717527,
+          "se": 0.006409315351737277,
+          "ci95": [
+            0.36129122884519926,
+            0.3968757476780447
+          ],
+          "t_critical": 2.776,
+          "df": 4,
+          "assumption": "Student t, two-sided 95%, df=4. Repeated holdouts from one corpus, not independent NIDS datasets."
+        },
+        "share_per_seed": {
+          "11": {
+            "share": 1.0113705186828783,
+            "share_percent": 101.13705186828783,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "23": {
+            "share": 1.0127335983182832,
+            "share_percent": 101.27335983182833,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "42": {
+            "share": 1.0859005142985503,
+            "share_percent": 108.59005142985502,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "77": {
+            "share": 1.016884852209227,
+            "share_percent": 101.68848522092271,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          },
+          "101": {
+            "share": 1.0345205289725607,
+            "share_percent": 103.45205289725608,
+            "note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+          }
+        },
+        "share_mean_percent": 103.22820024963,
+        "share_note": "Share is (sum of signed cell deltas involving original code-17) / (AUC_A - AUC_D). Other cells can cancel, so the share can exceed 100% or be negative. This is an accounting identity, not a unique causal attribution."
+      }
+    }
+  },
+  "paper_consistency": {
+    "protocol_mask_tl": -0.1438,
+    "protocol_mask_cf": 0.2647,
+    "source_port_mask_tl": 0.0165,
+    "source_port_mask_cf_auc": 0.0,
+    "intersection_auc": 0.5075,
+    "noniid_delta_auc": 0.3791
+  },
+  "replay": {
+    "n_checks": 330,
+    "n_fail": 0,
+    "status": "PASS",
+    "atol": 1e-08,
+    "rtol": 1e-07,
+    "hard_tol": 1e-06,
+    "note": "A scored against stored Phase B.1 TL metrics; D against CF. FedAvg uses clipped-logit sigmoid; centralized uses sklearn predict_proba."
+  },
+  "masking_versus_replacement": {
+    "masking": "Paper masking zeros one already-standardized column (the source-training mean) on a finished TL or CF matrix. A constant CF source-port column cannot reorder scores when masked.",
+    "replacement": "Factorial C/D replace TL's originally variable source-port column with the CF sentinel before scaling. That replacement can change ranking even though masking the resulting constant cannot.",
+    "not_the_same": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "n_checks": 540,
+  "n_fail": 0,
+  "status": "PASS",
+  "atol": 1e-08,
+  "rtol": 1e-07,
+  "hard_metric_tol": 1e-06,
+  "justification": "Phase B retrains the accepted configuration with the same seeds, splits, Dirichlet draw, optimizer, and probability transform. Integer confusion counts must match exactly. Floating metrics must match within atol=1e-08, rtol=1e-07. Ranking metrics may not drift by more than 1e-06, which is stricter than four-decimal reporting.",
+  "failures": [],
+  "replay": {
+    "status": "PASS",
+    "mismatches": []
+  }
+}

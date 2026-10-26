@@ -7,7 +7,9 @@ original providers and run `evaluation/prepare_public_data.py`.
 
 - **InSDN binary source**: `Dataset.csv`, with the columns named in the
   preparation script. The study uses 343,889 cleaned rows (68,424 normal and
-  275,465 attack). Its `ip_proto` carries true IANA numbers `{0, 6, 17}`.
+  275,465 attack). Its `ip_proto` stores integer codes `{0, 6, 17}` as they
+  appear in the release CSV. Code 0 is not treated as an IANA protocol identity;
+  in the prepared file every such row has source and destination port 0.
   Dataset paper: <https://doi.org/10.1109/ACCESS.2020.3022633>.
 - **CICIDS2017**, Monday, Friday DDoS, and Friday PortScan. Obtain them from
   <https://www.unb.ca/cic/datasets/ids-2017.html>. CSV and Parquet inputs are
@@ -35,7 +37,7 @@ The paper evaluates three views of the same capture files.
 |---|---|---|---|---|
 | `TL` | `TrafficLabelling` | original column | original column | — |
 | `CF` | the finished `TL` rows | flag surrogate | sentinel `-1` | **yes** |
-| `ML` | `MachineLearningCVE` | flag surrogate | sentinel `-1` | no |
+| `MLCVE` | `MachineLearningCVE` | flag surrogate | sentinel `-1` | no |
 
 `CF` is the controlled comparison. It is **not** produced by re-running the
 cleaner with the two columns suppressed: both the missing-value filter and the
@@ -46,10 +48,13 @@ seven remaining features, and overwrites only `ip_proto` and `tp_src`. It then
 asserts that exactly two columns differ and that the rest are bit-identical, and
 aborts otherwise. `evaluation/run_verified_federated_baseline.py` repeats that
 assertion after seeded subsampling, and `evaluation/verify_paper_numbers.py`
-repeats it against the committed CSVs.
+repeats it against the prepared CSVs when those files are present. They are
+not committed; Level A verification skips the CSV checks rather than treating
+absence as a pass.
 
-`ML` differs from `TL` in row set and attack prevalence as well, so it
-establishes practical relevance rather than the mechanism.
+`MLCVE` is an unmatched ecological check. It differs from `TL` in row set and
+attack prevalence, so it can corroborate that a public release lands near the
+counterfactual. It is not row-matched and is not the identified causal effect.
 
 ## Commands
 
@@ -90,10 +95,10 @@ The evaluation expects `data/insdn/flow_stats.csv`,
 
 All views are built from the same three capture files with the same fixed
 stratified split (`random_state=42`). `TL` and `CF` have identical row counts
-and identical labels by construction; the `ML` difference comes from
+and identical labels by construction; the `MLCVE` difference comes from
 de-duplication, which collapses far more rows once real source ports are absent.
 Against `TL`, the `CF` surrogate assigns a different protocol to 30.32% of rows,
-because UDP (17) has no representation in the flag-derived rule. These views are
+because code 17 has no representation in the flag-derived rule. These views are
 an interoperability audit, not a complete CICIDS2017 leaderboard.
 
 ## Excluded column
@@ -105,3 +110,34 @@ reported for these releases by Rosay et al. (ICISSP 2022). The evaluation script
 reads only the nine independent features listed in the paper and ignores
 `flow_duration`. The checksums above cover the prepared files as written,
 including that column.
+
+## Phase B robustness controls (camera-ready)
+
+Quoted Phase B numbers are generated under `results/phase_b/` and must not
+overwrite `results/verified/`. After the four prepared CSVs match the checksums
+above, a third party with this camera-ready commit reproduces them with:
+
+```powershell
+python evaluation/run_phase_b_noniid_cross.py
+python evaluation/run_phase_b_mechanism.py
+python evaluation/run_phase_b_robustness.py
+python evaluation/run_phase_b_missingness.py
+python evaluation/verify_paper_numbers.py
+```
+
+B.1 retrains the source-only LR models and writes small checkpoints used by the
+fixed-model factorial (B.2) and by LR missingness policies that replay the
+nine-field models (B.4). B.3 retrains a centralized nine-field categorical
+`HistGradientBoostingClassifier`; it is not federated. B.4 also retrains
+seven-field models (policy P2). Do not fit on target labels, do not tune after
+inspecting target metrics, and do not call `run_verified_federated_baseline.py`
+from Phase B.
+
+**Publication state.** Quoted numbers can be checked against tracked JSON
+without redistributing third-party CSVs (Level A). Regenerating models from
+source files is Level B and needs the prepared datasets. B.2 and some
+missingness policies replay tracked checkpoints; B.1/B.3/B.4 retrain source-only
+models. The camera-ready tag is `rivf2026-camera-ready`. The claim map is
+`evaluation/phase_b_claim_manifest.md`. The manuscript quotes only the subset
+checked by `evaluation/verify_paper_numbers.py`; the full missingness matrix
+stays in `results/phase_b/missingness/`.

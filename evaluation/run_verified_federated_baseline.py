@@ -14,7 +14,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 ROOT=Path(__file__).resolve().parents[1]; OUT=ROOT/'results'/'verified'
-OUT.mkdir(parents=True,exist_ok=True)
 INSDN=Path(os.environ.get('INSDN_CSV',ROOT/'data'/'insdn'/'flow_stats.csv'))
 # Three views of the same target traffic. `trafficlabelling` keeps the original
 # Protocol and Source Port columns. `tl_counterfactual` is the controlled
@@ -165,6 +164,7 @@ FULL_METRICS=['precision','recall','f1','roc_auc','pr_auc','balanced_accuracy','
 def summarize(rows,key):
  keys=['f1','roc_auc','pr_auc','balanced_accuracy','mcc','recall','precision'];return {k:{'mean':float(np.mean([r[key][k] for r in rows])),'std':float(np.std([r[key][k] for r in rows],ddof=1))} for k in keys}
 def main():
+ OUT.mkdir(parents=True,exist_ok=True)
  missing=[str(p) for p in [INSDN,*MIRRORS.values()] if not p.exists()]
  if missing: raise SystemExit('Missing prepared dataset file(s): '+', '.join(missing)+'\nSee data/README.md or set INSDN_CSV, CICIDS2017_MIRROR_CSV and CICIDS2017_MLCVE_MIRROR_CSV.')
  rows=[one(s) for s in SEEDS]; ab=[one(s,'no_ports') for s in SEEDS]; npv=[one(s,'no_protocol') for s in SEEDS]; oh=[one(s,'onehot_protocol') for s in SEEDS]; isec=[one(s,'intersection') for s in SEEDS]
