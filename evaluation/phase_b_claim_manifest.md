@@ -9,7 +9,8 @@ Status snapshot for RIVF 2026 #1571348135. This file does **not** publish data.
 
 The versioned artifact URL is
 https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready
-A local commit is not that public tag until the tag is pushed.
+The annotated tag `rivf2026-camera-ready` is already published and must not be
+moved.
 
 ## Quoted claims
 

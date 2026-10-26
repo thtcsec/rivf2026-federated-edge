@@ -48,10 +48,13 @@ seven remaining features, and overwrites only `ip_proto` and `tp_src`. It then
 asserts that exactly two columns differ and that the rest are bit-identical, and
 aborts otherwise. `evaluation/run_verified_federated_baseline.py` repeats that
 assertion after seeded subsampling, and `evaluation/verify_paper_numbers.py`
-repeats it against the committed CSVs.
+repeats it against the prepared CSVs when those files are present. They are
+not committed; Level A verification skips the CSV checks rather than treating
+absence as a pass.
 
-`MLCVE` differs from `TL` in row set and attack prevalence as well, so it
-establishes practical relevance rather than the mechanism.
+`MLCVE` is an unmatched ecological check. It differs from `TL` in row set and
+attack prevalence, so it can corroborate that a public release lands near the
+counterfactual. It is not row-matched and is not the identified causal effect.
 
 ## Commands
 

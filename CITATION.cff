@@ -1,25 +1,37 @@
 cff-version: 1.2.0
-message: "If you use this research software or paper in your academic work, please cite it as below."
+message: "If you use this research software or paper, please cite it as below."
+# Display names follow the frozen IEEE author block in rivf2026.tex.
+# LICENSE keeps the Vietnamese legal names Trịnh Hoàng Tú and Cao Tiến Thành.
 authors:
   - family-names: "Trinh"
-    given-names: "Hoang Tu"
+    given-names: "Tu Hoang"
     email: "23dh113972@st.huflit.edu.vn"
-    affiliation: "Department of Cybersecurity, Faculty of Information Technology, HUFLIT"
+    affiliation: "Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages -- Information Technology"
   - family-names: "Cao"
-    given-names: "Tien Thanh"
+    given-names: "Thanh Tien"
     email: "thanhct@huflit.edu.vn"
-    affiliation: "Department of Cybersecurity, Faculty of Information Technology, HUFLIT"
+    affiliation: "Faculty of Information Technology, Ho Chi Minh City University of Foreign Languages -- Information Technology"
 title: "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection"
 version: "2.0.0"
-date-released: "2026-08-10"
+date-released: "2026-10-26"
+url: "https://github.com/thtcsec/rivf2026-federated-edge"
+repository-code: "https://github.com/thtcsec/rivf2026-federated-edge"
+license: MIT
 preferred-citation:
   type: conference-paper
   authors:
     - family-names: "Trinh"
-      given-names: "Hoang Tu"
+      given-names: "Tu Hoang"
     - family-names: "Cao"
-      given-names: "Tien Thanh"
+      given-names: "Thanh Tien"
   title: "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection"
-  collection-title: "Proceedings of the 20th IEEE RIVF International Conference on Computing and Communication Technologies (RIVF 2026)"
+  collection-title: "Proceedings of the 20th International Conference on Computing and Communication Technologies (RIVF 2026)"
+  conference:
+    name: "The 20th International Conference on Computing and Communication Technologies (RIVF 2026)"
+    city: "Hanoi"
+    country: "VN"
+    date-start: "2026-12-18"
+    date-end: "2026-12-20"
   year: 2026
-  address: "Hanoi, Vietnam"
+  status: in-press
+  url: "https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready"

@@ -1,8 +1,13 @@
 # Artifact evaluation guide
 
 **Paper:** *Same Flows, Opposite Verdicts: Feature Reconstruction in
-Cross-Dataset Intrusion Detection* (working camera-ready title; EDAS/TPC
-confirmation may be required)
+Cross-Dataset Intrusion Detection*
+
+**Authors (IEEE author block):** Tu Hoang Trinh and Thanh Tien Cao
+
+**Status:** Accepted IEEE RIVF 2026 camera-ready candidate (EDAS #1571348135).
+The EDAS display name may still require author confirmation. No IEEE Xplore DOI
+has been assigned.
 
 **Target track:** Cyber-Security, Cryptography, Blockchain
 
