@@ -1,0 +1,4 @@
+# Phase B frozen JSON/CSV hashes are SHA-256 of the LF bytes committed
+# on the research branch. Keep LF in the working tree on Windows so
+# evaluation/test_phase_b_*.py freeze checks remain bit-identical.
+results/phase_b/** text eol=lf

@@ -1,0 +1,245 @@
+{
+  "experiment": "phase_b.4_missing_feature_policies",
+  "git_commit": "17e1bcdb4b1727a4be3c71085a1a45f4b0f96e09",
+  "timestamp_utc": "2026-10-26T11:03:36.093338+00:00",
+  "seeds": [
+    11,
+    23,
+    42,
+    77,
+    101
+  ],
+  "feature_schema": [
+    "ip_proto",
+    "tp_src",
+    "tp_dst",
+    "packet_count",
+    "byte_count",
+    "duration_sec",
+    "packet_count_per_sec",
+    "byte_count_per_sec",
+    "packet_size_avg"
+  ],
+  "unaffected_features": [
+    "tp_dst",
+    "packet_count",
+    "byte_count",
+    "duration_sec",
+    "packet_count_per_sec",
+    "byte_count_per_sec",
+    "packet_size_avg"
+  ],
+  "protocol_column_index": 0,
+  "port_column_index": 1,
+  "mask_probability": 0.5,
+  "mask_seed_offset": 10007,
+  "mask_independence": "independent Bernoulli per provenance field",
+  "p4_lr_encoding": "OneHotEncoder(handle_unknown=ignore) on source-train protocol codes; protocol_unavailable flag; observed port or 0 with port_unavailable flag; seven unaffected features; StandardScaler fit on encoded source train. Protocol code 0 is a real category, never the missing token.",
+  "p4_hgb_encoding": "native NaN missing values; categorical protocol for hgb_categorical only",
+  "p4_limitation": "train missingness 0.5 vs 100% unavailable target fields",
+  "target_training": false,
+  "target_calibration": false,
+  "input_hashes": {
+    "insdn": "c05f1f40dceb888aaaaf52b29283054147ed68390ea47997a8539e1505f64a7e",
+    "trafficlabelling": "4ff3075e61dea938892bda5bd90812170e085b225a87d1b0431b4e3c98d089bd",
+    "tl_counterfactual": "957b4170bda3a6f95648548196be35d473a36965a628e2b88580ae218f186b4c",
+    "mlcve": "af5f02ade640caa9870a310c7d95903c5b95a1d2a794c060d0c3932346530a03"
+  },
+  "phase_b_frozen_hashes": {
+    "aggregate_noniid_cross.json": "a9976d3fbe3ab1bf3f9752c91f075f3501b828fcaad3951724ea4a1c2bc38fab",
+    "baseline_parity_report.json": "8455052e61dffb82db2004b7aafac1ad7de06b28d4c3e01ddc666e3b80cd3947",
+    "checkpoints/seed_101_centralized.json": "6a3500c8f1cbd8fb65af56acad1c89c1f73c15dba89dcaea7f5eed35f91319e5",
+    "checkpoints/seed_101_centralized.npz": "7011ee4e62e0ac3ab78128c83c107f664522b727c7f6a3620b3d3108ecb960c5",
+    "checkpoints/seed_101_fedavg_iid.json": "a53922bd3874a651a3b8072c5c266667f3e6c8fa711a25cc97ac04f992a077c9",
+    "checkpoints/seed_101_fedavg_iid.npz": "25faf5cd959d6664a2e348365baea5368300225fa6792b46c15cb5f0ff1dd371",
+    "checkpoints/seed_101_fedavg_noniid.json": "170424fc621bcf3ea7894b5d37923e396d624e44d46cb3e33456df881c08ed62",
+    "checkpoints/seed_101_fedavg_noniid.npz": "84cb075980da31ce576b4841ea3b767f217edbbc6b65c3311076fbd1205e09cd",
+    "checkpoints/seed_11_centralized.json": "49915d732da559b1da8ea963002417206653a3518156ec7c87fe2a6887a57dd4",
+    "checkpoints/seed_11_centralized.npz": "3b72f1e906aa25d65ebb09ee4b6ffe2c52efe8cb15ca6ec4d4559840608c4411",
+    "checkpoints/seed_11_fedavg_iid.json": "282e21024910d10beb5aa6c1a8b0a29ced462bdea96dbc54e818b639f8f4491a",
+    "checkpoints/seed_11_fedavg_iid.npz": "37dfbacc00d318e21a292a81ccbe6200fdcf641e9f5176cf2511a03ea74a254d",
+    "checkpoints/seed_11_fedavg_noniid.json": "56df137c20efa58146ded3a8e60b131c48699e0c02798b96c261037153e99b92",
+    "checkpoints/seed_11_fedavg_noniid.npz": "72259e0e23f9f4f8370b6a687f53bd01db00614f833e5acd7569e2ace2e48f54",
+    "checkpoints/seed_23_centralized.json": "2e0173cb3b49a37e4967a23b3948c93d263b9a096b45b3de0947b3e8366bd10e",
+    "checkpoints/seed_23_centralized.npz": "1a2ab596f6856374a202705ac89db645fe511ff44f1da72b67dbad388d2817c0",
+    "checkpoints/seed_23_fedavg_iid.json": "ffd41a8985f217b4b603f890bb172e5a0c55979c4c8fa898f27fee8a4979fc0a",
+    "checkpoints/seed_23_fedavg_iid.npz": "fa7fbf30a8fa6a290f04cb696f732a673adf4fac494de82ccd5e97a9d1fa466d",
+    "checkpoints/seed_23_fedavg_noniid.json": "92f1aa2d9c99cbaa471e0701afba53d1a9aaadf591d6919a0f7e4d1bedc3cf53",
+    "checkpoints/seed_23_fedavg_noniid.npz": "911803e3110f6cfa43568b5516a8b8c4e9fbeb41c4b8309e7aa5d0fa25cb6bf7",
+    "checkpoints/seed_42_centralized.json": "e40bbccac6e709f5a98a16bce1a6e018b032035f5f9914cc0fea36c3c221e1ff",
+    "checkpoints/seed_42_centralized.npz": "a7f32b043728df5fbe9426c9af433e5d11e3f40d508905b4f6ebbc2c5e733590",
+    "checkpoints/seed_42_fedavg_iid.json": "fce82f0469b0da8fb811f1baaba9656b56804f6d19c2c2201d3b60d696b07866",
+    "checkpoints/seed_42_fedavg_iid.npz": "028a5ae3d1afa4063b918ece2a6c82b784db769ba4b37ba67ef529e9e0a07718",
+    "checkpoints/seed_42_fedavg_noniid.json": "e54dfdd3aab0c0ee3b133950dffc99a1dc920ee2ac13f870421b7e7352146a1d",
+    "checkpoints/seed_42_fedavg_noniid.npz": "46b06cec7f40a0b327c5521d3937399a5316383c6ddbf061241496cc76d0ee03",
+    "checkpoints/seed_77_centralized.json": "942e48b7d8400078a45ddc91d9365dd73fa38080f11675722614743fe404d5fa",
+    "checkpoints/seed_77_centralized.npz": "cceab524ab7a401527d8941cef4813a21d7c5b45729b7b90d6984ec91d4602a9",
+    "checkpoints/seed_77_fedavg_iid.json": "a2547a037b2afe2bffa34f8bc20a5d30861d859839a9e3ecb73ca08f0f9323bd",
+    "checkpoints/seed_77_fedavg_iid.npz": "dbf7b00043382ab415ad7bcdd85e768c587767cc9ed0525e97add9c9364c8826",
+    "checkpoints/seed_77_fedavg_noniid.json": "b60a9e96b31c95dfb0c5272ac07edb10141215ea6bf97b5678403354f3c2d6e5",
+    "checkpoints/seed_77_fedavg_noniid.npz": "55e874ceb671ece8587de924559d786e8f372394c2c9643e4b835a38e222a2c5",
+    "experiment_manifest.json": "ffcbb4b05a42349821f5bccb3d00bf22f38a0afc16824eb3046fda8214930a9c",
+    "experiment_report.md": "5472c9273eb591abd21788c484f994605060d37a6dc950e83efae5f2707239a9",
+    "mechanism/auc_decomposition_validation.json": "36c3bcbbba4cdfcaecd041fed9ce91df3a94cb02bef3e551fd7a323fb111800a",
+    "mechanism/auc_pair_decomposition.csv": "e2bef53fc726ab6fe8b2bad78d6d2fcd6dfb78e8a5e10f153f2ed08b92b3cbbf",
+    "mechanism/experiment_manifest.json": "1361f4ebb901f0d6f9a465845ba9ab2273994a115e6e664050db40c9dce70341",
+    "mechanism/factorial_effects_per_seed.csv": "a9452c1bad7209a0551fbda07dec909e3d5a431f2856c4085d5d63c12ca3cfa2",
+    "mechanism/factorial_per_seed.csv": "fe9a3c9ca4af1000e74b95efd65808f26e705be53e7ea4caeb375d662a7a8473",
+    "mechanism/factorial_summary.json": "330ab22b3185e79b49f07b8a00fab36f0765293e9d80368b5773e7a75ee89fe9",
+    "mechanism/mechanism_report.md": "9ddd7fe36d0ff90e4ac2aff924f7d18cefc4114ab95cdea0f90c61baebc43697",
+    "paired_effects.json": "735d0d731988fd88b3898a50fcb39abffb84b80679977ad82baf1f18513dfa94",
+    "per_seed_noniid_cross.csv": "f7d7a49681860fc4221658819c52402c0d5cc54f2f4596a7ae80df993315a0fd",
+    "recommendation.json": "c5e9e628790d384b2260b4088df3d388c0a777fc096b28e05e0f19c320e1e85c",
+    "robustness/nonlinear_experiment_manifest.json": "f4ed2da9d0db76106cbe7a3d95cbad51380f38addcd0660ee326d9a61ae235c4",
+    "robustness/nonlinear_factorial.csv": "3c7ae9a0464a65eef66fe4cff0f59dc425a9e7b14ccf2d66cb091cf7d91668ba",
+    "robustness/nonlinear_per_seed.csv": "19e814f8a0b05cdccab6436a180f90cf972a913092bc9225763ee87b153c473b",
+    "robustness/nonlinear_scientific_report.md": "566c40938a01571a138279711cea6851b35f39caf651557cf5d67d33785f19ae",
+    "robustness/nonlinear_summary.json": "93b3ed31f6203c767053c4f3c9e1b1bb4a4a1f452973a5e9145f564fd75f8e08"
+  },
+  "policies": {
+    "P0": {
+      "name": "observed_nine_fields",
+      "source_retraining": false,
+      "fixed_model_intervention": true,
+      "uses_original_observed_fields": true,
+      "unavailable_field_handling": "none_fields_observed",
+      "mlcve_feasible": false,
+      "accessed_original_tl_provenance": true,
+      "views": [
+        "source_test",
+        "trafficlabelling"
+      ]
+    },
+    "P1": {
+      "name": "reconstruction_cf_contract",
+      "source_retraining": false,
+      "fixed_model_intervention": true,
+      "uses_original_observed_fields": false,
+      "unavailable_field_handling": "flag_inferred_protocol_and_port_sentinel",
+      "mlcve_feasible": true,
+      "accessed_original_tl_provenance": false,
+      "views": [
+        "source_test",
+        "tl_counterfactual",
+        "mlcve"
+      ]
+    },
+    "P2": {
+      "name": "drop_and_retrain_intersection",
+      "source_retraining": true,
+      "fixed_model_intervention": false,
+      "uses_original_observed_fields": false,
+      "unavailable_field_handling": "drop_unavailable_columns",
+      "mlcve_feasible": true,
+      "accessed_original_tl_provenance": false,
+      "views": [
+        "source_test",
+        "trafficlabelling",
+        "tl_counterfactual",
+        "mlcve"
+      ]
+    },
+    "P3": {
+      "name": "source_statistic_imputation",
+      "source_retraining": false,
+      "fixed_model_intervention": true,
+      "uses_original_observed_fields": false,
+      "unavailable_field_handling": "source_train_protocol_mode_and_port_median",
+      "mlcve_feasible": true,
+      "accessed_original_tl_provenance": false,
+      "views": [
+        "source_test",
+        "trafficlabelling",
+        "tl_counterfactual",
+        "mlcve"
+      ]
+    },
+    "P4": {
+      "name": "missingness_aware_source_training",
+      "source_retraining": true,
+      "fixed_model_intervention": false,
+      "uses_original_observed_fields": false,
+      "unavailable_field_handling": "synthetic_mcar_then_100pct_unavailable_at_target",
+      "mlcve_feasible": true,
+      "accessed_original_tl_provenance": false,
+      "views": [
+        "source_test",
+        "trafficlabelling",
+        "tl_counterfactual",
+        "mlcve"
+      ]
+    }
+  },
+  "models": {
+    "lr_fedavg_iid": "replayed 9-field FedAvg IID checkpoints for P0/P1/P3; retrained for P2/P4",
+    "lr_centralized": "replayed 9-field centralized checkpoints for P0/P1/P3; retrained for P2/P4",
+    "hgb_categorical": "centralized HistGradientBoostingClassifier; not federated",
+    "hgb_numeric": "same HGB family/hyperparameters without categorical_features"
+  },
+  "hgb_hyperparameters": {
+    "loss": "log_loss",
+    "learning_rate": 0.1,
+    "max_iter": 100,
+    "max_leaf_nodes": 15,
+    "min_samples_leaf": 20,
+    "l2_regularization": 1.0,
+    "early_stopping": false,
+    "class_weight": null
+  },
+  "evaluation": {
+    "roc_auc": "sklearn.metrics.roc_auc_score",
+    "pr_auc": "trapezoidal sklearn.metrics.auc on precision_recall_curve",
+    "threshold": 0.5,
+    "positive_class": 1,
+    "metrics": [
+      "precision",
+      "recall",
+      "f1",
+      "roc_auc",
+      "pr_auc",
+      "balanced_accuracy",
+      "mcc",
+      "tn",
+      "fp",
+      "fn",
+      "tp"
+    ]
+  },
+  "package_versions": {
+    "python": "3.11.9",
+    "numpy": "2.2.6",
+    "pandas": "2.3.1",
+    "sklearn": "1.7.2"
+  },
+  "output_root": "D:\\tu_projects\\LatexProject\\rivf2026\\results\\phase_b\\missingness",
+  "reproduction": {
+    "fedavg P0 TL": {
+      "got": 0.7357322367062642,
+      "ref": 0.7357
+    },
+    "fedavg P1 CF": {
+      "got": 0.3544798351615774,
+      "ref": 0.3545
+    },
+    "fedavg P2 TL": {
+      "got": 0.5074998288603041,
+      "ref": 0.5075
+    },
+    "central P0 TL": {
+      "got": 0.7489735414558663,
+      "ref": 0.749
+    },
+    "central P1 CF": {
+      "got": 0.3543911035684675,
+      "ref": 0.3544
+    },
+    "hgb cat P0 TL": {
+      "got": 0.9602176119340398,
+      "ref": 0.9602
+    },
+    "hgb cat P1 CF": {
+      "got": 0.9079810384159671,
+      "ref": 0.908
+    }
+  }
+}

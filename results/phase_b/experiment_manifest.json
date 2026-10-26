@@ -1,0 +1,59 @@
+{
+  "experiment": "phase_b.1_noniid_zero_shot_cross",
+  "git_commit": "ed880b51214a3b7906898b9086b5aa341600afbe",
+  "timestamp_utc": "2026-10-26T00:24:59.991893+00:00",
+  "seeds": [
+    11,
+    23,
+    42,
+    77,
+    101
+  ],
+  "feature_schema": [
+    "ip_proto",
+    "tp_src",
+    "tp_dst",
+    "packet_count",
+    "byte_count",
+    "duration_sec",
+    "packet_count_per_sec",
+    "byte_count_per_sec",
+    "packet_size_avg"
+  ],
+  "training_configuration": {
+    "model": "SGDClassifier(log_loss)",
+    "penalty": "l2",
+    "alpha": 0.0001,
+    "eta0": 0.01,
+    "batch": "full local partition per round",
+    "local_epochs": 1,
+    "initialization": "shared zero coefficients/intercept",
+    "threshold": 0.5,
+    "class_weight": null,
+    "scaler": "StandardScaler fit on source training only",
+    "sklearn": "1.7.2",
+    "dirichlet_alpha": 0.5,
+    "clients": 5,
+    "rounds": 20,
+    "n_sample": 30000,
+    "source_test_fraction": 0.2
+  },
+  "input_hashes": {
+    "insdn": "c05f1f40dceb888aaaaf52b29283054147ed68390ea47997a8539e1505f64a7e",
+    "trafficlabelling": "4ff3075e61dea938892bda5bd90812170e085b225a87d1b0431b4e3c98d089bd",
+    "tl_counterfactual": "957b4170bda3a6f95648548196be35d473a36965a628e2b88580ae218f186b4c",
+    "mlcve": "af5f02ade640caa9870a310c7d95903c5b95a1d2a794c060d0c3932346530a03"
+  },
+  "package_versions": {
+    "python": "3.11.9",
+    "numpy": "2.2.6",
+    "pandas": "2.3.1",
+    "sklearn": "1.7.2"
+  },
+  "output_root": "D:\\tu_projects\\LatexProject\\rivf2026\\results\\phase_b",
+  "never_writes": "D:\\tu_projects\\LatexProject\\rivf2026\\results\\verified",
+  "probability_transform": "clip(logit, -35, 35) then sigmoid for FedAvg; sklearn predict_proba for centralized",
+  "target_training": false,
+  "target_scaler": false,
+  "threshold": 0.5
+}

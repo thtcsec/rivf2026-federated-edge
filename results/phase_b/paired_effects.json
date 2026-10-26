@@ -1,0 +1,512 @@
+{
+  "fedavg_noniid": {
+    "tl_minus_cf": {
+      "roc_auc": {
+        "per_seed": {
+          "11": 0.38796989996416137,
+          "23": 0.3799336686143961,
+          "42": 0.37130933323002474,
+          "77": 0.35966952334574565,
+          "101": 0.3965350161537822
+        },
+        "n": 5,
+        "mean": 0.37908348826162197,
+        "std": 0.014331664815717546,
+        "se": 0.006409315351737286,
+        "ci95": [
+          0.36129122884519926,
+          0.3968757476780447
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "pr_auc": {
+        "per_seed": {
+          "11": 0.25137210414834976,
+          "23": 0.21885568006878592,
+          "42": 0.22363441544693713,
+          "77": 0.23686098098939268,
+          "101": 0.23840466677031294
+        },
+        "n": 5,
+        "mean": 0.2338255694847557,
+        "std": 0.01290368109690698,
+        "se": 0.005770701618532611,
+        "ci95": [
+          0.21780610179170917,
+          0.2498450371778022
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "balanced_accuracy": {
+        "per_seed": {
+          "11": 0.21058243177774638,
+          "23": 0.2109652153881595,
+          "42": 0.2236704320176891,
+          "77": 0.20800737990471435,
+          "101": 0.21568033965224132
+        },
+        "n": 5,
+        "mean": 0.21378115974811013,
+        "std": 0.006182688073905394,
+        "se": 0.002764982163385941,
+        "ci95": [
+          0.20610556926255075,
+          0.2214567502336695
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "mcc": {
+        "per_seed": {
+          "11": 0.43533226908890055,
+          "23": 0.44638550504691504,
+          "42": 0.46866216083733436,
+          "77": 0.46262625417375836,
+          "101": 0.4359711373218319
+        },
+        "n": 5,
+        "mean": 0.44979546529374803,
+        "std": 0.015268474557382734,
+        "se": 0.006828269404606761,
+        "ci95": [
+          0.43084018942655966,
+          0.4687507411609364
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "f1": {
+        "per_seed": {
+          "11": 0.13252914745430272,
+          "23": 0.13007134916979585,
+          "42": 0.1407692175355908,
+          "77": 0.12328598069949981,
+          "101": 0.13840482086025047
+        },
+        "n": 5,
+        "mean": 0.13301210314388792,
+        "std": 0.006941414949270169,
+        "se": 0.0031042951373202706,
+        "ci95": [
+          0.12439457984268686,
+          0.141629626445089
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "precision": {
+        "per_seed": {
+          "11": 0.1332932289146726,
+          "23": 0.12988223485122538,
+          "42": 0.14251730843620153,
+          "77": 0.12137398619477596,
+          "101": 0.14228421700031493
+        },
+        "n": 5,
+        "mean": 0.13387019507943806,
+        "std": 0.00891572049129951,
+        "se": 0.003987231417386705,
+        "ci95": [
+          0.12280164066477257,
+          0.14493874949410357
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "recall": {
+        "per_seed": {
+          "11": -0.00012055455093429313,
+          "23": 0.0,
+          "42": -0.0004822182037371725,
+          "77": -0.0014466546112116285,
+          "101": -0.0008438818565401629
+        },
+        "n": 5,
+        "mean": -0.0005786618444846514,
+        "std": 0.0005868914500127174,
+        "se": 0.0002624658355283712,
+        "ci95": [
+          -0.0013072670039114098,
+          0.00014994331494210694
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": false,
+        "all_negative": false
+      }
+    },
+    "tl_auc_mean": 0.7297433509971716,
+    "cf_auc_mean": 0.3506598627355496,
+    "ranking_reversal_tl_above_half_cf_below": {
+      "per_seed": {
+        "11": true,
+        "23": true,
+        "42": true,
+        "77": true,
+        "101": true
+      },
+      "all_seeds": true
+    }
+  },
+  "fedavg_iid": {
+    "tl_minus_cf": {
+      "roc_auc": {
+        "per_seed": {
+          "11": 0.37740740509314513,
+          "23": 0.3791110205771706,
+          "42": 0.390441520975756,
+          "77": 0.3797762561966108,
+          "101": 0.3795258048807515
+        },
+        "n": 5,
+        "mean": 0.38125240154468676,
+        "std": 0.005219424470365994,
+        "se": 0.00233419758383284,
+        "ci95": [
+          0.3747726690519668,
+          0.3877321340374067
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "pr_auc": {
+        "per_seed": {
+          "11": 0.2442812294805803,
+          "23": 0.23478362916511666,
+          "42": 0.2575168494149308,
+          "77": 0.2521675493281707,
+          "101": 0.22052004071707818
+        },
+        "n": 5,
+        "mean": 0.2418538596211753,
+        "std": 0.014685992959452986,
+        "se": 0.006567775714884038,
+        "ci95": [
+          0.22362171423665722,
+          0.2600860050056934
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "balanced_accuracy": {
+        "per_seed": {
+          "11": 0.21832066760727548,
+          "23": 0.22435076958709438,
+          "42": 0.22340282924118537,
+          "77": 0.220764417495323,
+          "101": 0.21932542772079833
+        },
+        "n": 5,
+        "mean": 0.2212328223303353,
+        "std": 0.0025869251779893922,
+        "se": 0.0011569081101380047,
+        "ci95": [
+          0.2180212454165922,
+          0.2244443992440784
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "mcc": {
+        "per_seed": {
+          "11": 0.4327747711501621,
+          "23": 0.4506881247538623,
+          "42": 0.4458554759163036,
+          "77": 0.4463802439087933,
+          "101": 0.4374664449033481
+        },
+        "n": 5,
+        "mean": 0.44263301212649386,
+        "std": 0.007300499817909911,
+        "se": 0.0032648827725142793,
+        "ci95": [
+          0.43356969754999425,
+          0.4516963267029935
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "f1": {
+        "per_seed": {
+          "11": 0.14471355551846132,
+          "23": 0.14738722788231107,
+          "42": 0.14752703893897345,
+          "77": 0.1433378753529747,
+          "101": 0.1435996234973178
+        },
+        "n": 5,
+        "mean": 0.14531306423800766,
+        "std": 0.0020248765275994087,
+        "se": 0.0009055523123512013,
+        "ci95": [
+          0.14279925101892071,
+          0.1478268774570946
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "precision": {
+        "per_seed": {
+          "11": 0.14930357878426928,
+          "23": 0.15201468460478526,
+          "42": 0.1527039904817487,
+          "77": 0.1468437896612672,
+          "101": 0.14895557359841838
+        },
+        "n": 5,
+        "mean": 0.14996432342609778,
+        "std": 0.0023927832754390694,
+        "se": 0.0010700852118612724,
+        "ci95": [
+          0.1469937668779709,
+          0.15293487997422467
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "recall": {
+        "per_seed": {
+          "11": -0.0007233273056058698,
+          "23": -0.000964436407474345,
+          "42": -0.0006027727546714656,
+          "77": -0.00012055455093429313,
+          "101": -0.0006027727546714656
+        },
+        "n": 5,
+        "mean": -0.0006027727546714879,
+        "std": 0.00030735500383319883,
+        "se": 0.0001374533363591482,
+        "ci95": [
+          -0.0009843432164044832,
+          -0.00022120229293849252
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": false,
+        "all_negative": true
+      }
+    },
+    "tl_auc_mean": 0.7357322367062642,
+    "cf_auc_mean": 0.3544798351615774,
+    "ranking_reversal_tl_above_half_cf_below": {
+      "per_seed": {
+        "11": true,
+        "23": true,
+        "42": true,
+        "77": true,
+        "101": true
+      },
+      "all_seeds": true
+    }
+  },
+  "centralized": {
+    "tl_minus_cf": {
+      "roc_auc": {
+        "per_seed": {
+          "11": 0.3976286550474964,
+          "23": 0.4010121472387356,
+          "42": 0.41593848913016457,
+          "77": 0.37108780278708464,
+          "101": 0.38724509523351297
+        },
+        "n": 5,
+        "mean": 0.3945824378873988,
+        "std": 0.016677349922351457,
+        "se": 0.007458337622185739,
+        "ci95": [
+          0.37387809264821115,
+          0.4152867831265864
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "pr_auc": {
+        "per_seed": {
+          "11": 0.2607682521472904,
+          "23": 0.2595103529529665,
+          "42": 0.28716288075879426,
+          "77": 0.24364167981265494,
+          "101": 0.2269361548000563
+        },
+        "n": 5,
+        "mean": 0.25560386409435243,
+        "std": 0.022376519506850726,
+        "se": 0.010007083743433658,
+        "ci95": [
+          0.2278241996225806,
+          0.28338352856612425
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "balanced_accuracy": {
+        "per_seed": {
+          "11": 0.2135168561839194,
+          "23": 0.2142309773541567,
+          "42": 0.21989404196414775,
+          "77": 0.22257352723703883,
+          "101": 0.21643361814033563
+        },
+        "n": 5,
+        "mean": 0.21732980417591966,
+        "std": 0.0038411064957783307,
+        "se": 0.0017177950466752711,
+        "ci95": [
+          0.2125612051263491,
+          0.2220984032254902
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "mcc": {
+        "per_seed": {
+          "11": 0.42998690858636734,
+          "23": 0.44078817366296774,
+          "42": 0.449505935381599,
+          "77": 0.45061926222825927,
+          "101": 0.42711525558628005
+        },
+        "n": 5,
+        "mean": 0.4396031070890947,
+        "std": 0.010831017655623162,
+        "se": 0.004843778348694759,
+        "ci95": [
+          0.42615677839311805,
+          0.4530494357850714
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "f1": {
+        "per_seed": {
+          "11": 0.13826262261227362,
+          "23": 0.13573671914965318,
+          "42": 0.1408121621646235,
+          "77": 0.14464290946003994,
+          "101": 0.14309823597979304
+        },
+        "n": 5,
+        "mean": 0.14051052987327664,
+        "std": 0.0035953484483786766,
+        "se": 0.0016078887066746227,
+        "ci95": [
+          0.13604703082354788,
+          0.1449740289230054
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "precision": {
+        "per_seed": {
+          "11": 0.14091567735008265,
+          "23": 0.13732341329431583,
+          "42": 0.14393563905609685,
+          "77": 0.14837697294203278,
+          "101": 0.14890463548209557
+        },
+        "n": 5,
+        "mean": 0.1438912676249247,
+        "std": 0.004930725765011229,
+        "se": 0.0022050875977949525,
+        "ci95": [
+          0.13776994445344592,
+          0.1500125907964035
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": true,
+        "all_negative": false
+      },
+      "recall": {
+        "per_seed": {
+          "11": -0.00024110910186858625,
+          "23": -0.00024110910186858625,
+          "42": -0.0014466546112115175,
+          "77": -0.0006027727546714656,
+          "101": -0.00012055455093429313
+        },
+        "n": 5,
+        "mean": -0.0005304400241108898,
+        "std": 0.0005431648137947378,
+        "se": 0.00024291068932620985,
+        "ci95": [
+          -0.0012047600976804484,
+          0.0001438800494586687
+        ],
+        "t_critical": 2.776,
+        "df": 4,
+        "assumption": "Student t, two-sided 95%, df=4. The five seeds are repeated stratified holdouts from one finite corpus, not independent external NIDS datasets. The interval describes holdout variation in this experiment, not population generalisation.",
+        "all_positive": false,
+        "all_negative": true
+      }
+    },
+    "tl_auc_mean": 0.7489735414558663,
+    "cf_auc_mean": 0.3543911035684675,
+    "ranking_reversal_tl_above_half_cf_below": {
+      "per_seed": {
+        "11": true,
+        "23": true,
+        "42": true,
+        "77": true,
+        "101": true
+      },
+      "all_seeds": true
+    }
+  }
+}

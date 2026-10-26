@@ -1,0 +1,143 @@
+{
+  "status": "PASS",
+  "tolerance": 1e-12,
+  "n_checks": 15,
+  "checks": [
+    {
+      "seed": 11,
+      "model": "centralized",
+      "sklearn_A": 0.7541444868926434,
+      "reconstructed_A": 0.7541444868926432,
+      "sklearn_D": 0.35651583184514696,
+      "reconstructed_D": 0.35651583184514696,
+      "status": "PASS"
+    },
+    {
+      "seed": 11,
+      "model": "fedavg_iid",
+      "sklearn_A": 0.7348852905813181,
+      "reconstructed_A": 0.7348852905813181,
+      "sklearn_D": 0.357477885488173,
+      "reconstructed_D": 0.35747788548817305,
+      "status": "PASS"
+    },
+    {
+      "seed": 11,
+      "model": "fedavg_noniid",
+      "sklearn_A": 0.7435896901836909,
+      "reconstructed_A": 0.7435896901836909,
+      "sklearn_D": 0.35561979021952955,
+      "reconstructed_D": 0.3556197902195295,
+      "status": "PASS"
+    },
+    {
+      "seed": 23,
+      "model": "centralized",
+      "sklearn_A": 0.7496192339634468,
+      "reconstructed_A": 0.7496192339634468,
+      "sklearn_D": 0.3486070867247112,
+      "reconstructed_D": 0.34860708672471113,
+      "status": "PASS"
+    },
+    {
+      "seed": 23,
+      "model": "fedavg_iid",
+      "sklearn_A": 0.729106614684633,
+      "reconstructed_A": 0.729106614684633,
+      "sklearn_D": 0.3499955941074624,
+      "reconstructed_D": 0.3499955941074624,
+      "status": "PASS"
+    },
+    {
+      "seed": 23,
+      "model": "fedavg_noniid",
+      "sklearn_A": 0.7143850794511699,
+      "reconstructed_A": 0.7143850794511699,
+      "sklearn_D": 0.3344514108367738,
+      "reconstructed_D": 0.3344514108367739,
+      "status": "PASS"
+    },
+    {
+      "seed": 42,
+      "model": "centralized",
+      "sklearn_A": 0.7719923201668935,
+      "reconstructed_A": 0.7719923201668935,
+      "sklearn_D": 0.3560538310367289,
+      "reconstructed_D": 0.3560538310367289,
+      "status": "PASS"
+    },
+    {
+      "seed": 42,
+      "model": "fedavg_iid",
+      "sklearn_A": 0.7475605365885563,
+      "reconstructed_A": 0.7475605365885561,
+      "sklearn_D": 0.35711901561280024,
+      "reconstructed_D": 0.35711901561280024,
+      "status": "PASS"
+    },
+    {
+      "seed": 42,
+      "model": "fedavg_noniid",
+      "sklearn_A": 0.7266688078221325,
+      "reconstructed_A": 0.7266688078221324,
+      "sklearn_D": 0.35535947459210776,
+      "reconstructed_D": 0.35535947459210776,
+      "status": "PASS"
+    },
+    {
+      "seed": 77,
+      "model": "centralized",
+      "sklearn_A": 0.7269862542540191,
+      "reconstructed_A": 0.7269862542540191,
+      "sklearn_D": 0.35589845146693444,
+      "reconstructed_D": 0.35589845146693444,
+      "status": "PASS"
+    },
+    {
+      "seed": 77,
+      "model": "fedavg_iid",
+      "sklearn_A": 0.7347679574834841,
+      "reconstructed_A": 0.7347679574834841,
+      "sklearn_D": 0.3549917012868733,
+      "reconstructed_D": 0.3549917012868733,
+      "status": "PASS"
+    },
+    {
+      "seed": 77,
+      "model": "fedavg_noniid",
+      "sklearn_A": 0.7126597858094713,
+      "reconstructed_A": 0.7126597858094713,
+      "sklearn_D": 0.35299026246372567,
+      "reconstructed_D": 0.3529902624637256,
+      "status": "PASS"
+    },
+    {
+      "seed": 101,
+      "model": "centralized",
+      "sklearn_A": 0.7421254120023288,
+      "reconstructed_A": 0.742125412002329,
+      "sklearn_D": 0.3548803167688159,
+      "reconstructed_D": 0.35488031676881593,
+      "status": "PASS"
+    },
+    {
+      "seed": 101,
+      "model": "fedavg_iid",
+      "sklearn_A": 0.7323407841933295,
+      "reconstructed_A": 0.7323407841933294,
+      "sklearn_D": 0.352814979312578,
+      "reconstructed_D": 0.352814979312578,
+      "status": "PASS"
+    },
+    {
+      "seed": 101,
+      "model": "fedavg_noniid",
+      "sklearn_A": 0.7514133917193937,
+      "reconstructed_A": 0.7514133917193937,
+      "sklearn_D": 0.35487837556561147,
+      "reconstructed_D": 0.3548783755656115,
+      "status": "PASS"
+    }
+  ],
+  "definition": "weight(g,h)=n_pos(g)*n_neg(h)/(N_pos*N_neg); global AUC = sum weight*pairwise_AUC with 0.5 tie credit. Groups are original TL protocol codes, never CF reconstructions. Empty cells are not estimable and contribute zero."
+}

@@ -1,0 +1,6 @@
+{
+  "recommendation": "retain_separately_optional_one_sentence",
+  "reversal": true,
+  "comparable_to_iid": true,
+  "parity": "PASS"
+}

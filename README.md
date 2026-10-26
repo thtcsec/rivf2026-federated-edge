@@ -3,10 +3,12 @@
 Reproduction package for the IEEE RIVF 2026 camera-ready candidate
 *Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset
 Intrusion Detection* by Hoang Tu Trinh and Tien Thanh Cao. The working title
-may require EDAS/TPC confirmation. The repository contains only the
-logistic-regression FedAvg audit reported in the paper; it makes no TCN/GRU,
-reinforcement-learning, OpenFlow, latency, resource, or physical-deployment
-claim. Do not treat integer protocol codes as established IANA identities.
+may require EDAS/TPC confirmation. This freeze contains the logistic-regression
+FedAvg audit plus the Phase B robustness controls quoted in the camera-ready
+manuscript. It makes no TCN/GRU, reinforcement-learning, OpenFlow, latency,
+resource, or physical-deployment claim. Do not treat integer protocol codes as
+established IANA identities. The public GitHub `main` branch still hosts the
+accepted submission until this commit is pushed.
 
 ## Headline result
 
@@ -91,8 +93,29 @@ pdflatex -interaction=nonstopmode rivf2026.tex
 pdflatex -interaction=nonstopmode rivf2026.tex
 ```
 
+**Level A (no third-party data).** A clean checkout can check every quoted
+number against tracked files under `results/verified/` and `results/phase_b/`
+with `python evaluation/verify_paper_numbers.py`. Prepared-CSV checksums and
+the protocol-label audit are skipped when those files are absent. See
+`evaluation/phase_b_claim_manifest.md`.
+
+**Level B (experimental reproduction).** Regenerating models needs the four
+prepared CSVs. After checksums match `data/README.md`:
+
+```bash
+python evaluation/run_phase_b_noniid_cross.py
+python evaluation/run_phase_b_mechanism.py
+python evaluation/run_phase_b_robustness.py
+python evaluation/run_phase_b_missingness.py
+```
+
+Phase B writes only under `results/phase_b/` and must not overwrite
+`results/verified/`. B.2 replays the tracked B.1 checkpoints; it does not
+retrain the nine-field LR models.
+
 `verify_paper_numbers.py` re-reads `rivf2026.tex` and fails if any table cell,
-prose figure, count, or published checksum disagrees with `results/verified/`.
+prose figure, count, or published checksum disagrees with `results/verified/`
+and the quoted Phase B JSON keys.
 
 Data licenses prevent redistribution. See `data/README.md` for source files,
 feature conversion, per-file field provenance, expected rows, and SHA-256
@@ -102,11 +125,12 @@ checksums. Prepared files may also be supplied using `INSDN_CSV`,
 
 ## Outputs
 
-The evaluation writes all computed artifacts under `results/verified/`. The
-machine-readable outputs are `five_seed_metrics.csv`,
-`external_ablation_metrics.csv`, `feature_shift_audit.csv`,
-`provenance_screen.csv`, and `summary.json`. All but the first carry a `mirror`
-column or key so that every number can be traced to one provenance.
+The original evaluation writes under `results/verified/`. The machine-readable
+outputs are `five_seed_metrics.csv`, `external_ablation_metrics.csv`,
+`feature_shift_audit.csv`, `provenance_screen.csv`, and `summary.json`. All but
+the first carry a `mirror` column or key so that every number can be traced to
+one provenance. Phase B writes only under `results/phase_b/` (non-IID scoring,
+factorial, HGB robustness, missingness, and 40 KB of LR checkpoints).
 
 ## Scope and interpretation
 

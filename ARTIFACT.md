@@ -61,20 +61,26 @@ reinforcement-learning, or SDN-actuation claim is supported or made.
    and aborts if the counterfactual is not row-matched after subsampling.
 5. Run `python evaluation/verify_paper_numbers.py`. It re-reads `rivf2026.tex`
    and asserts that every table cell, prose scalar, count, prevalence, and
-   confusion-matrix entry matches `results/verified/`; that all four
-   prepared-file SHA-256 digests are the ones published in `data/README.md`; and
-   that the committed counterfactual CSV really differs from the TL CSV in
-   exactly `ip_proto` and `tp_src` with identical labels and prevalence. It exits
-   non-zero on the first mismatch, so a stale table cannot survive a rerun
-   unnoticed.
+   confusion-matrix entry matches `results/verified/`; that quoted Phase B
+   numbers match `results/phase_b/`; and, when the prepared CSVs are present,
+   that all four SHA-256 digests are the ones published in `data/README.md` and
+   that the counterfactual CSV differs from the TL CSV in exactly `ip_proto` and
+   `tp_src` with identical labels and prevalence. Without those CSVs, checksum
+   and row-match checks are skipped (EXTERNAL DATA REQUIRED) rather than
+   reported as passing. The script exits non-zero on the first mismatch.
 6. For manual inspection, the machine-readable outputs are
    `results/verified/five_seed_metrics.csv`,
    `results/verified/external_ablation_metrics.csv`,
    `results/verified/feature_shift_audit.csv`, and
    `results/verified/provenance_screen.csv`; all but the first are keyed by a
    `mirror` column whose values are `trafficlabelling`, `tl_counterfactual` and
-   `mlcve`.
+   `mlcve`. Quoted Phase B keys are listed in
+   `evaluation/phase_b_claim_manifest.md`.
 7. Build the PDF twice with `pdflatex`.
+8. Optional Level B: after checksums match, run the four `run_phase_b_*.py`
+   scripts. They must not write `results/verified/`. The 30 tracked checkpoints
+   under `results/phase_b/checkpoints/` are required for B.2 replay and for LR
+   missingness policies that reuse the nine-field models.
 
 The experiment is deterministic for the specified package versions and seeds.
 Report platform-dependent floating-point differences rather than silently

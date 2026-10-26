@@ -1,0 +1,60 @@
+{
+  "model": "fedavg_iid",
+  "seed": 101,
+  "features": [
+    "ip_proto",
+    "tp_src",
+    "tp_dst",
+    "packet_count",
+    "byte_count",
+    "duration_sec",
+    "packet_count_per_sec",
+    "byte_count_per_sec",
+    "packet_size_avg"
+  ],
+  "n_features": 9,
+  "feature_order": [
+    "ip_proto",
+    "tp_src",
+    "tp_dst",
+    "packet_count",
+    "byte_count",
+    "duration_sec",
+    "packet_count_per_sec",
+    "byte_count_per_sec",
+    "packet_size_avg"
+  ],
+  "hyperparameters": {
+    "model": "SGDClassifier(log_loss)",
+    "penalty": "l2",
+    "alpha": 0.0001,
+    "eta0": 0.01,
+    "batch": "full local partition per round",
+    "local_epochs": 1,
+    "initialization": "shared zero coefficients/intercept",
+    "threshold": 0.5,
+    "class_weight": null,
+    "scaler": "StandardScaler fit on source training only",
+    "sklearn": "1.7.2",
+    "dirichlet_alpha": 0.5,
+    "clients": 5,
+    "rounds": 20,
+    "n_sample": 30000,
+    "source_test_fraction": 0.2
+  },
+  "npz": "checkpoints/seed_101_fedavg_iid.npz",
+  "coef_shape": [
+    1,
+    9
+  ],
+  "intercept_shape": [
+    1
+  ],
+  "data_hashes": {
+    "insdn": "c05f1f40dceb888aaaaf52b29283054147ed68390ea47997a8539e1505f64a7e",
+    "trafficlabelling": "4ff3075e61dea938892bda5bd90812170e085b225a87d1b0431b4e3c98d089bd",
+    "tl_counterfactual": "957b4170bda3a6f95648548196be35d473a36965a628e2b88580ae218f186b4c",
+    "mlcve": "af5f02ade640caa9870a310c7d95903c5b95a1d2a794c060d0c3932346530a03"
+  },
+  "git": "ed880b51214a3b7906898b9086b5aa341600afbe"
+}

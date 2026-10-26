@@ -107,3 +107,35 @@ reported for these releases by Rosay et al. (ICISSP 2022). The evaluation script
 reads only the nine independent features listed in the paper and ignores
 `flow_duration`. The checksums above cover the prepared files as written,
 including that column.
+
+## Phase B robustness controls (camera-ready)
+
+Quoted Phase B numbers are generated under `results/phase_b/` and must not
+overwrite `results/verified/`. After the four prepared CSVs match the checksums
+above, a third party with this camera-ready commit reproduces them with:
+
+```powershell
+python evaluation/run_phase_b_noniid_cross.py
+python evaluation/run_phase_b_mechanism.py
+python evaluation/run_phase_b_robustness.py
+python evaluation/run_phase_b_missingness.py
+python evaluation/verify_paper_numbers.py
+```
+
+B.1 retrains the source-only LR models and writes small checkpoints used by the
+fixed-model factorial (B.2) and by LR missingness policies that replay the
+nine-field models (B.4). B.3 retrains a centralized nine-field categorical
+`HistGradientBoostingClassifier`; it is not federated. B.4 also retrains
+seven-field models (policy P2). Do not fit on target labels, do not tune after
+inspecting target metrics, and do not call `run_verified_federated_baseline.py`
+from Phase B.
+
+**Publication state.** These scripts and `results/phase_b/` are part of the
+local `camera-ready-integrated` freeze. They are not on `origin/main` (accepted
+submission `9a2f461`) and are not a public GitHub snapshot until that commit is
+pushed. The claim map is `evaluation/phase_b_claim_manifest.md`. Quoted numbers
+can be checked against tracked JSON without redistributing third-party CSVs
+(Level A). Regenerating models from source files is Level B and needs the
+prepared datasets. The manuscript quotes only the subset checked by
+`evaluation/verify_paper_numbers.py`; the full missingness matrix stays in
+`results/phase_b/missingness/`.
