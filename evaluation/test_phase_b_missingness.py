@@ -79,9 +79,109 @@ class ContractTests(unittest.TestCase):
             self.skipTest('prepared CSVs absent')
         self.assertEqual(validate_inputs()['hashes'], REFERENCE_HASHES)
 
-    def test_mask_pre_registered(self):
+    def test_mask_probability_specified(self):
         self.assertEqual(miss.MASK_P, 0.5)
         self.assertIn('MASK_P = 0.5', SRC)
+        self.assertNotIn('near-perfect on unseen source rows', SRC)
+
+    def _vec(self, *vals):
+        row = np.zeros(9)
+        row[:len(vals)] = vals
+        return row
+
+    def test_leakage_audit_no_overlap(self):
+        xtr = np.stack([self._vec(1), self._vec(1)])
+        ytr = np.array([0, 0])
+        xte = np.stack([self._vec(2)])
+        yte = np.array([1])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['unique_exact_overlap'], 0)
+        self.assertEqual(d['test_rows_matching_a_train_vector'], 0)
+        self.assertEqual(d['test_overlap_frac'], 0.0)
+        self.assertEqual(d['label_conflicts_in_this_split_overlap'], 0)
+        self.assertIn('No identical feature vector', d['verdict'])
+        self.assertNotIn('appear in both', d['verdict'])
+        self.assertNotIn('inflates source AUC', d['verdict'])
+        self.assertIn('does not measure source-AUC inflation', d['verdict'])
+
+    def test_leakage_audit_identical_labels_overlap(self):
+        xtr = np.stack([self._vec(1), self._vec(1), self._vec(3)])
+        ytr = np.array([0, 0, 1])
+        xte = np.stack([self._vec(1), self._vec(1)])
+        yte = np.array([0, 0])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['unique_exact_overlap'], 1)
+        self.assertEqual(d['test_rows_matching_a_train_vector'], 2)
+        self.assertEqual(d['label_conflicts_in_this_split_overlap'], 0)
+        self.assertEqual(d['train_internal_label_conflicts'], 0)
+        self.assertEqual(d['test_internal_label_conflicts'], 0)
+        self.assertIn('label-consistent', d['verdict'])
+
+    def test_leakage_audit_cross_split_conflict(self):
+        xtr = np.stack([self._vec(1), self._vec(2)])
+        ytr = np.array([0, 1])
+        xte = np.stack([self._vec(1)])
+        yte = np.array([1])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['cross_split_conflicting_groups'], 1)
+        self.assertEqual(d['label_conflicts_in_this_split_overlap'], 1)
+        self.assertGreater(d['label_conflicts_in_this_split_overlap'], 0)
+        self.assertNotIn('near-perfect', d['verdict'])
+        self.assertIn('does not measure source-AUC inflation', d['verdict'])
+
+    def test_leakage_audit_train_only_conflict(self):
+        xtr = np.stack([self._vec(1), self._vec(1)])
+        ytr = np.array([0, 1])
+        xte = np.stack([self._vec(9)])
+        yte = np.array([0])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['train_internal_label_conflicts'], 1)
+        self.assertEqual(d['test_internal_label_conflicts'], 0)
+        self.assertEqual(d['unique_exact_overlap'], 0)
+        self.assertEqual(d['cross_split_conflicting_groups'], 0)
+
+    def test_leakage_audit_test_only_conflict(self):
+        xtr = np.stack([self._vec(9)])
+        ytr = np.array([0])
+        xte = np.stack([self._vec(1), self._vec(1)])
+        yte = np.array([0, 1])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['test_internal_label_conflicts'], 1)
+        self.assertEqual(d['train_internal_label_conflicts'], 0)
+        self.assertEqual(d['unique_exact_overlap'], 0)
+
+    def test_leakage_audit_multiple_labels_one_vector(self):
+        xtr = np.stack([self._vec(1)] * 3)
+        ytr = np.array([0, 1, 0])
+        xte = np.stack([self._vec(1)] * 2)
+        yte = np.array([1, 0])
+        d = miss.leakage_audit(xtr, xte, ytr, yte)
+        self.assertEqual(d['train_internal_label_conflicts'], 1)
+        self.assertEqual(d['test_internal_label_conflicts'], 1)
+        self.assertEqual(d['unique_exact_overlap'], 1)
+        self.assertEqual(d['cross_split_conflicting_groups'], 0)
+        self.assertEqual(d['test_rows_matching_a_train_vector'], 2)
+
+    def test_leakage_audit_permutation_invariant(self):
+        xtr = np.stack([self._vec(1), self._vec(1), self._vec(2), self._vec(3)])
+        ytr = np.array([0, 1, 1, 0])
+        xte = np.stack([self._vec(1), self._vec(2), self._vec(2), self._vec(9)])
+        yte = np.array([1, 0, 0, 1])
+        base = miss.leakage_audit(xtr, xte, ytr, yte)
+        rng = np.random.default_rng(0)
+        keys = (
+            'unique_exact_overlap', 'test_rows_matching_a_train_vector',
+            'test_overlap_frac', 'label_conflicts_in_this_split_overlap',
+            'train_internal_label_conflicts', 'test_internal_label_conflicts',
+            'cross_split_conflicting_groups', 'unique_train_vectors',
+            'unique_test_vectors',
+        )
+        for _ in range(8):
+            pi = rng.permutation(len(xtr))
+            pj = rng.permutation(len(xte))
+            got = miss.leakage_audit(xtr[pi], xte[pj], ytr[pi], yte[pj])
+            for k in keys:
+                self.assertEqual(got[k], base[k], k)
 
     def test_mask_deterministic_and_label_independent(self):
         a = miss.provenance_masks(20, 11)

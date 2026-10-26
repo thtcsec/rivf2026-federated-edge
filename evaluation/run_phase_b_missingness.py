@@ -1,22 +1,23 @@
 """Phase B.4: missing-feature handling policies for zero-shot NIDS transfer.
 
-Pre-registered policies. Source-only fitting. Writes only under
-results/phase_b/missingness/. HGB is not a federated model.
+Author-specified policies in this script. Source-only fitting. Writes only
+under results/phase_b/missingness/. HGB is not a federated model.
 
-Experimental matrix (fixed before target inspection):
+Experimental matrix (author-specified configuration in this file):
   Models: lr_fedavg_iid, lr_centralized, hgb_categorical, hgb_numeric
   Policies:
     P0 observed nine-field TL (not MLCVE-feasible)
     P1 existing reconstruction (CF / MLCVE contract)
     P2 drop provenance fields and retrain on seven-field intersection
     P3 source-train mode/median imputation on a fixed nine-field model
-    P4 missingness-aware source training (mask p=0.5, pre-registered)
+    P4 missingness-aware source training (mask p=0.5, specified here)
 """
 from __future__ import annotations
 
 import inspect
 import json
 import sys
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -55,7 +56,7 @@ VIEWS = ('source_test', 'trafficlabelling', 'tl_counterfactual', 'mlcve')
 PROTO_I = FEATURES.index('ip_proto')
 PORT_I = FEATURES.index('tp_src')
 UNAFFECTED_I = [i for i, f in enumerate(FEATURES) if f not in PROVENANCE_FIELDS]
-# Pre-registered 2026-10-26. Not chosen from target scores.
+# Author-specified 2026-10-26. Not chosen from target scores.
 MASK_P = 0.5
 MASK_OFFSET = 10007
 PAPER = {
@@ -248,27 +249,76 @@ def source_partition(seed: int):
     return xtr, xte, ytr, yte
 
 
+def _vector_key(row: np.ndarray) -> tuple:
+    return tuple(np.round(np.asarray(row, dtype=float), 10))
+
+
+def _label_sets(rows: np.ndarray, labels: np.ndarray) -> dict[tuple, set[int]]:
+    grouped: dict[tuple, set[int]] = defaultdict(set)
+    for row, lab in zip(rows, labels):
+        grouped[_vector_key(row)].add(int(lab))
+    return grouped
+
+
 def leakage_audit(xtr: np.ndarray, xte: np.ndarray, ytr: np.ndarray, yte: np.ndarray) -> dict:
+    """Permutation-invariant feature-vector overlap diagnostics.
+
+    Counts use complete label *sets* per rounded feature-vector key, never the
+    first-seen label. Schema notes versus 2fa428b:
+
+    - ``train_internal_label_conflicts`` / ``test_internal_label_conflicts``
+      count unique vector *groups* with more than one label, not extra rows.
+    - ``label_conflicts_in_this_split_overlap`` counts overlapping groups whose
+      train and test label sets differ (was an order-dependent test-row count).
+    """
     if any(name in FEATURES for name in ('label', 'target', 'is_synthetic', 'run_id')):
         raise SystemExit('label or identifier leaked into FEATURES')
-    tr = {tuple(np.round(r, 10)) for r in xtr}
-    te_keys = [tuple(np.round(r, 10)) for r in xte]
-    overlap = tr.intersection(te_keys)
-    te_in = int(sum(k in overlap for k in te_keys))
+    if len(yte) == 0:
+        raise SystemExit('leakage_audit requires a non-empty test split')
+    keys_tr = [_vector_key(r) for r in xtr]
+    keys_te = [_vector_key(r) for r in xte]
+    tr_sets = _label_sets(xtr, ytr)
+    te_sets = _label_sets(xte, yte)
+    overlap = set(tr_sets).intersection(te_sets)
+    te_in = int(sum(k in overlap for k in keys_te))
+    train_internal = int(sum(len(s) > 1 for s in tr_sets.values()))
+    test_internal = int(sum(len(s) > 1 for s in te_sets.values()))
+    cross_split = int(sum(tr_sets[k] != te_sets[k] for k in overlap))
+    bits = []
+    if overlap:
+        bits.append(
+            f'{len(overlap)} unique feature vectors appear in both splits '
+            f'({te_in} test rows; fraction {te_in / len(yte):.4f}).'
+        )
+    else:
+        bits.append('No identical feature vector appears in both source splits.')
+    if train_internal:
+        bits.append(f'{train_internal} training vector groups have conflicting labels.')
+    if test_internal:
+        bits.append(f'{test_internal} test vector groups have conflicting labels.')
+    if cross_split:
+        bits.append(
+            f'{cross_split} overlapping vector groups have train/test label disagreement.'
+        )
+    elif overlap and not train_internal and not test_internal:
+        bits.append('Overlapping groups are label-consistent in this split.')
+    bits.append(
+        'This audit does not measure source-AUC inflation or unseen-row performance.'
+    )
     return {
         'n_train': int(len(ytr)),
         'n_test': int(len(yte)),
+        'unique_train_vectors': int(len(tr_sets)),
+        'unique_test_vectors': int(len(te_sets)),
         'unique_exact_overlap': int(len(overlap)),
         'test_rows_matching_a_train_vector': te_in,
         'test_overlap_frac': float(te_in / len(yte)),
-        'label_conflicts_in_this_split_overlap': 0,  # filled by caller if needed
+        'label_conflicts_in_this_split_overlap': cross_split,
+        'train_internal_label_conflicts': train_internal,
+        'test_internal_label_conflicts': test_internal,
+        'cross_split_conflicting_groups': cross_split,
         'features': list(FEATURES),
-        'verdict': (
-            'Repeated identical InSDN flow-stat vectors exist and appear in both '
-            'source splits. Duplicate groups are label-consistent. This inflates '
-            'source AUC but is not target-label leakage. Seven-feature HGB remains '
-            'near-perfect on unseen source rows; the source task is easy for trees.'
-        ),
+        'verdict': ' '.join(bits),
     }
 
 
@@ -359,12 +409,12 @@ def write_report(summary: dict) -> None:
         '',
         'Controlled comparison of source-only missingness policies when Protocol',
         'and Source Port are unavailable in a target release. **HGB is not a',
-        'federated model.** Policies and the masking probability were pre-registered',
-        'and were not changed after seeing target scores. The manuscript was not edited.',
+        'federated model.** Policies and the masking probability are an',
+        'author-specified configuration in this script.',
         '',
         f"- Git commit: `{git_sha()}`",
         f"- sklearn: `{sklearn.__version__}`",
-        f"- Pre-registered P4 mask probability: `{MASK_P}` (independent per field)",
+        f"- Author-specified P4 mask probability: `{MASK_P}` (independent per field)",
         f"- Leakage audit: {summary['leakage']['verdict']}",
         '',
         '## Policy feasibility',
@@ -408,7 +458,7 @@ def write_report(summary: dict) -> None:
     q = summary['answers']
     lines += [
         '',
-        '## Pre-registered questions',
+        '## Author-specified questions',
         '',
         f"1. Can any source-only missingness policy avoid the LR below-chance result? **{q['q1']}**",
         f"2. If yes, useful ranking vs chance? **{q['q2']}**",
@@ -425,13 +475,13 @@ def write_report(summary: dict) -> None:
         'encoding inside logistic regression did not remove the reversal. HGB',
         'categorical vs numeric is the within-family representation control.',
         '',
-        'A better target AUC is an observed outcome under pre-registered policies,',
+        'A better target AUC is an observed outcome under the specified policies,',
         'not a validated deployment-time selection rule.',
         '',
         '## Limitations',
         '',
         f'- P4 trains with missingness rate {MASK_P} and is applied to 100% missing target fields.',
-        '- Source InSDN is nearly separable for trees even on unseen rows.',
+        '- This audit reports source-split overlap; it does not compute an unseen-row source AUC.',
         '- One HGB configuration and the original LR optimizer; not a survey.',
         '- No manuscript change in this phase.',
         '',

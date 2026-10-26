@@ -1,6 +1,6 @@
 """Phase B.3: centralized HistGradientBoostingClassifier robustness check.
 
-Pre-registered hyperparameters. Source-only training. Protocol is a nominal
+Author-specified hyperparameters. Source-only training. Protocol is a nominal
 stored code (categorical_features), not a numeric magnitude. Writes only under
 results/phase_b/robustness/. This is not a federated model.
 """
@@ -188,7 +188,7 @@ def write_report(summary: dict, hashes: dict) -> None:
     if verdict == 'observed_in_one_additional_centralized_nonlinear_classifier':
         generality = (
             'Strengthens the claim only for this one additional centralized '
-            'nonlinear family under the pre-registered configuration. It does '
+            'nonlinear family under the author-specified configuration. It does '
             'not establish generality across classifier families.'
         )
         shortcut = (
@@ -219,8 +219,8 @@ def write_report(summary: dict, hashes: dict) -> None:
         '# Phase B.3 nonlinear robustness report',
         '',
         'Centralized `HistGradientBoostingClassifier` with protocol as a native',
-        'categorical feature. **Not a federated model.** Hyperparameters were',
-        'pre-registered and were not changed after seeing target scores.',
+        'categorical feature. **Not a federated model.** Hyperparameters are',
+        'an author-specified configuration in this script.',
         'The camera-ready manuscript was not modified.',
         '',
         f'- Git commit: `{git_sha()}`',

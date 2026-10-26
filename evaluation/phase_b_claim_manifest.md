@@ -5,7 +5,7 @@ Status snapshot for RIVF 2026 #1571348135. This file does **not** publish data.
 | Layer | State |
 |---|---|
 | Camera-ready tag `rivf2026-camera-ready` | Integrated manuscript + Phase B scripts/results |
-| Public remote `origin/main` | Accepted submission until the camera-ready PR is merged |
+| Public remote `origin/main` | Camera-ready publication merge (PR #1) |
 
 The versioned artifact URL is
 https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready
@@ -39,4 +39,18 @@ Full B.4 imputation matrix, AUROC pair decomposition, numeric HGB, and LR P3/P4.
 
 ## Unseen-row source HGB AUC
 
-The frozen leakage object records `mean_test_overlap_frac` and a qualitative verdict that seven-feature HGB remains near-perfect on unseen source rows. It does **not** store a separate unseen-row ROC-AUC. No such number is quoted in the manuscript.
+The frozen leakage object records `mean_test_overlap_frac` (quoted as 34.86%)
+and a historical qualitative sentence about unseen source rows. It does **not**
+store a separate unseen-row ROC-AUC. No such number is quoted in the manuscript.
+The current `leakage_audit` implementation no longer emits that qualitative
+claim; it reports overlap and computed label conflicts only. Re-running it is a
+**current reproduction**, not a rewrite of the frozen JSON.
+
+## Historical provenance limitation
+
+Phase B manifests record `git_commit` and prepared-CSV SHA-256 values. They do
+not record hashes of the executed source tree, and a commit SHA is not proof of
+a clean checkout. Author-specified seeds, round counts, and hyperparameters in
+the scripts are not a timestamped preregistration. Do not modify frozen
+manifests to look more complete. The immutable scientific tag remains
+`rivf2026-camera-ready`.
