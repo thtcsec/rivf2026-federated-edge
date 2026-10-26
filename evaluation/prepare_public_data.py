@@ -70,6 +70,41 @@ def cic_one(path:Path,notes:list)->pd.DataFrame:
 
 UNAFFECTED=[c for c in FEATURES if c not in ('ip_proto','tp_src')]
 
+def _changed_columns(left:pd.DataFrame,right:pd.DataFrame)->list[str]:
+ return [c for c in FEATURES if not left[c].reset_index(drop=True).equals(right[c].reset_index(drop=True))]
+
+def counterfactual_metadata(base:dict,test:pd.DataFrame,cf:pd.DataFrame,derived_from:str,notes:list|None=None)->dict:
+ """Metadata for the CF view, computed from the CF rows rather than copied from TL.
+
+ Spreading the TL summary used to leave protocol_values={0,6,17} and
+ source_port_sentinel_rows=0, which describe the pre-overwrite TrafficLabelling
+ table, not the counterfactual.
+ """
+ notes = notes or base.get('field_provenance') or []
+ meta={**base,
+  'dataset':'cicids2017_3class_counterfactual','derived_from':derived_from,'rows_test':len(cf),
+  'row_matched':True,'columns_changed':_changed_columns(test,cf),
+  'protocol_disagreement_rate':float((test.ip_proto.to_numpy()!=cf.ip_proto.to_numpy()).mean()),
+  'protocol_values':sorted(int(v) for v in pd.unique(cf.ip_proto)),
+  'source_port_sentinel_rows':int((cf.tp_src==-1).sum()),
+  'field_provenance':[{'file':n['file'],'protocol':'flag-derived surrogate substituted for the original column',
+                       'source_port':'sentinel -1 substituted for the original column'} for n in notes]}
+ return meta
+
+def assert_row_matched(test:pd.DataFrame,cf:pd.DataFrame)->None:
+ left=test[UNAFFECTED+['label']].reset_index(drop=True);right=cf[UNAFFECTED+['label']].reset_index(drop=True)
+ if not left.equals(right): raise SystemExit('counterfactual mirror is not row-matched to the original mirror')
+
+def refresh_counterfactual_metadata(tl_dir:Path,cf_dir:Path)->dict:
+ """Rewrite CF dataset_summary.json from existing CSVs; never touch the CSV bytes."""
+ test=pd.read_csv(tl_dir/'test.csv'); cf=pd.read_csv(cf_dir/'test.csv')
+ assert_row_matched(test,cf)
+ base=json.loads((tl_dir/'dataset_summary.json').read_text(encoding='utf8'))
+ notes=base.get('field_provenance') or []
+ meta=counterfactual_metadata(base,test,cf,tl_dir.name,notes)
+ (cf_dir/'dataset_summary.json').write_text(json.dumps(meta,indent=2),encoding='utf8')
+ return meta
+
 def prepare_cicids(root:Path,out:Path,counterfactual_out:Path|None=None)->None:
  notes=[];frames=[cic_one(locate(root,name),notes) for name in CIC_FILES.values()];z=pd.concat(frames,ignore_index=True).dropna(subset=FEATURES+['label'])
  z=z.drop_duplicates(subset=FEATURES+['label','source_file']);le=LabelEncoder();y=le.fit_transform(z.label);x=z[FEATURES]
@@ -87,22 +122,18 @@ def prepare_cicids(root:Path,out:Path,counterfactual_out:Path|None=None)->None:
  # would otherwise silently select a different row set.
  cf=pd.DataFrame(xt,columns=FEATURES).copy()
  cf['ip_proto']=z.loc[xt.index,'ip_proto_surrogate'].to_numpy();cf['tp_src']=-1;cf['label']=yt
- left=test[UNAFFECTED+['label']].reset_index(drop=True);right=cf[UNAFFECTED+['label']].reset_index(drop=True)
- if not left.equals(right): raise SystemExit('counterfactual mirror is not row-matched to the original mirror')
- changed=[c for c in FEATURES if not test[c].reset_index(drop=True).equals(cf[c].reset_index(drop=True))]
+ assert_row_matched(test,cf)
  counterfactual_out.mkdir(parents=True,exist_ok=True);cf.to_csv(counterfactual_out/'test.csv',index=False)
- (counterfactual_out/'dataset_summary.json').write_text(json.dumps({**summary,
-  'dataset':'cicids2017_3class_counterfactual','derived_from':out.name,'rows_test':len(cf),
-  'row_matched':True,'columns_changed':changed,
-  'protocol_disagreement_rate':float((test.ip_proto.to_numpy()!=cf.ip_proto.to_numpy()).mean()),
-  'field_provenance':[{'file':n['file'],'protocol':'flag-derived surrogate substituted for the original column',
-                       'source_port':'sentinel -1 substituted for the original column'} for n in notes]},indent=2),encoding='utf8')
+ (counterfactual_out/'dataset_summary.json').write_text(json.dumps(counterfactual_metadata(summary,test,cf,out.name,notes),indent=2),encoding='utf8')
 
 def main()->None:
  # Either half can be rebuilt on its own so that a verifier who already holds one
  # checksum-matching prepared file does not need both raw corpora.
- ap=argparse.ArgumentParser();ap.add_argument('--insdn-src',type=Path);ap.add_argument('--cicids-root',type=Path);ap.add_argument('--cicids-out-name',default='cicids2017_mirror');ap.add_argument('--cicids-counterfactual-name',default=None,help='also write a row-matched mirror whose protocol and source port are replaced by the MachineLearningCVE surrogates');ap.add_argument('--out-root',type=Path,default=Path(__file__).resolve().parents[1]/'data');a=ap.parse_args()
- if a.insdn_src is None and a.cicids_root is None: ap.error('supply --insdn-src and/or --cicids-root')
+ ap=argparse.ArgumentParser();ap.add_argument('--insdn-src',type=Path);ap.add_argument('--cicids-root',type=Path);ap.add_argument('--cicids-out-name',default='cicids2017_mirror');ap.add_argument('--cicids-counterfactual-name',default=None,help='also write a row-matched mirror whose protocol and source port are replaced by the MachineLearningCVE surrogates');ap.add_argument('--out-root',type=Path,default=Path(__file__).resolve().parents[1]/'data');ap.add_argument('--refresh-cf-metadata',action='store_true',help='rewrite CF dataset_summary.json from existing CSVs without touching CSV bytes');a=ap.parse_args()
+ if a.refresh_cf_metadata:
+  meta=refresh_counterfactual_metadata(a.out_root/'cicids2017_mirror',a.out_root/'cicids2017_mirror_counterfactual')
+  print(json.dumps({k:meta[k] for k in ['protocol_values','source_port_sentinel_rows','columns_changed','protocol_disagreement_rate','row_matched']},indent=2));return
+ if a.insdn_src is None and a.cicids_root is None: ap.error('supply --insdn-src and/or --cicids-root (or --refresh-cf-metadata)')
  if a.insdn_src is not None: prepare_insdn(a.insdn_src,a.out_root/'insdn')
  if a.cicids_root is not None: prepare_cicids(a.cicids_root,a.out_root/a.cicids_out_name,a.out_root/a.cicids_counterfactual_name if a.cicids_counterfactual_name else None)
  print(f'Prepared data under {a.out_root}')

@@ -23,7 +23,7 @@ SUM = json.loads((VER / 'summary.json').read_text(encoding='utf8'))
 AUDIT = pd.read_csv(VER / 'feature_shift_audit.csv')
 SCR = pd.read_csv(VER / 'provenance_screen.csv')
 
-VIEWS = [('trafficlabelling', 'TL'), ('tl_counterfactual', 'CF'), ('mlcve', 'ML')]
+VIEWS = [('trafficlabelling', 'TL'), ('tl_counterfactual', 'CF'), ('mlcve', 'MLCVE')]
 MIRROR_DIR = {'trafficlabelling': 'cicids2017_mirror',
               'tl_counterfactual': 'cicids2017_mirror_counterfactual',
               'mlcve': 'cicids2017_mirror_mlcve'}
@@ -116,7 +116,7 @@ CROSS = table_block('tab:cross')
 FED_PANEL, CEN_PANEL = split_at(CROSS, 'Centralized model')
 ROW_LABEL = {'trafficlabelling': r'\textsc{tl} (original)',
              'tl_counterfactual': r'\textsc{cf} (matched)',
-             'mlcve': r'\textsc{ml} (real)'}
+             'mlcve': r'\textsc{mlcve} (real)'}
 for prefix, panel in [('cross_', FED_PANEL), ('central_cross_', CEN_PANEL)]:
     for view, _ in VIEWS:
         row = table_row(ROW_LABEL[view], panel)
@@ -130,10 +130,11 @@ ABL = [('All nine (reconstructed)', None), (r'\quad without ports', 'without_por
        (r'\quad without protocol', 'without_protocol'),
        (r'\quad one-hot protocol', 'onehot_protocol'),
        ('Intersection, 7 fields', 'intersection')]
+# Panel (b) is a within-domain LR control, not an information-theoretic bound.
 ABLT = table_block('tab:ablation')
 # Panel (a) reports source means without dispersion; the per-seed spread stays in
 # five_seed_metrics.csv. Panel (b) is the target-trained oracle and has no source column.
-TRANSFER, ORACLE = split_at(ABLT, '(b) Target-trained oracle')
+TRANSFER, ORACLE = split_at(ABLT, '(b) Target-trained within-domain control')
 for label, name in ABL:
     row = table_row(label, TRANSFER)
     src = SUM['summary']['fedavg_iid'] if name is None else SUM[f'ablation_{name}']
@@ -293,12 +294,57 @@ check('transfer paired gap',
       f'${statistics.mean(td):.4f}\\pm{statistics.stdev(td):.4f}$')
 assert all(x > 0 for x in od), 'TL oracle should exceed CF on every seed'
 assert om - half > 0, 'paired oracle CI should exclude zero'
-assert round(statistics.mean(td) / om) == 22, 'transfer gap should be ~22x the oracle gap'
+if 'true IANA' in TEX:
+    failures.append('manuscript still claims true IANA protocol numbers')
+if 'every DDoS and PortScan row has code 6' in TEX:
+    failures.append('manuscript still claims every PortScan row has code 6')
+if re.search(r'masking it costs \$0\.0165\$', TEX):
+    failures.append('source-port masking sign is still inverted (costs instead of gains)')
+check('source-port TL masking gains', r'\emph{gains} $0.0165$')
+
+# Protocol-code associations are computed from the prepared CSVs, not hardcoded.
+try:
+    sys.path.insert(0, str(ROOT / 'evaluation'))
+    from protocol_label_audit import audit as protocol_audit, PATHS as PROTO_PATHS
+    if all(p.exists() for p in PROTO_PATHS.values()):
+        pre = protocol_audit()
+        z = pre['insdn_code0']
+        check('insdn proto0 share', f"{100 * z['share']:.1f}\\%")
+        check('insdn proto0 attack', f"{100 * z['attack_rate']:.1f}\\%")
+        check('tl udp count', f"{pre['transition']['tl_udp_n']:,}")
+        if pre['transition']['changed_pairs'] != [(17, 0)]:
+            failures.append(f"protocol transitions {pre['transition']['changed_pairs']} are not solely 17->0")
+        if pre['transition']['tl_udp_attack_rate'] != 0.0:
+            failures.append('TL code-17 attack rate is not zero on the prepared split')
+        ac = pre['tl_attack_codes']
+        if not ac['ddos_all_code6']:
+            failures.append('not every TL DDoS row has protocol code 6')
+        if ac['n_portscan_code0'] == 0:
+            failures.append('TL PortScan has no code-0 rows; prose/table reconciliation is stale')
+        if not ac['code0_attacks_are_portscan']:
+            failures.append('TL code-0 attacks are not exactly the code-0 PortScan rows')
+        check('tl code0 attack pct', f"{100 * ac['code0_attack_rate']:.1f}\\%")
+        check('cf code0 attack not exact zero', r'$<$0.1\%')
+        _num = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}
+        w = _num.get(ac['n_portscan_code0'])
+        if w is None:
+            failures.append(f"unexpected TL PortScan code-0 count {ac['n_portscan_code0']}")
+        else:
+            check('portscan code0 wording', f'{w} PortScan')
+        if not z['src_port_all_zero'] or not z['dst_port_all_zero']:
+            failures.append('InSDN protocol 0 is not uniformly portless')
+except Exception as exc:
+    failures.append(f'protocol audit failed: {exc}')
 
 for view, _ in VIEWS:
     meta = json.loads((ROOT / 'data' / MIRROR_DIR[view] / 'dataset_summary.json').read_text(encoding='utf8'))
     check(f'{view} cleaned flows', f"{meta['rows_after_clean']:,}")
     check(f'{view} test rows', f"{meta['rows_test']:,}")
+cf_meta = json.loads((ROOT / 'data' / 'cicids2017_mirror_counterfactual' / 'dataset_summary.json').read_text(encoding='utf8'))
+if cf_meta.get('protocol_values') != [0, 6]:
+    failures.append(f"CF metadata protocol_values={cf_meta.get('protocol_values')} (expected [0, 6] from CF rows)")
+if cf_meta.get('source_port_sentinel_rows') in (None, 0):
+    failures.append('CF metadata source_port_sentinel_rows still describes the pre-overwrite table')
 
 # --- checksums published in data/README.md ---------------------------------
 README = (ROOT / 'data' / 'README.md').read_text(encoding='utf8')

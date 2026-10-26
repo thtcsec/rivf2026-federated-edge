@@ -32,10 +32,9 @@
   ],
   "protocol_values": [
     0,
-    6,
-    17
+    6
   ],
-  "source_port_sentinel_rows": 0,
+  "source_port_sentinel_rows": 207463,
   "derived_from": "cicids2017_mirror",
   "row_matched": true,
   "columns_changed": [

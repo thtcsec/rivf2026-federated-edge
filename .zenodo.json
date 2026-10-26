@@ -1,5 +1,5 @@
 {
-  "title": "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection",
+  "title": "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection",
   "upload_type": "publication",
   "publication_type": "conferencepaper",
   "description": "Research artifact for an IEEE RIVF 2026 submission showing that the published CSV distribution supplying target features, not the target traffic, can decide the sign of a cross-dataset federated intrusion-detection result.",

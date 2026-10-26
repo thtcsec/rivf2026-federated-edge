@@ -9,7 +9,7 @@ authors:
     given-names: "Tien Thanh"
     email: "thanhct@huflit.edu.vn"
     affiliation: "Department of Cybersecurity, Faculty of Information Technology, HUFLIT"
-title: "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection"
+title: "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection"
 version: "2.0.0"
 date-released: "2026-08-10"
 preferred-citation:
@@ -19,7 +19,7 @@ preferred-citation:
       given-names: "Hoang Tu"
     - family-names: "Cao"
       given-names: "Tien Thanh"
-  title: "Two Distributions, Opposite Verdicts: Feature Provenance in Cross-Dataset Federated Intrusion Detection"
+  title: "Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset Intrusion Detection"
   collection-title: "Proceedings of the 20th IEEE RIVF International Conference on Computing and Communication Technologies (RIVF 2026)"
   year: 2026
   address: "Hanoi, Vietnam"

@@ -7,7 +7,9 @@ original providers and run `evaluation/prepare_public_data.py`.
 
 - **InSDN binary source**: `Dataset.csv`, with the columns named in the
   preparation script. The study uses 343,889 cleaned rows (68,424 normal and
-  275,465 attack). Its `ip_proto` carries true IANA numbers `{0, 6, 17}`.
+  275,465 attack). Its `ip_proto` stores integer codes `{0, 6, 17}` as they
+  appear in the release CSV. Code 0 is not treated as an IANA protocol identity;
+  in the prepared file every such row has source and destination port 0.
   Dataset paper: <https://doi.org/10.1109/ACCESS.2020.3022633>.
 - **CICIDS2017**, Monday, Friday DDoS, and Friday PortScan. Obtain them from
   <https://www.unb.ca/cic/datasets/ids-2017.html>. CSV and Parquet inputs are
@@ -35,7 +37,7 @@ The paper evaluates three views of the same capture files.
 |---|---|---|---|---|
 | `TL` | `TrafficLabelling` | original column | original column | — |
 | `CF` | the finished `TL` rows | flag surrogate | sentinel `-1` | **yes** |
-| `ML` | `MachineLearningCVE` | flag surrogate | sentinel `-1` | no |
+| `MLCVE` | `MachineLearningCVE` | flag surrogate | sentinel `-1` | no |
 
 `CF` is the controlled comparison. It is **not** produced by re-running the
 cleaner with the two columns suppressed: both the missing-value filter and the
@@ -48,7 +50,7 @@ aborts otherwise. `evaluation/run_verified_federated_baseline.py` repeats that
 assertion after seeded subsampling, and `evaluation/verify_paper_numbers.py`
 repeats it against the committed CSVs.
 
-`ML` differs from `TL` in row set and attack prevalence as well, so it
+`MLCVE` differs from `TL` in row set and attack prevalence as well, so it
 establishes practical relevance rather than the mechanism.
 
 ## Commands
@@ -90,10 +92,10 @@ The evaluation expects `data/insdn/flow_stats.csv`,
 
 All views are built from the same three capture files with the same fixed
 stratified split (`random_state=42`). `TL` and `CF` have identical row counts
-and identical labels by construction; the `ML` difference comes from
+and identical labels by construction; the `MLCVE` difference comes from
 de-duplication, which collapses far more rows once real source ports are absent.
 Against `TL`, the `CF` surrogate assigns a different protocol to 30.32% of rows,
-because UDP (17) has no representation in the flag-derived rule. These views are
+because code 17 has no representation in the flag-derived rule. These views are
 an interoperability audit, not a complete CICIDS2017 leaderboard.
 
 ## Excluded column

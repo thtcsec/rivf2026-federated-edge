@@ -1,35 +1,43 @@
-# Two Distributions, Opposite Verdicts
+# Same Flows, Opposite Verdicts
 
-Reproduction package for the IEEE RIVF 2026 submission by Hoang Tu Trinh and
-Tien Thanh Cao. The repository contains only the logistic-regression FedAvg
-audit reported in the paper; it makes no TCN/GRU, reinforcement-learning,
-OpenFlow, latency, resource, or physical-deployment claim.
+Reproduction package for the IEEE RIVF 2026 camera-ready candidate
+*Same Flows, Opposite Verdicts: Feature Reconstruction in Cross-Dataset
+Intrusion Detection* by Hoang Tu Trinh and Tien Thanh Cao. The working title
+may require EDAS/TPC confirmation. The repository contains only the
+logistic-regression FedAvg audit reported in the paper; it makes no TCN/GRU,
+reinforcement-learning, OpenFlow, latency, resource, or physical-deployment
+claim. Do not treat integer protocol codes as established IANA identities.
 
 ## Headline result
 
-CICIDS2017 is published in two flow-feature distributions that expose different
+CICIDS2017 is published in two flow-feature releases that expose different
 columns. The primary experiment is a **row-matched counterfactual**: the same
 207,463 target flows in the same order, with identical labels, identical attack
 prevalence and seven bit-identical features, in which only `Protocol` and
-`Source Port` are replaced by the surrogates the `MachineLearningCVE` release
-forces. That is enough to reverse the cross-dataset verdict.
+`Source Port` are replaced by one specified MachineLearningCVE-compatible
+surrogate. That reconstruction is a controlled failure mode, not documented
+practice. It reverses the cross-dataset ranking of an InSDN-trained linear model.
 
 | Target view | Protocol / source port | Row-matched | ROC-AUC | MCC |
 |---|---|---|---|---|
 | `TL` original | original columns | — | 0.7357 | +0.2511 |
 | `CF` counterfactual | flag surrogate / sentinel `-1` | **yes** | 0.3545 | -0.1915 |
-| `ML` real release | flag surrogate / sentinel `-1` | no | 0.3441 | -0.2698 |
+| `MLCVE` real release | flag surrogate / sentinel `-1` | no | 0.3441 | -0.2698 |
 
 Because `CF` shares its rows, labels and prevalence with `TL`, the difference
 cannot be attributed to attack mix, labeling, collection environment or
-sampling. The real `ML` release lands next to the counterfactual, so the
+sampling. The real `MLCVE` release lands next to the counterfactual, so the
 mechanism isolated on matched rows is what dominates in an actual public
 release. A centralized model shows the same pattern (0.7490 / 0.3544 / 0.3447),
 so this is not an artifact of FedAvg aggregation.
 
-Masking localizes the reversal to protocol, whose contribution changes sign
-(-0.1438 on `TL` vs +0.2647 on `CF`) even though its marginal KS distance is the
-*smaller* of the two. On those identical rows, **dropping** the unavailable field
+In this CICIDS2017 slice every code-17 (UDP-coded) flow is benign, while InSDN
+associates code 0 with 99.7% attacks; every protocol change in `CF` is `17→0`.
+Three PortScan rows have code 0; they are not recoded.
+Masking localizes the ranking reversal to protocol (`ΔA = -0.1438` on `TL` vs
+`+0.2647` on `CF`). Source-port masking *gains* 0.0165 ROC-AUC on `TL`; it does
+not cost ranking quality. Protocol total variation is smaller for the harmful
+encoding than for the original. On those identical rows, **dropping** the unavailable field
 reaches 0.5157 while **reconstructing** it reaches only 0.3545: incorrect
 reconstruction is worse than admitting the field is missing.
 

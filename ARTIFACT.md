@@ -1,7 +1,8 @@
 # Artifact evaluation guide
 
-**Paper:** *Two Distributions, Opposite Verdicts: Feature Provenance in
-Cross-Dataset Federated Intrusion Detection*
+**Paper:** *Same Flows, Opposite Verdicts: Feature Reconstruction in
+Cross-Dataset Intrusion Detection* (working camera-ready title; EDAS/TPC
+confirmation may be required)
 
 **Target track:** Cyber-Security, Cryptography, Blockchain
 
@@ -19,23 +20,19 @@ Cross-Dataset Federated Intrusion Detection*
    (0.7490 / 0.3544 / 0.3447), showing the effect is neither an artifact of the
    counterfactual nor of federated averaging.
 4. A source-mean masking audit and retraining ablations that localize the
-   reversal to protocol, whose learned contribution changes sign between
-   row-matched views while its marginal KS distance is the smaller of the two,
-   and that quantify dropping the unavailable field (0.5157) against
-   reconstructing it (0.3545). The schema-intersection setting, which drops both
-   fields `MachineLearningCVE` does not supply, reaches 0.5075 and returns the
-   same five-seed metrics on TL and CF to four decimals, since removing those two
-   columns makes the two views the same data.
-5. A target-trained oracle that fits and evaluates entirely inside one target
-   view (its own scaler, an 80/20 split of that view's sampled rows), bounding
-   the label-predictive signal the view still holds: 0.8995 +- 0.0553 on TL,
-   0.8820 +- 0.0630 on CF and 0.8956 +- 0.0635 on ML for the nine-field schema,
-   and 0.7200 +- 0.0931 (TL and CF) against 0.7117 +- 0.0797 (ML) for the
-   seven-field intersection. TL and CF are scored per seed on the same rows, so
-   the paired difference is the informative quantity: the oracle gap is 0.0175
-   (95% CI [0.0069, 0.0280], TL ahead on all five seeds) against a zero-shot gap
-   of 0.3813 +- 0.0052 on those same rows. Reconstruction therefore costs a small
-   but consistent amount of in-domain signal while changing far more meaning.
+   ranking reversal to protocol (`ΔA` changes sign between row-matched views)
+   while protocol total variation is *smaller* for the harmful encoding. Source-port
+   masking *gains* 0.0165 ROC-AUC on TL. Dropping the unavailable protocol field
+   reaches 0.5157 against 0.3545 for reconstruction. The seven-field intersection
+   is provenance-valid but chance-level (0.5075) and returns identical TL/CF
+   metrics, confirming those views differ only in the two overwritten columns.
+5. A target-trained within-domain logistic-regression control (its own scaler,
+   an 80/20 split of that view's sampled rows), not an information-theoretic
+   bound: 0.8995 +- 0.0553 on TL, 0.8820 +- 0.0630 on CF and 0.8956 +- 0.0635 on
+   MLCVE for the nine-field schema, and 0.7200 +- 0.0931 (TL and CF) against
+   0.7117 +- 0.0797 (MLCVE) for the seven-field intersection. The paired
+   in-domain gap is 0.0175 (95% CI [0.0069, 0.0280], TL ahead on all five seeds)
+   against a zero-shot gap of 0.3813 +- 0.0052.
 6. A label-free preflight check using only source-training statistics and
    unlabelled target values. It flags exactly the two substituted source-port
    columns among 27 column--view pairs, on all five seeds, and does not flag the
