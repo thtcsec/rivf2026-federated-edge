@@ -9,7 +9,8 @@
 
 <p align="center">
   <a href="https://rivf2026.org/"><img src="https://img.shields.io/badge/IEEE-RIVF%202026-003147.svg" alt="IEEE RIVF 2026" /></a>
-  <a href="https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready"><img src="https://img.shields.io/badge/artifact-rivf2026--camera--ready-2ea44f.svg" alt="Camera-ready artifact tag" /></a>
+  <a href="https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready-v2"><img src="https://img.shields.io/badge/artifact-v2-2ea44f.svg" alt="Camera-ready v2 artifact tag" /></a>
+  <a href="https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready"><img src="https://img.shields.io/badge/scientific%20freeze-v1-6e7781.svg" alt="Original scientific freeze tag" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/code%20license-MIT-blue.svg" alt="MIT license" /></a>
   <a href="evaluation/phase_b_claim_manifest.md"><img src="https://img.shields.io/badge/reproducibility-Level%20A%20verifier-informational.svg" alt="Level A result verification" /></a>
 </p>
@@ -24,14 +25,15 @@
 | **Venue** | IEEE RIVF 2026, VinUniversity, Hanoi, 18–20 December 2026 |
 | **Status** | Accepted; camera-ready candidate (EDAS #1571348135). No IEEE Xplore DOI yet. |
 | **Track** | Cyber-Security, Cryptography, Blockchain |
-| **Artifact tag** | [`rivf2026-camera-ready`](https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready) |
+| **Current artifact** | [`rivf2026-camera-ready-v2`](https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready-v2) (independently audited reporting, diagnostic, and PDF-layout corrections; LR/HGB numbers unchanged) |
+| **Scientific freeze** | [`rivf2026-camera-ready`](https://github.com/thtcsec/rivf2026-federated-edge/tree/rivf2026-camera-ready) (original frozen results; this tag is not moved) |
 | **Code license** | MIT (`LICENSE`). InSDN and CICIDS2017 remain under their owners' terms. |
 
 \*Corresponding author: `thanhct@huflit.edu.vn`
 
 ## Overview
 
-CICIDS2017 ships two flow-feature releases that do not expose the same columns. Aligning the MachineLearningCVE schema to a nine-field InSDN model therefore requires dropping Protocol and Source Port or reconstructing them. This artifact evaluates **one specified reconstruction** as a controlled failure mode, not as documented practice.
+CICIDS2017 ships two flow-feature releases that do not expose the same columns. Aligning the MachineLearningCVE schema to a nine-field InSDN model therefore requires dropping Protocol and Source Port or reconstructing them. This artifact evaluates **one specified reconstruction** (code 6 if any TCP flag is set and 0 otherwise, and source port `-1`) as a controlled failure mode, not as documented practice.
 
 Federated averaging is the evaluation setting, not the identified cause. Integer protocol codes are empirical labels, not IANA identities.
 
